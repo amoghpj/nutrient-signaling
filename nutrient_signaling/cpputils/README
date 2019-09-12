@@ -1,0 +1,2 @@
+- pydstool2cpp.py converts the model definition text files in a specified directory to a cpp file.
+- main.cpp simulates the model and stores the numerical results in ./values.txt, and calls plotfile.py  which plots these values.

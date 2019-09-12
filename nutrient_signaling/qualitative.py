@@ -1,18 +1,3 @@
-import yaml
-class TimeCourse:
-    self.data = []
-    
-    def read_data(self, path_to_yaml):
-        with open(path_to_yaml,'r') as infile:
-            self.data = yaml.safe_load(infile)
-            
-class Perturb:
-    self.data = []
-    def read_data(self, path_to_yaml):
-        with open(path_to_yaml,'r') as infile:
-            self.data = yaml.safe_load(infile)
-    
-            
 class QualExp:
     def __init__(self):
         self.readouts = ['Gis1',

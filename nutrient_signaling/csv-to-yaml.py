@@ -32,7 +32,7 @@ def read_experiment(csvpath):
     return data
 
 def read_perturb(csvpath):
-    df = pd.read_csv(csvpath)
+    df = pd.read_csv(csvpath,sep='\t')
     data = []
     columns = df.columns
     print(columns)
@@ -40,37 +40,41 @@ def read_perturb(csvpath):
         print(row)
         currdata = {'id':i}
         param = process_literal(row['parameter_change'])
-        wt = {'pars':None,'ics':None}
+        perturbation = {'pars':None,'ics':None}
         treat = {'pars':None,'ics':None}
         if type(param) == list:
-            wt['pars'] = param[0]['parameters']
-            wt['ics'] = param[0]['inconds']
+            perturbation['pars'] = param[0]['parameters']
+            perturbation['ics'] = param[0]['inconds']
             treat['pars'] = param[1]['parameters']
             treat['ics'] = param[1]['inconds']
         else:
-            wt['pars'] = param['parameters']
-            wt['ics'] = param['inconds']
+            perturbation['pars'] = param['parameters']
+            perturbation['ics'] = param['inconds']
             
         skeleton = {
+            'simid':row['sim_id'],
+            'simulate':row['simulate'],
             'description':row['description'],
+            'type':row['sim_type'],
+            'whichcondition':row['whichcondition'],
             'readout':row['readout'],
-            'type':row['Shift Type'],
             'source':row['source'],
-            'doi':row['DOI'],
-            'time':{'wt':row['WT Simulation end time'],
-                    'mut':row['Mutant Simulation end time']},
-            'units':row['Assay units'],
-            'value':{'preshift':{'wt':row['Experimental WT pre shift level'],
-                                 'mutant':row['Experimental Mutant pre shift level']},
-                     'postshift':{'wt':row['Experimental WT post shift level'],
-                                  'mutant':row['Experimental Mutant post shift level level']}},
-            'simulations':{'preshift':{'pars':process_literal(row['Simulation pre shift specification'])},
-                           'postshift':{'pars':process_literal(row['Simulation post shift specification'])},
-                           'mutant':{'pars':mutant['pars'],
-                                     'ics':mutant['ics']},
-                           'treat':{'pars':treat['pars'], 
-                                    'ics':treat['ics']},                           
-            }}        
+            'time':{'wt':row['tend_wt'],
+                    'perturb':row['tend_mut']},
+            'units':row['units'],
+            'value':{'preshift':{'wt':row['wt_pre'],
+                                 'perturb':row['mut_pre']},
+                     'postshift':{'wt':row['wt_post'],
+                                  'perturb':row['mut_post']}},
+            'spec':{'preshift':{'pars':process_literal(row['pre_spec'])},
+                    'postshift':{'pars':process_literal(row['post_spec'])},
+                    'perturbation':{'pars':perturbation['pars'],
+                                    'ics':perturbation['ics']},
+                    'treat':{'pars':treat['pars'], 
+                             'ics':treat['ics']},
+            },
+            'citation':row['citation']
+        }        
         data.append(skeleton)
     return data
 
