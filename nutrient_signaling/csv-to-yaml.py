@@ -17,7 +17,6 @@ def csv2yaml(csvpath, yamlpath, inputtype):
     else:
         print('Input type not recognized')
         sys.exit()
-    print(data)
     with open(yamlpath, 'w') as outfile:
         outfile.write(yaml.dump(data, default_flow_style=False))
 
@@ -35,9 +34,7 @@ def read_perturb(csvpath):
     df = pd.read_csv(csvpath,sep='\t')
     data = []
     columns = df.columns
-    print(columns)
     for i, row in df.iterrows():
-        print(row)
         currdata = {'id':i}
         param = process_literal(row['parameter_change'])
         perturbation = {'pars':None,'ics':None}
@@ -59,6 +56,7 @@ def read_perturb(csvpath):
             'whichcondition':row['whichcondition'],
             'readout':row['readout'],
             'source':row['source'],
+            'vmax':row['vmax'],
             'time':{'wt':row['tend_wt'],
                     'perturb':row['tend_mut']},
             'units':row['units'],

@@ -3,6 +3,7 @@ import copy
 import sys
 import PyDSTool as dst
 import matplotlib.pyplot as plt
+import os
 from nutrient_signaling.simulators import SimulatorPython
 
 class Perturb:
@@ -30,6 +31,8 @@ class Perturb:
         """
         From path, read perturbation data
         """
+        cwd = os.path.dirname(os.path.realpath(__file__))
+        print('I am in ' + cwd)
         with open(path_to_yaml,'r') as infile:
             self.data = yaml.safe_load(infile)
             
@@ -37,8 +40,7 @@ class Perturb:
         """
         Call simulate on each item in yaml file
         """
-
-        store_attributes = ['simid','description', 'units','readout','source','citation','value']
+        store_attributes = ['simid','description', 'units','readout','source','citation','value','whichcondition','type','vmax']
         for simid, experiment in enumerate(self.data):
             predictions = {}
             self.debug(simid)
@@ -52,7 +54,6 @@ class Perturb:
                                                                 experimenttype=experimenttype)
                         
                 self.predictions.append(predictions)
-        print(self.predictions)
 
     
     def simulate(self,experiment, experimenttype='wt'):
@@ -60,12 +61,16 @@ class Perturb:
         For each element in `data`, simulate experimenttype
         and store the steady state values
         """
-        result = {'pre':0, 'post':0}        
+        result = {'pre':0, 'post':0}
+
         model = copy.deepcopy(self.simobj)
+        # print('init')
+        # model.get_attr()
         self.debug('\t\tinitialized')
         # Initialize all variables with their ss values        
         model.set_attr(ics=model.get_ss())
-        
+        # print('ics')
+        # model.get_attr()        
         self.debug('\t\tset ics to ss')
         if experimenttype == 'perturb':
             # Parameters and initial conditions representing the experimental
@@ -75,6 +80,8 @@ class Perturb:
             self.debug(ics_perturb)            
             model.set_attr(pars=pars_perturb,
                            ics=ics_perturb)
+            # print('ics')
+            # model.get_attr()        
             self.debug('perturb done')
 
         # Preshift 
@@ -82,6 +89,10 @@ class Perturb:
                        tdata=[0, experiment['time'][experimenttype]],
                        pars=experiment['spec']['preshift']['pars'])
         
+        # if experiment['description'] == 'rapamycin' and experimenttype == 'perturb':
+        #     print('preshift')
+        #     model.get_attr()
+        #     sys.exit()
         result['pre'] = model.get_ss()[experiment['readout']]
         self.debug('pre done')
         # Postshift

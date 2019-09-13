@@ -70,19 +70,24 @@ class SimulatorPython:
 class SimulatorCPP:
     def __init__(self, execpath='./src/'):
         self.execpath = execpath
-        self.pars = None
-        self.ics = None
+        self.pars = {}
+        self.ics = {}
         self.tdata = [0, 90]
-        self.tend = 90
+        self.tend = self.tdata[1]
         self.step = 0.001
         self.plot = False
         self.simfilename = 'values.dat'
         self.execfname = "main.o"
         
-    def set_attr(self, pars=None, ics=None,tdata=[0,90]):
-        self.pars = pars
-        self.ics= ics
+    def set_attr(self, pars={}, ics={},tdata=[0,90]):
+        self.pars.update(pars)
+        self.ics.update(ics)
         self.tend = tdata[1]
+        
+    def get_attr(self):
+        print("pars ", self.pars )
+        print("ics ", self.ics)
+        print("tend ", self.tend )
         
     def construct_call(self):
         """
@@ -140,7 +145,7 @@ class SimulatorCPP:
     def simulate_and_get_points(self):
         cmd = self.construct_call()
         self.simulate(cmd)
-        D = sim.read_sim()
+        D = self.read_sim()
         return(D.to_dict(orient='list'))        
 
 
