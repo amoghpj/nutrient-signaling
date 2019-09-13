@@ -20,6 +20,9 @@ class SimulatorPython:
         pts = self.model.compute('test').sample()
         return(pts)
     
+    def simulate_and_get_points(self):
+        return(self.simulateModel())
+    
     def get_ss(self):
         """
         Returns steady states of all variables in the model
@@ -68,7 +71,7 @@ class SimulatorPython:
 
 
 class SimulatorCPP:
-    def __init__(self, execpath='./src/'):
+    def __init__(self, execpath='./src/',executable='main.o'):
         self.execpath = execpath
         self.pars = {}
         self.ics = {}
@@ -77,7 +80,7 @@ class SimulatorCPP:
         self.step = 0.001
         self.plot = False
         self.simfilename = 'values.dat'
-        self.execfname = "main.o"
+        self.executable = executable
         
     def set_attr(self, pars={}, ics={},tdata=[0,90]):
         self.pars.update(pars)
@@ -96,7 +99,7 @@ class SimulatorCPP:
         cmd : str
             Shell command to call cpp executable
         """
-        cmd = self.execpath + self.execfname +" --ode --tend " + str(self.tend) + " "\
+        cmd = self.execpath + self.executable +" --ode --tend " + str(self.tend) + " "\
               + "--step " + str(self.step) + " "
         
         if self.plot:
@@ -146,30 +149,37 @@ class SimulatorCPP:
         cmd = self.construct_call()
         self.simulate(cmd)
         D = self.read_sim()
-        return(D.to_dict(orient='list'))        
+        return(D.to_dict(orient='list'))
+    
+    def simulateModel(self):
+        return(self.simulate_and_get_points())    
 
 
 def get_simulator(modelpath='./', simulator='py',**kwargs):
     if simulator == 'py':
         model = md.readinput(modelpath) ## change
-        simobj = SimulatorPython(model,kwargs)
+        simobj = SimulatorPython(model)
         return(simobj)
     elif simulator == 'cpp':
         validpath = False
+        execpath = './src/'
+        executable = 'main.o'
         if 'execpath' in kwargs.keys():
+            execpath = kwargs['execpath']
             if not os.path.isdir(kwargs['execpath']):
                 print('Path to executable does not exist')
                 validpath = False
         if 'executable' in kwargs.keys():
-            if not os.path.isfile(kwargs['execpath'] +  kwargs['execfile']):
+            executable = kwargs['executable']
+            if not os.path.isfile(kwargs['execpath'] +  kwargs['executable']):
                 print('Executable not found')
                 validpath = False
         if not validpath:
-            if not os.path.exists('./src/main.o'):
-                print('src/main.o does not exist. Creating model file...')
+            if not os.path.exists(execpath + executable):
+                print(execpath + executable +' does not exist. Creating model file...')
                 cwd = os.path.dirname(os.path.realpath(__file__))
                 from nutrient_signaling.cpputils.pydstool2cpp import PyDSTool2CPP
-                outpath = cwd + '/..' + '/src/'
+                outpath = execpath#cwd + '/../' + execpath
                 if not os.path.exists(outpath):
                     os.mkdir(outpath)
                 p2c = PyDSTool2CPP(modelpath)
@@ -177,11 +187,11 @@ def get_simulator(modelpath='./', simulator='py',**kwargs):
                 print(p2c.getwritepath())
                 p2c.writecpp()
                 os.chdir(cwd + '/cpputils')
-                cmd = "g++ -std=c++11 main.cpp model.cpp -o main.o "
+                cmd = "g++ -std=c++11 main.cpp model.cpp -o " + executable
                 so = os.popen(cmd).read()
-                so = os.popen('cp main.o ' + outpath)
-                os.chdir(cwd)
-        simobj = SimulatorCPP()
+                so = os.popen('cp ' +executable+ ' ' + outpath)
+                os.chdir(cwd + '/../')
+        simobj = SimulatorCPP(execpath, executable )
         return(simobj)
             
             

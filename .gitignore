@@ -1,0 +1,7 @@
+__pycache__/*
+*.o
+*.pyc
+*.dat
+*.h
+report.*
+test/*
