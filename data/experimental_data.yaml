@@ -1,0 +1,278 @@
+experiments:
+  - exp_id: "1"
+    name: "wt-glucose"
+    pre_pars:
+      Carbon: 0.1
+      ATP: 0.1
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    readouts: "r"
+
+  - exp_id: "2"
+    name: "wt-raffinose"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 0.7
+      ATP: 0.7
+      Glutamine_ext: 1.0
+
+  - exp_id: "3"
+    name: "rtg1/3delta-glucose-glutamate"
+    mutant:
+      pars:
+        Rtg13_T: 0.0
+      ics:
+        Rtg13: 0.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 0.9
+
+  - exp_id: "5"
+    name: "snf1delta-ethanol"
+    mutant:
+      pars:
+        Snf1_T: 0.0
+      ics:
+        Snf1: 0.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 0.3
+      ATP: 1.0
+      Glutamine_ext: 0.0
+
+  - exp_id: "6"
+    name: "gln3delta-rich-rap"
+    mutant:
+      pars:
+        Gln3_T: 0.0
+      ics:
+        Gln31: 0.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0
+
+  - exp_id: "7"
+    name: "ure2-2x-rich-rap"
+    mutant:
+      pars:
+        w_gln3: "2x"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0
+
+  - exp_id: "8"
+    name: "wt-rich-rap"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0
+
+  - exp_id: "9"
+    name: "gln3delta-msx"
+    mutant:
+      pars:
+        Gln3_T: 0.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      k_acc_glu: 1e-5      
+
+  - exp_id: "10"
+    name: "gln3delta-msx"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      k_acc_glu: 1e-5      
+      
+  - exp_id: "11"
+    name: "bcy1-hyper-rap"
+    mutant:
+      pars:
+        w_pka_camp: "0.1x"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0  
+      
+  - exp_id: "12"
+    name: "ira-hyper-rap"
+    mutant:
+      pars:
+        w_ras_pka: "0.1x"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0
+
+  - exp_id: "13"
+    name: "ras2delta-rap"
+    mutant:
+      pars:
+        Ras_T: 0.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0      
+
+  - exp_id: "14"
+    name: "tpkdelta-rap"
+    mutant:
+      pars:
+        PKA_T: 0.66
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0
+
+  - exp_id: "15"
+    name: "rasv19mult-gln3delta-rap"
+    mutant:
+      pars:
+        Gln3_T: 0.0
+        w_ras_pka: 0.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0            
+
+  - exp_id: "16"
+    name: "tpkmult-gln3delta-rap"
+    mutant:
+      pars:
+        Gln3_T: 0.0
+        w_pka_camp: 4.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0            
+
+  - exp_id: "17"
+    name: "bcy1delta-gln3delta-rap"
+    mutant:
+      pars:
+        Gln3_T: 0.0
+        w_pka_camp: "10x"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0
+
+  - exp_id: "18"
+    name: "wt-3at"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 0.0
+      NH4: 20.
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 0.0
+      NH4: 20.0
+      k_acc_nh4: 1e-5
+
+  - exp_id: "19"
+    name: "tor1-4-rap"
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 0.0
+      NH4: 20.
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 0.0
+      TORC1_T: 0.8
+    
+  - exp_id: "20"
+    name: "gln3delta-gcn4delta-rap"
+    mutant:
+      pars:
+        Gln3_T: 0.0
+        Gcn4_T: 0.0
+    pre_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+    post_pars:
+      Carbon: 1.0
+      ATP: 1.0
+      Glutamine_ext: 1.0
+      TORC1_T: 0.0
+    
