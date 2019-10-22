@@ -30,7 +30,7 @@ def readinput(PATH):
     }
     
     for inputfile in modeldefinition.keys():
-        print("Reading " + inputfile)
+        #print("Reading " + inputfile)
         with open(PATH+'/'+inputfile+".txt",'r') as infile:
             for line in infile.readlines():
                 if checkstring(inputfile,line)==1:
