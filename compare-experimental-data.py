@@ -7,6 +7,7 @@ import matplotlib
 import sys
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from optparse import OptionParser
 from nutrient_signaling.simulators import get_simulator
 
 home = os.path.expanduser('~')
@@ -106,6 +107,7 @@ def interpret_experiment(uid, state, expargs):
     TODO: Fix Dot 6 interpretation
     """
     experiment = expargs['experiment']
+    print(uid)
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']
     s = '|TF|Expected|Simulation | Boolean|\n'
@@ -114,13 +116,36 @@ def interpret_experiment(uid, state, expargs):
         s += "|%s|%s|%0.3f|%s|\n" %(rd, experiment['expected'][rd], state[rd]['val'],state[rd]['dec'])
         if experiment['expected'][rd] == state[rd]['dec']:
             matches.append(rd)
-            
+    strict = False
+    if experiment['forGrowth'] is not None:
+        strict = True
+        tf = list(experiment['forGrowth'].keys())[0]
+        if experiment['forGrowth'][tf] == state[tf]['dec']:
+            strictsatisfied = True
+        else:
+            strictsatisfied = False
+    print(tf, strictsatisfied)
     if state['Dot6']['val'] < cutoffs['Dot6']:
-        growthdec = 'Strain exhibits growth in this condition'
+        growthsatisfied = True
     elif state['Dot6']['val'] > cutoffs['Dot6'] and state['Dot6']['val'] < 1.3*cutoffs['Dot6']:
-        growthdec = 'Strain exhibits slow growth'            
+        slowgrowth = True
     else:
-        growthdec = 'Strain does not grow in this condition'
+        growthsatisfied = False
+    if strict:
+        if strictsatisfied:
+            statement = 'growth'
+        else:
+            statement = 'no growth'
+    else:
+        if growthsatisfied:
+            statement = 'growth'
+        elif slowgrowth:
+            statement = 'slow growth'
+        else:
+            statement = 'no growth'
+    print(statement)
+    growthdec = 'Strain exhibits {} in this condition'.format(statement)
+            
     template = "* {}\n{}\n\n{} of 6 tf states are identical.\n\n*Experiment*: {} studied a /{}/ strain ({}) grown in {}. {} ({}). The strain is {}.\n\nPredicted: {}.\n\n[[./img/{}.png]]\n\n"
     report = template.format(uid,
                              s,
@@ -134,7 +159,10 @@ def interpret_experiment(uid, state, expargs):
                              experiment['growth'],
                              growthdec,
                              uid.replace(' ',''))
-    if len(matches) >=5 :
+    if strict:
+        if strictsatisfied:
+            shareddict['counter'] += 1
+    elif len(matches) >=5 :
         shareddict['counter'] += 1
     shareddict[uid] += report
 
@@ -171,10 +199,18 @@ def define_state_space(datapath):
         cutoffs[k] = mean
     return statedict, cutoffs
     
-def compare_model_predictions():
+def compare_model_predictions(debug):
     datapath = 'data/experimental-data-full.yaml'
     print('Initializing...')
-    sd, cutoffs = define_state_space(datapath)
+    if not debug:
+        sd, cutoffs = define_state_space(datapath)
+    else:
+        cutoffs = {'Gis1':0.498,
+                   'Mig1':1.344,
+                   'Dot6':1.058,
+                   'Gcn4':0.489,
+                   'Rtg13':0.46,
+                   'Gln3':0.564}    
     print('Loading data...')
     expdat = load_data(datapath)
     report = ''
@@ -184,7 +220,7 @@ def compare_model_predictions():
     shareddict['counter'] = 0
     kl = []
     start = 0
-    end = 62
+    end = 10
     print('Starting experiments...')
     for i, experiment in enumerate(expdat[start:end]):
         uid = str(experiment['id']) + '-' + experiment['strain']
@@ -209,7 +245,16 @@ def compare_model_predictions():
     with open('report.org','w') as outfile:
         report = preamble + summary + ''.join([shareddict[k] for k in kl])
         outfile.write(report)
+
+
+def main():
+    parser = OptionParser()
+    parser.add_option('-d','--debug',action='store_true',default=False,help='will not calculate thresholds')
+    opt,args = parser.parse_args()
+    compare_model_predictions(opt.debug)
     
-compare_model_predictions()
+if __name__ == '__main__':
+    main()
+
 
 

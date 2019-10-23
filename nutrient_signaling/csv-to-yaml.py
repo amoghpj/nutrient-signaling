@@ -83,18 +83,23 @@ def read_experiment(csvpath, bib):
                 mutant['pars'] = mutspec['pars']
             if 'ics' in mutspec.keys():                
                 mutant['ics'] = mutspec['ics']
-
+        forGrowth = None
+        if not pd.isna(row['For Growth']):
+            tf, st = row['For Growth'].split(':')
+            forGrowth = {tf:st}
+            
         nancheck = lambda C : C if not pd.isna(C) else None
         skeleton = {'id':row['ID'],
                     'strain':row['strain'],
                     'nutrientCondition':row['Nutrient input'],
                     'phenotypeReported':row['Phenotype Reported'],
-                    'phenotypeInterpreted': nancheck(row['Phenotype Interpreted']),                    
+                    #'phenotypeInterpreted': nancheck(row['Phenotype Interpreted']),                    
                     'growth':row['Growth characteristic'],
                     'expReadout':row['Experimental Readout'],
                     'background':row['Background'],
                     'comments':nancheck(row['Comments']),
                     'doi':get_doi(row['citation'], bib),
+                    'forGrowth':forGrowth,
                     'shortname': get_shortname(row['citation'], bib),
                     'expected':{tf.split(':')[0]:tf.split(':')[1] for tf in row['Expected State'].split(',')},
                     'preshift':preshift,
