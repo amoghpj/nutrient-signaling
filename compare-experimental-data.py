@@ -52,7 +52,6 @@ def plotTfs(P, readouts, whatsimulation, cutoffs, fname):
 
 def load_data(path):
     with open(path, 'r') as infile:
-        #lines = infile.readlines()
         expdat = yaml.safe_load(infile)
     return(expdat)
 
@@ -69,8 +68,6 @@ def do_experiment(expargs):
     # Initialize model object
     model = get_simulator(modelpath=modelpath,
                        simulator='py')
-    ## TODO: do I need this flag?
-    ismutant = False
     ## Do mutant simulation
     ## 1. If parameters are defined, set parameters
     ## 2. If initial conditions are specified, set initial conditions
@@ -78,14 +75,13 @@ def do_experiment(expargs):
     if experiment['mutant']['pars'] is not None:
         mutpars = experiment['mutant']['pars']
         for k,v in mutpars.items():
-            # Simple check to implement a "X times" type of specification
+            ## Simple check to implement a "X times" type of specification
+            ## Update mutpars inplace
             if type(v) is str and 'x' in v:
                 mutpars[k] = float(v.replace('x',''))*model.model.pars[k]
         model.set_attr(pars = mutpars)
-        ismutant = True
     if experiment['mutant']['ics'] is not None:
         model.set_attr(ics = experiment['mutant']['ics'])
-        ismutant = True        
     
     prepars = experiment['preshift']
     if prepars is None:
@@ -104,19 +100,25 @@ def do_experiment(expargs):
     P = model.simulate_and_get_points()
     newss = model.get_ss()
     state = tfStates(newss, readouts, cutoffs)
-    uid = str(experiment['id']) + '-' + experiment['strain']        
-    plotTfs(P, readouts, uid)
-    interpret_experiment(uid, state, expargs)    
+    uid = str(experiment['id']) + '-' + experiment['strain']
+    fname = str(uid)
+    for rep in [' ', '\\']:
+        if rep in fname:
+            fname = fname.replace(rep,'')
+    plotTfs(P, readouts, uid, cutoffs, fname)
+    interpret_experiment(uid, state, expargs, fname)    
 
-def interpret_experiment(uid, state, expargs):
+def interpret_experiment(uid, state, expargs, fname):
     """
-    TODO: Fix Dot 6 interpretation
+    Interpret each in silico simulation.
+    Currently records the global predicted cell state,
+    model-experiment match, and predicted viability of the state.
     """
     # TODO: Maybe classes will be more useful here?
     experiment = expargs['experiment']
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']    
-    ###
+
     ## The experiment specification can carry the field
     ## =phenotypeInterpreted= which is how I represent
     ## the strain's phenotype in terms of the model readouts.
@@ -134,6 +136,19 @@ def interpret_experiment(uid, state, expargs):
                 # case of text. Printing below to help debug.
             print(uid + '\t' + k +'\t' + experiment['phenotypeInterpreted'][k]\
                   + '\t' + state[k]['dec'])
+    else:
+        ## Not desirable, but fall back on the full list of readouts.
+        ## This is quite unreliable.
+        for r in readouts:
+            if experiment['expected'][k] == state[k]['dec'].strip():
+                phenotypeMatches.append(True)
+            else:
+                phenotypeMatches.append(False)                
+                # Simple string comparison to decide match.
+                # Takes care of potential white spaces, but not
+                # case of text. Printing below to help debug.
+                print(uid + '\t' + k +'\t' + experiment['phenotypeInterpreted'][k]\
+                      + '\t' + state[k]['dec'])            
             
     ## Next, irrespective of the strain, we can guesstimate the state
     ## the cell _should be in_ in order to grow in a given nutrient
@@ -148,87 +163,58 @@ def interpret_experiment(uid, state, expargs):
                 viability.append(True)
             else:
                 viability.append(False)
-    ###
-    # TODO: The whole cell state doesn't really matter. Consider getting rid of this.    
-    s = '|TF|Expected|Simulation | Boolean|\n'
-    matches = []
+    
+    ## Store the global TF state. Useful for analysis in the future
+    s = '|*TF*|*Interpreted*|*Simulated*|*Simulation*|\n'
+
     for rd in readouts:
         # Format the value of each readout in individual rows
-        s += "|%s|%s|%0.3f|%s|\n" %(rd, experiment['expected'][rd], state[rd]['val'],state[rd]['dec'])
-        if experiment['expected'][rd] == state[rd]['dec']:
-            matches.append(rd)
-    strict = False
-    # The following is a heuristic to infer "growth rate". It is notoriously bad
-    # if state['Dot6']['val'] < cutoffs['Dot6']:
-    #     growthsatisfied = True
-    # elif state['Dot6']['val'] > cutoffs['Dot6'] and state['Dot6']['val'] < 1.3*cutoffs['Dot6']:
-    #     slowgrowth = True
-    # else:
-    #     growthsatisfied = False
-
-    ## The following were based on a heuristic.
-    ## TODO: make decision on removing this
-    # if strict:
-    #     if strictsatisfied:
-    #         statement = 'growth'
-    #     else:
-    #         statement = 'no growth'
-    # else:
-    #     if growthsatisfied:
-    #         statement = 'growth'
-    #     elif slowgrowth:
-    #         statement = 'slow growth'
-    #     else:
-    #         statement = 'no growth'
-    strainIsViable = True
+        emph = '/'
+        expected = '-'
+        simulated = '-'
+        if rd in experiment['phenotypeInterpreted']:
+            emph = '*'
+            expected = experiment['phenotypeInterpreted'][rd]
+            simulated = state[rd]['dec']
+        s += "|%s|%s|%s|%0.3f|\n" %(emph + rd + emph,
+                                    expected,
+                                    simulated,
+                                    state[rd]['val'])
+    strainGrowthStatus = "growth"
     for v in viability:
         if not v:
-            strainIsViable = False
+            strainGrowthStatus = "no growth"
             break
-    simulationIsCorrect = True
+        
+    simulationAgreementStatus = "agrees"
     for p in phenotypeMatches:
         if not p:
-            simulationIsCorrect = False
+            simulationAgreementStatus = "does not agree"
 
-    if strainIsViable:
-        statement = 'growth'
-    else:
-        statement = 'no growth'
-    if simulationIsCorrect:
-        agreement = 'agrees with'
-        shareddict['counter'] += 1        
-    else:
-        agreement = 'does not agree with'        
+    modelMatchesFlag = False
+    if simulationAgreementStatus == "agrees":
+        shareddict['counter'] += 1
+        modelMatchesFlag = True        
     
-    growthdec = 'Strain exhibits {} in this condition'.format(statement)
-    #agreement = 'does not agree'
-    # if strict:
-    #     if strictsatisfied:
-    #         shareddict['counter'] += 1
-    #         agreement = 'agrees with'
-    # elif len(matches) >=5 :
-    #     shareddict['counter'] += 1
-    #     agreement = 'agrees with'        
-    # "{} of 6 tf states are identical.\n\n"\
     template = "* {}\n"\
         "{}\n\n"\
-        "*Experiment*: {} studied a /{}/ strain ({}) grown in {}. {} ({})."\
-        "The strain is {}.\n\n"\
-        "Predicted: {}.\n\nModel {} with experiment.\n\n"\
+        "*Description*: {} studied a /{}/ strain ({}) grown in {}.\n\n"\
+        "*Growth*: In this medium, the strain showed {}. The model predicts that the strain will show {}.\n\n"\
+        "*Model {} with experiment*.\n\n"\
+        "#+ATTR_LATEX: :height 0.25\\textheight\n"\
         "[[./img/{}.png]]\n\n"
+    
     report = template.format(uid,
                              s,
-                             #len(matches),
                              experiment['shortname'],
                              experiment['strain'],
                              experiment['background'],
                              experiment['nutrientCondition'],
+                             #experiment['expReadout'],                             
                              experiment['phenotypeReported'],
-                             experiment['expReadout'],
-                             experiment['growth'],
-                             growthdec,
-                             agreement,
-                             uid.replace(' ',''))
+                             strainGrowthStatus,
+                             simulationAgreementStatus,
+                             fname)
     shareddict[uid] += report
 
 def define_state_space(datapath):
@@ -285,16 +271,25 @@ def compare_model_predictions(debug):
     shareddict['counter'] = 0
     kl = []
     start = 0
-    end = 53
+    end = 49
     print('Starting experiments...')
-    for i, experiment in enumerate(expdat[start:end]):
+
+    
+    for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
         uid = str(experiment['id']) + '-' + experiment['strain']
         shareddict[uid] = ''
         kl.append(uid)
+        
+    # experiment = expdat[-1]        
+    # expargs = {'experiment':experiment,
+    #            'shareddict': shareddict,
+    #            'cutoffs': cutoffs}
+    # do_experiment(expargs)
+        
     print('uid\ttf\texpec\tsimul')        
     with mp.Pool() as pool:
         jobs = []
-        for i, experiment in enumerate(expdat[start:end]):
+        for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
             expargs = {'experiment':experiment,
                        'shareddict': shareddict,
                        'cutoffs': cutoffs}
