@@ -64,36 +64,43 @@ def get_shortname(key,bib):
 def read_experiment(csvpath, bib):
     df = pd.read_csv(csvpath)
     data = []
+    nancheck = lambda C : C if not pd.isna(C) else None
+    nancheckliteral = lambda C : process_literal(C) if not pd.isna(C) else None    
+    
     for i, row in df.iterrows():
         print(row['ID'])
-        preshift = None
-        if not pd.isna(row['pre_pars']):
-            preshift = process_literal(row['pre_pars'])
-        postshift = None
-        if not pd.isna(row['post_pars']):
-            postshift = process_literal(row['post_pars'])
-        postshiftics = None
-        if not pd.isna(row['post_ics']):
-            postshiftics = process_literal(row['post_ics'])            
+        preshift = nancheckliteral(row['pre_pars'])
+        postshift = nancheckliteral(row['post_pars'])
+        postshiftics = nancheckliteral(row['post_ics'])
         mutant = {'pars':None, 'ics':None}
-        if not pd.isna(row['mutant']):
-            print(row['mutant'])
-            mutspec = process_literal(row['mutant'])
-            if 'pars' in mutspec.keys():
-                mutant['pars'] = mutspec['pars']
-            if 'ics' in mutspec.keys():                
-                mutant['ics'] = mutspec['ics']
+        mutspec = nancheckliteral(row['mutant'])
+        if mutspec is not None:
+            mutant = {p:mutspec.get(p, None) for p in ['pars','ics']}
         forGrowth = None
         if not pd.isna(row['For Growth']):
-            tf, st = row['For Growth'].split(':')
-            forGrowth = {tf:st}
-            
-        nancheck = lambda C : C if not pd.isna(C) else None
+            terms = []
+            forGrowth = {}
+            if ',' in row['For Growth']:
+                terms = row['For Growth'].split(',')
+            else:
+                terms = [row['For Growth']]
+            forGrowth = {t.split(':')[0]:t.split(':')[1]\
+                         for t in terms}
+        phenoInter = None
+        if not pd.isna(row['Phenotype Interpreted']):
+            terms = []
+            phenoInter = {}
+            if ',' in row['Phenotype Interpreted']:
+                terms = row['Phenotype Interpreted'].split(',')
+            else:
+                terms = [row['Phenotype Interpreted']]
+            phenoInter = {t.split(':')[0]:t.split(':')[1]\
+                         for t in terms}            
         skeleton = {'id':row['ID'],
                     'strain':row['strain'],
                     'nutrientCondition':row['Nutrient input'],
                     'phenotypeReported':row['Phenotype Reported'],
-                    #'phenotypeInterpreted': nancheck(row['Phenotype Interpreted']),                    
+                    'phenotypeInterpreted': phenoInter,
                     'growth':row['Growth characteristic'],
                     'expReadout':row['Experimental Readout'],
                     'background':row['Background'],
@@ -107,7 +114,6 @@ def read_experiment(csvpath, bib):
                     'postshiftics':postshiftics,
                     'mutant':{'pars':mutant['pars'],
                               'ics':mutant['ics']},
-                    'simReadout':nancheck(row['Simulation Readout']),
         }
         data.append(skeleton)
     return data
