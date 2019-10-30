@@ -1,0 +1,1765 @@
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Rtg13: 'Off'
+  growth: growth
+  id: 1
+  mutant:
+    ics: null
+    pars:
+      Rtg13_T: 0.5
+  nutrientCondition: YP + 5% glucose
+  phenotypeInterpreted:
+    Rtg13: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.5
+  postshiftics: null
+  preshift:
+    ATP: 0.1
+    Carbon: 0.1
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: wt
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Rtg13: 'On'
+  growth: growth
+  id: 2
+  mutant:
+    ics: null
+    pars:
+      Rtg13_T: 0.5
+  nutrientCondition: YP + 2% raffinose
+  phenotypeInterpreted:
+    Rtg13: 'On'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 0.7
+    Carbon: 0.7
+    Glutamine_ext: 0.5
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: wt
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Rtg13: 'On'
+  growth: growth
+  id: 3
+  mutant:
+    ics:
+      Rtg13: 0.0
+    pars:
+      Rtg13_T: 0.25
+  nutrientCondition: YNBD + 0.02% Glutamate
+  phenotypeInterpreted:
+    Rtg13: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.9
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: rtg1
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Rtg13: 'On'
+  growth: growth
+  id: 4
+  mutant:
+    ics:
+      Rtg13: 0.0
+    pars:
+      Rtg13_T: 0.25
+  nutrientCondition: YNBD + 0.02% Glutamate
+  phenotypeInterpreted:
+    Rtg13: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.9
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: rtg2
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Rtg13: 'On'
+  growth: growth
+  id: 5
+  mutant:
+    ics:
+      Rtg13: 0.0
+    pars:
+      Rtg13_T: 0.25
+  nutrientCondition: YNBD + 0.02% Glutamate
+  phenotypeInterpreted:
+    Rtg13: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.9
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: rtg3
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Rtg13: 'On'
+  growth: no growth
+  id: 6
+  mutant:
+    ics:
+      Rtg13: 0.0
+    pars:
+      Rtg13_T: 0.25
+  nutrientCondition: YNBD
+  phenotypeInterpreted:
+    Rtg13: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: rtg1
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Rtg13: 'On'
+  growth: no growth
+  id: 7
+  mutant:
+    ics:
+      Rtg13: 0.0
+    pars:
+      Rtg13_T: 0.25
+  nutrientCondition: YNBD
+  phenotypeInterpreted:
+    Rtg13: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: rtg2
+- background: PSY142 \rho^0
+  comments: null
+  doi: https://doi.org/10.1128/mcb.19.10.6720
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Rtg13: 'On'
+  growth: no growth
+  id: 8
+  mutant:
+    ics:
+      Rtg13: 0.0
+    pars:
+      Rtg13_T: 0.25
+  nutrientCondition: YNBD
+  phenotypeInterpreted:
+    Rtg13: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Liu et al, 1999
+  strain: rtg3
+- background: BY4741
+  comments: also contains his,ura,leu
+  doi: https://doi.org/10.1534/genetics.114.168609
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gis1: 'On'
+    Mig1: 'Off'
+  growth: no growth
+  id: 9
+  mutant:
+    ics:
+      Snf1: 0.0
+    pars:
+      Snf1_T: 0.0
+  nutrientCondition: Minimal + (0.2%casa) + 2% Ethanol
+  phenotypeInterpreted:
+    Gis1: 'Off'
+    Mig1: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 0.1
+    Carbon: 0.1
+    Glutamine_ext: 0.2
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Gasmi et al, 2014
+  strain: snf1
+- background: wt
+  comments: weakly resistant to rap - Gln1, Gap1, Mep2 OFF
+  doi: https://doi.org/10.1038/45287
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'Off'
+  growth: slow growth
+  id: 10
+  mutant:
+    ics:
+      Gln3: 0.0
+    pars:
+      Gln3_T: 0.0
+  nutrientCondition: YPD + rapamycin
+  phenotypeInterpreted:
+    Gln3: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Beck et al, 1999
+  strain: gln3 gat1
+- background: wt
+  comments: weakly resistant to rap - Gln1, Gap1, Mep2 OFF
+  doi: https://doi.org/10.1038/45287
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'Off'
+  growth: slow growth
+  id: 11
+  mutant:
+    ics: null
+    pars:
+      w_gln3: 2x
+  nutrientCondition: YPD + rapamycin
+  phenotypeInterpreted:
+    Gln3: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Beck et al, 1999
+  strain: 2\mu URE2
+- background: wt
+  comments: Gln3 On, stress response (Gln1, Gap1, Mep2 ON)
+  doi: https://doi.org/10.1038/45287
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'Off'
+  growth: no growth
+  id: 12
+  mutant:
+    ics: null
+    pars: null
+  nutrientCondition: YPD + rapamycin
+  phenotypeInterpreted:
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Beck et al, 1999
+  strain: wt
+- background: wt
+  comments: Gat1 Compensates, stress response (Gln1, Gap1, Mep2 ON)
+  doi: https://doi.org/10.1038/45287
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'Off'
+  growth: no growth
+  id: 13
+  mutant:
+    ics:
+      Gln3: 0.0
+    pars:
+      Gln3_T: 0.65
+  nutrientCondition: YPD + rapamycin
+  phenotypeInterpreted:
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Beck et al, 1999
+  strain: gln3
+- background: wt
+  comments: Gln3 Compensates (Gln1, Gap1, Mep2 ON)
+  doi: https://doi.org/10.1038/45287
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gln3: 'Off'
+  growth: no growth
+  id: 14
+  mutant:
+    ics:
+      Gln3: 0.0
+    pars:
+      Gln3_T: 0.65
+  nutrientCondition: YPD + rapamycin
+  phenotypeInterpreted:
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Beck et al, 1999
+  strain: gat1
+- background: TB123
+  comments: Gat1 compensates
+  doi: https://doi.org/10.1073/pnas.102687599
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'On'
+  growth: no growth
+  id: 15
+  mutant:
+    ics:
+      Gln3: 0.0
+      Glutamine: 0.01
+    pars:
+      Gln3_T: 0.65
+  nutrientCondition: SD + 1mM MSX
+  phenotypeInterpreted:
+    Gln3: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    k_acc_glu: 1.0e-05
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Crespo et al, 2002
+  strain: gln3
+- background: TB123
+  comments: No Gln3 product, wt growth
+  doi: https://doi.org/10.1073/pnas.102687599
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'On'
+  growth: no growth
+  id: 16
+  mutant:
+    ics:
+      Gln3: 0.0
+      Glutamine: 0.01
+    pars:
+      Gln3_T: 0.0
+  nutrientCondition: SD + 1mM MSX
+  phenotypeInterpreted:
+    Gln3: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    k_acc_glu: 1.0e-05
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Crespo et al, 2002
+  strain: gln3 gat1
+- background: TB123
+  comments: Slow growth (Fig 2E), high Rtg1/3
+  doi: https://doi.org/10.1073/pnas.102687599
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'On'
+  growth: slow growth
+  id: 17
+  mutant:
+    ics: null
+    pars: null
+  nutrientCondition: SD + 1mM MSX
+  phenotypeInterpreted:
+    Gln3: 'On'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    k_acc_glu: 1.0e-05
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Crespo et al, 2002
+  strain: wt
+- background: S1278b
+  comments: Unclear how PKA interacts with TORC1, weakly resistant to rap
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: growth
+  id: 18
+  mutant:
+    ics: null
+    pars:
+      w_pka_sch9: 0.0
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: bcy1
+- background: S1278b
+  comments: Weakly resistant to rap
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: growth
+  id: 19
+  mutant:
+    ics: null
+    pars:
+      w_ras_pka: 0.5x
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: ira1
+- background: S1278b
+  comments: Weakly resistant to rap
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: growth
+  id: 20
+  mutant:
+    ics: null
+    pars:
+      w_ras_pka: 0.5x
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: ira2
+- background: S1278b
+  comments: Weakly resistant to rap
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: growth
+  id: 21
+  mutant:
+    ics: null
+    pars:
+      w_ras_pka: 0.1x
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: ira1 ira2
+- background: MLY41a
+  comments: Worse than wt, lacks PKA activation
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: no growth
+  id: 22
+  mutant:
+    ics: null
+    pars:
+      Ras_T: 0.0
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'On'
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: ras2
+- background: MLY41a
+  comments: Worse than wt, lacks PKA activation
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: no growth
+  id: 23
+  mutant:
+    ics: null
+    pars:
+      PKA_T: 0.66
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'On'
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: tpk1
+- background: MLY41a
+  comments: Worse than wt, lacks PKA activation
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: no growth
+  id: 24
+  mutant:
+    ics: null
+    pars:
+      PKA_T: 0.66
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'On'
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: tpk2
+- background: MLY41a
+  comments: Worse than wt, lacks PKA activation
+  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: no growth
+  id: 25
+  mutant:
+    ics: null
+    pars:
+      PKA_T: 0.66
+  nutrientCondition: YP Glucose + 50nM rap
+  phenotypeInterpreted:
+    Gcn4: 'On'
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Zurita-Martinez et al, 2005
+  strain: tpk3
+- background: TB50a
+  comments: Worse than wt, lacks PKA activation
+  doi: https://doi.org/10.1128/mcb.24.1.338-351.2004
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: ~TOR1-1
+  id: 26
+  mutant:
+    ics: null
+    pars:
+      Gln3_T: 0.0
+      w_ras_pka: 0.0
+  nutrientCondition: YPD + 200ng/mL rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Schmelzle et al, 2003
+  strain: RAS2v19 gln3 gat1
+- background: TB50a
+  comments: null
+  doi: https://doi.org/10.1128/mcb.24.1.338-351.2004
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: ~TOR1-1
+  id: 27
+  mutant:
+    ics: null
+    pars:
+      Gln3_T: 0.0
+      w_pka_camp: 0.0
+  nutrientCondition: YPD + 200ng/mL rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Schmelzle et al, 2003
+  strain: TPK1 gln3 gat1
+- background: TB50a
+  comments: bcy1  same as Tpk over expression/Different from 18?
+  doi: https://doi.org/10.1128/mcb.24.1.338-351.2004
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: no growth
+  id: 28
+  mutant:
+    ics: null
+    pars:
+      w_pka_camp: 0.0
+  nutrientCondition: YPD + 200ng/mL rap
+  phenotypeInterpreted:
+    Gcn4: 'On'
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Schmelzle et al, 2003
+  strain: bcy1
+- background: TB50alpha
+  comments: Different from 18?
+  doi: https://doi.org/10.1128/mcb.24.1.338-351.2004
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: slow growth
+  id: 29
+  mutant:
+    ics: null
+    pars:
+      Gln3_T: 0.0
+      w_pka_camp: 10x
+  nutrientCondition: YPD + 200ng/mL rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: Resistant to rap
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Schmelzle et al, 2003
+  strain: bcy1 gln3 gat1
+- background: H1642
+  comments: Gcn4 enables AAB, compensates for histidine?
+  doi: https://doi.org/10.1128/mcb.00183-10
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'On'
+  growth: growth
+  id: 30
+  mutant:
+    ics: null
+    pars: null
+  nutrientCondition: SC + 10mM 3AT
+  phenotypeInterpreted:
+    Gcn4: 'On'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+    k_acc_nh4: 0.0001
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+  shortname: Cherkasova et al, 2010
+  strain: wt
+- background: H1895
+  comments: No Gcn4 expression
+  doi: https://doi.org/10.1128/mcb.00183-10
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'On'
+  growth: no growth
+  id: 31
+  mutant:
+    ics: null
+    pars:
+      Gcn2_T: 0.0
+  nutrientCondition: SC + 10mM 3AT
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+    k_acc_nh4: 0.0001
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+  shortname: Cherkasova et al, 2010
+  strain: gcn2
+- background: HQY343
+  comments: No Gcn4 expression
+  doi: https://doi.org/10.1128/mcb.00183-10
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'On'
+  growth: no growth
+  id: 32
+  mutant:
+    ics: null
+    pars:
+      Snf1_T: 0.0
+  nutrientCondition: SC + 10mM 3AT
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+    k_acc_nh4: 0.0001
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+  shortname: Cherkasova et al, 2010
+  strain: snf1
+- background: HQY344
+  comments: No Gcn4 expression
+  doi: https://doi.org/10.1128/mcb.00183-10
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'On'
+  growth: no growth
+  id: 33
+  mutant:
+    ics: null
+    pars:
+      Gcn2_T: 0.0
+      Snf1_T: 0.0
+  nutrientCondition: SC + 10mM 3AT
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+    k_acc_nh4: 0.0001
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+    NH4: 2.0
+  shortname: Cherkasova et al, 2010
+  strain: gcn2 snf1
+- background: CLA-305
+  comments: resistant to rap, same as untreated levels
+  doi: http://dx.doi.org/10.1128/jb.183.7.2331-2334.2001
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: growth
+  id: 34
+  mutant:
+    ics: null
+    pars: null
+  nutrientCondition: YPD 200ng/mL rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.8
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Valenzuela et al, 2001
+  strain: TOR1-4
+- background: CLA-303
+  comments: resistant to rap, same as untreated levels
+  doi: http://dx.doi.org/10.1128/jb.183.7.2331-2334.2001
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: growth
+  id: 35
+  mutant:
+    ics: null
+    pars:
+      Gcn4_T: 0.0
+      Gln3_T: 0.0
+  nutrientCondition: YPD 200ng/mL rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Valenzuela et al, 2001
+  strain: gln3 gcn4
+- background: CLA-300
+  comments: null
+  doi: http://dx.doi.org/10.1128/jb.183.7.2331-2334.2001
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: no growth
+  id: 36
+  mutant:
+    ics: null
+    pars:
+      Gcn4_T: 0.0
+  nutrientCondition: YPD 200ng/mL rap
+  phenotypeInterpreted:
+    Gln3: 'On'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 0.0
+  shortname: Valenzuela et al, 2001
+  strain: gcn4
+- background: H874
+  comments: null
+  doi: https://doi.org/10.1007/s004380051121
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gis1: 'Off'
+    Mig1: 'On'
+  growth: viable
+  id: 37
+  mutant:
+    ics: null
+    pars:
+      Gis1_T: 0.0
+  nutrientCondition: SD glucose -ura
+  phenotypeInterpreted:
+    Gis1: 'Off'
+    Mig1: 'On'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: H. Ronne et al, 1999
+  strain: rph1 gis1
+- background: H874
+  comments: null
+  doi: https://doi.org/10.1007/s004380051121
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gis1: 'On'
+    Mig1: 'Off'
+  growth: very little growth
+  id: 38
+  mutant:
+    ics: null
+    pars:
+      Gis1_T: 0.0
+  nutrientCondition: YP ethanol
+  phenotypeInterpreted:
+    Gis1: 'Off'
+    Mig1: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 0.1
+    Carbon: 0.1
+    Glutamine_ext: 1.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: H. Ronne et al, 1999
+  strain: rph1 gis1
+- background: H808
+  comments: null
+  doi: https://doi.org/10.1007/s004380051121
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gis1: 'Off'
+  growth: viable
+  id: 39
+  mutant:
+    ics: null
+    pars:
+      Mig1_T: 0.0
+      PDE_T: 0.2
+      Snf1_T: 0.0
+  nutrientCondition: SD glucose
+  phenotypeInterpreted:
+    Gis1: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: H. Ronne et al, 1999
+  strain: mig1 snf1 pde2
+- background: H808
+  comments: null
+  doi: https://doi.org/10.1007/s004380051121
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gis1: 'On'
+  growth: no growth
+  id: 40
+  mutant:
+    ics: null
+    pars:
+      Mig1_T: 0.0
+      PDE_T: 0.2
+      Snf1_T: 0.0
+  nutrientCondition: SD raffinose
+  phenotypeInterpreted:
+    Gis1: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 0.7
+    Carbon: 0.7
+    Glutamine_ext: 1.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: H. Ronne et al, 1999
+  strain: mig1 snf1 pde2
+- background: H808
+  comments: null
+  doi: https://doi.org/10.1007/s004380051121
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gis1: 'Off'
+  growth: raffinose < < glucose
+  id: 41
+  mutant:
+    ics: null
+    pars:
+      Mig1_T: 0.0
+      PDE_T: 0.2
+      Snf1_T: 0.0
+  nutrientCondition: SD galactose
+  phenotypeInterpreted:
+    Gis1: 'Off'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 0.8
+    Carbon: 0.8
+    Glutamine_ext: 1.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: H. Ronne et al, 1999
+  strain: mig1 snf1 pde2
+- background: SZy686
+  comments: null
+  doi: http://dx.doi.org/10.1128/mcb.22.4.1246-1252.2002
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gln3: 'Off'
+  growth: growth
+  id: 42
+  mutant:
+    ics: null
+    pars:
+      Snf1_T: 0.0
+  nutrientCondition: YPD + rap
+  phenotypeInterpreted:
+    Gln3: 'Off'
+  phenotypeReported: rapamycin resistance
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Bertram et al, 2002
+  strain: snf1
+- background: JC426
+  comments: null
+  doi: http://dx.doi.org/10.1128/mcb.22.4.1246-1252.2002
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    Rtg13: 'On'
+  forGrowth:
+    Gln3: 'On'
+  growth: no growth
+  id: 43
+  mutant:
+    ics: null
+    pars:
+      w_snf_glc: 0.0
+  nutrientCondition: YPD + rap
+  phenotypeInterpreted:
+    Gln3: 'Off'
+  phenotypeReported: rapamycin hypersensitive
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Bertram et al, 2002
+  strain: reg1
+- background: SZy145
+  comments: null
+  doi: http://dx.doi.org/10.1128/mcb.22.4.1246-1252.2002
+  expReadout: colony growth
+  expected:
+    Dot6: 'On'
+    Gcn4: 'On'
+    Gis1: 'Off'
+    Gln3: 'On'
+    Mig1: 'On'
+    'On': 'On'
+  forGrowth:
+    Gln3: 'On'
+  growth: no growth
+  id: 44
+  mutant:
+    ics: null
+    pars:
+      w_gln3: 0.0
+  nutrientCondition: YPD + rap
+  phenotypeInterpreted:
+    Gln3: 'Off'
+  phenotypeReported: rapamycin sensitivity
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Bertram et al, 2002
+  strain: ure2
+- background: TB50
+  comments: null
+  doi: https://doi.org/10.1101/gad.532109
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: slow growth
+  id: 45
+  mutant:
+    ics:
+      Sch9: 1.0
+    pars:
+      Sch9_T: 1.0
+  nutrientCondition: YPD + rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: slow growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Huber et al, 2009
+  strain: SCH9^{DE}
+- background: TB50
+  comments: null
+  doi: https://doi.org/10.1101/gad.532109
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  growth: growth
+  id: 46
+  mutant:
+    ics:
+      Sch9: 1.0
+    pars:
+      Sch9_T: 1.0
+      w_gcn_torc: 0.0
+  nutrientCondition: YPD + rap
+  phenotypeInterpreted:
+    Gcn4: 'Off'
+    Gln3: 'Off'
+  phenotypeReported: growth
+  postshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+    TORC1_T: 0.0
+  postshiftics:
+    TORC1: 0
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Huber et al, 2009
+  strain: SCH9^{DE} tap42
+- background: W303-1
+  comments: PKA function intact. Alternative parameterization succeeds in capturing
+    this behavior
+  doi: 2005_MolMicroBio_Roosen_PKA_Sch9_Targets
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gis1: 'On'
+  growth: growth
+  id: 47
+  mutant:
+    ics:
+      Sch9: 0.0
+    pars:
+      Sch9_T: 0.0
+  nutrientCondition: YP + glycerol
+  phenotypeInterpreted:
+    Gis1: 'On'
+  phenotypeReported: growth
+  postshift:
+    ATP: 0.01
+    Carbon: 0.01
+    Glutamine_ext: 1.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Johnny et al, 2005
+  strain: sch9
+- background: W303-1
+  comments: PKA function intact
+  doi: 2005_MolMicroBio_Roosen_PKA_Sch9_Targets
+  expReadout: colony growth
+  expected:
+    Dot6: 'Off'
+    Gcn4: 'Off'
+    Gis1: 'Off'
+    Gln3: 'Off'
+    Mig1: 'On'
+    Rtg13: 'Off'
+  forGrowth:
+    Gis1: 'On'
+  growth: no growth
+  id: 48
+  mutant:
+    ics:
+      Gis1: 0.0
+      Sch9: 0.0
+    pars:
+      Gis1_T: 0.0
+      Sch9_T: 0.0
+  nutrientCondition: YP + glycerol
+  phenotypeInterpreted:
+    Gis1: 'Off'
+  phenotypeReported: no growth
+  postshift:
+    ATP: 0.01
+    Carbon: 0.01
+    Glutamine_ext: 1.0
+  postshiftics: null
+  preshift:
+    ATP: 1.0
+    Carbon: 1.0
+    Glutamine_ext: 1.0
+  shortname: Johnny et al, 2005
+  strain: sch9 gis1
