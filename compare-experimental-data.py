@@ -29,25 +29,26 @@ def tfStates(ss,readouts,cutoffs):
         state[rd] = {'val':val, 'dec':dec}
     return(state)
 
-def plotTfs(P, readouts, whatsimulation):
+def plotTfs(P, readouts, whatsimulation, cutoffs, fname):
     plt.close()
-    f,ax = plt.subplots(1,3,figsize=(6,2))
-    for rd in readouts:
-        if rd == 'Mig1':
-            ax[1].plot(P['t'], [np.log10((p)/(1-p)) for p in P[rd]], label=rd)
-        elif rd == 'Dot6':
-            ax[2].plot(P['t'], [np.log10((p)/(1-p)) for p in P[rd]], label=rd)
+    f = plt.figure(figsize=(6,4))
+    axmap = {'Gln3':0,'Rtg13':1,'Mig1':2,'Gcn4':3,'Gis1':4,'Dot6':5}
+    for i, rd in enumerate(readouts):
+        ax = f.add_subplot(2,3,axmap[rd] + 1)
+        if rd == 'Mig1' or rd == 'Dot6':
+            ax.plot(P['t'], [np.log10((p)/(1-p)) for p in P[rd]], label=rd)
+            if rd == 'Mig1':
+                ax.set_ylim([0.5,1.6])
+            elif rd == 'Dot6':
+                ax.set_ylim([0, 2.8])
         else:
-            ax[0].plot(P['t'], P[rd], label=rd)
-    ax[1].set_ylim([1.1,1.6])
-    ax[2].set_ylim([1.2,2.8])
-    ax[0].set_ylim([0.0,1.0])
-    ax[0].legend(fancybox=False, framealpha=0.0)
-    ax[1].legend(fancybox=False, framealpha=0.0)
-    ax[2].legend(fancybox=False, framealpha=0.0)
-    plt.tight_layout()
+            ax.plot(P['t'], P[rd], label=rd)
+            ax.set_ylim([0.0,1.0])
+        ax.legend(fancybox=False, framealpha=0.0)
+        ax.axhline(cutoffs[rd],c='k',ls='--',lw=1.0)
     plt.suptitle(whatsimulation)
-    plt.savefig('img/' + whatsimulation.replace(' ','') + '.png')
+    plt.tight_layout()    
+    plt.savefig('img/' + fname + '.png', dpi=200)
 
 def load_data(path):
     with open(path, 'r') as infile:
