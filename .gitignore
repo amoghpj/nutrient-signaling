@@ -1,7 +1,9 @@
 __pycache__/*
+nutrient_signaling/cpputils/*
 *.o
 *.pyc
 *.dat
 *.h
 report.*
 test/*
+nsig/*
