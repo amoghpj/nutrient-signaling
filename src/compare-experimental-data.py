@@ -47,7 +47,7 @@ def plotTfs(P, readouts, whatsimulation, cutoffs, fname):
         ax.legend(fancybox=False, framealpha=0.0)
         ax.axhline(cutoffs[rd],c='k',ls='--',lw=1.0)
     plt.suptitle(whatsimulation)
-    plt.tight_layout()    
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])    
     plt.savefig('img/' + fname + '.png', dpi=200)
 
 def load_data(path):
@@ -195,28 +195,42 @@ def interpret_experiment(uid, state, expargs, fname):
     if simulationAgreementStatus == "agrees":
         shareddict['counter'] += 1
         modelMatchesFlag = True        
-    
+    print(uid)    
     template = "* {}\n"\
+        ":PROPERTIES:\n:CUSTOM_ID: sec:{}\n:END:\n"\
         "{}\n\n"\
         "*Description*: {} studied a /{}/ strain ({}) grown in {}.\n\n"\
+        "*Representation*:\n\n/Preshift Parameters/\n{}\n\n/Postshift Parameters/\n{}\n\n/Postshift Initial Conditions/\n{}\n\n"\
+        "/Mutant/\n\nParameters:\n{}\n\nInitial Conditions:\n{}\n\n"\
         "*Growth*: In this medium, the strain showed {}. The model predicts that the strain will show {}.\n\n"\
         "*Model {} with experiment*.\n\n"\
         "#+ATTR_LATEX: :height 0.25\\textheight\n"\
         "[[./img/{}.png]]\n\n"
-    
+
     report = template.format(uid,
+                             fname,                             
                              s,
                              experiment['shortname'],
                              experiment['strain'],
                              experiment['background'],
                              experiment['nutrientCondition'],
-                             #experiment['expReadout'],                             
+                             stringify(experiment['preshift']),
+                             stringify(experiment['postshift']),
+                             stringify(experiment['postshiftics']),                             
+                             stringify(experiment['mutant']['pars']),
+                             stringify(experiment['mutant']['ics']),                             
                              experiment['phenotypeReported'],
                              strainGrowthStatus,
                              simulationAgreementStatus,
                              fname)
     shareddict[uid] += report
 
+def stringify(datadict):
+    if datadict is None:
+        return('')
+    else:
+        return('\n'.join(['|' + str(k) + '|' + str(v)+'|' for k,v in datadict.items()]))
+    
 def define_state_space(datapath):
     statedict = {r:[] for r in readouts}
     
@@ -250,8 +264,8 @@ def define_state_space(datapath):
         cutoffs[k] = mean
     return statedict, cutoffs
     
-def compare_model_predictions(debug):
-    datapath = 'data/experimental-data-full.yaml'
+def compare_model_predictions(experimentpath, debug):
+    datapath = experimentpath
     print('Initializing...')
     if not debug:
         sd, cutoffs = define_state_space(datapath)
@@ -271,7 +285,7 @@ def compare_model_predictions(debug):
     shareddict['counter'] = 0
     kl = []
     start = 0
-    end = 49
+    end = len(expdat)
     print('Starting experiments...')
 
     
@@ -280,23 +294,25 @@ def compare_model_predictions(debug):
         shareddict[uid] = ''
         kl.append(uid)
         
-    # experiment = expdat[-1]        
-    # expargs = {'experiment':experiment,
-    #            'shareddict': shareddict,
-    #            'cutoffs': cutoffs}
-    # do_experiment(expargs)
-        
     print('uid\ttf\texpec\tsimul')        
-    with mp.Pool() as pool:
-        jobs = []
-        for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
-            expargs = {'experiment':experiment,
-                       'shareddict': shareddict,
-                       'cutoffs': cutoffs}
-            job = pool.apply_async(do_experiment, args=(expargs, ))
-            jobs.append(job)
-        for job in jobs:
-            job.wait()
+    if debug:
+        experiment = expdat[-1]        
+        expargs = {'experiment':experiment,
+                   'shareddict': shareddict,
+                   'cutoffs': cutoffs}
+        do_experiment(expargs)
+    
+    else:
+        with mp.Pool() as pool:
+            jobs = []
+            for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
+                expargs = {'experiment':experiment,
+                           'shareddict': shareddict,
+                           'cutoffs': cutoffs}
+                job = pool.apply_async(do_experiment, args=(expargs, ))
+                jobs.append(job)
+            for job in jobs:
+                job.wait()
             
     print('Done!')
     print('This took ' + str(time.time() - clock) + 's')
@@ -310,8 +326,9 @@ def compare_model_predictions(debug):
 def main():
     parser = OptionParser()
     parser.add_option('-d','--debug',action='store_true',default=False,help='will not calculate thresholds')
+    parser.add_option('-e','--experiments',default='',type='str',help='Path to yaml file containing experimental results')    
     opt,args = parser.parse_args()
-    compare_model_predictions(opt.debug)
+    compare_model_predictions(opt.experiments, opt.debug)
     
 if __name__ == '__main__':
     main()
