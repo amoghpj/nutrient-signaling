@@ -183,7 +183,7 @@ def get_simulator(modelpath='./', simulator='py',**kwargs):
     elif simulator == 'cpp':
         validpath = False
         execpath = kwargs.get('execpath','./src/')
-        executable = kwargs.get('execpath','main.o')
+        executable = kwargs.get('executable','main.o')
         simfilename = kwargs.get('simfilename','values.dat')
         
         if not os.path.isdir(execpath):
@@ -206,9 +206,10 @@ def get_simulator(modelpath='./', simulator='py',**kwargs):
                 print(p2c.getwritepath())
                 p2c.writecpp()
                 headerpath = cwd + '/cpputils/'
-                cmd = "g++ -std=c++11 {}main.cpp {}model.cpp -o {}".format(headerpath,
-                                                                           headerpath,
-                                                                           executable)
+                cmd = "g++ -std=c++11 {}main.cpp {}model.cpp -o {}/{}".format(headerpath,
+                                                                              headerpath,
+                                                                              execpath,
+                                                                              executable)
                 print(cmd)
                 so = os.popen(cmd).read()
                 so = os.popen('cp ' + headerpath + executable+ ' ' + outpath)
