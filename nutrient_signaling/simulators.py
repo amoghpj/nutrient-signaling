@@ -212,7 +212,7 @@ def get_simulator(modelpath='./', simulator='py',**kwargs):
                                                                               executable)
                 print(cmd)
                 so = os.popen(cmd).read()
-                so = os.popen('cp ' + headerpath + executable+ ' ' + outpath)
+                #so = os.popen('cp ' + headerpath + executable+ ' ' + outpath)
         simobj = SimulatorCPP(model,
                               execpath=execpath,
                               executable=executable,
