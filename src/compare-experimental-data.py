@@ -1,24 +1,34 @@
 import os
+import sys
 import yaml
 import time
-import numpy as np
-import multiprocessing as mp
 import matplotlib
-import sys
+import numpy as np
+import pandas as pd
+from pathlib import Path
+import multiprocessing as mp
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from optparse import OptionParser
+# Local Imports
 from nutrient_signaling.simulators import get_simulator
 
 home = os.path.expanduser('~')
-modelpath = home + '/jalihal_projects/Research/nutrient-signaling/data/2019-06-21'
-readouts = ['Gis1','Mig1','Dot6','Gcn4','Rtg13','Gln3']
+READOUTS = ['Gis1','Mig1','Dot6','Gcn4','Rtg13','Gln3']
+SIMULATOR = 'cpp'
+SIMARGS = {'executable':'robust.o'}
 
-def tfStates(ss,readouts,cutoffs):
+def cleanfname(fname):
+    specialchars = ['\\', '{', '}', ' ']
+    for sc in specialchars:
+        fname = fname.replace(sc,'')
+    return(fname)
+
+def tfStates(ss,READOUTS,cutoffs):
     state = {}
-    for rd in readouts:
+    for rd in READOUTS:
         if rd in ['Mig1','Dot6']:
-            val = np.log10((ss[rd])/(1-ss[rd]))
+            val = np.log10((ss[rd])/(1.001-ss[rd]))
         else:
             val =  ss[rd]
 
@@ -29,11 +39,11 @@ def tfStates(ss,readouts,cutoffs):
         state[rd] = {'val':val, 'dec':dec}
     return(state)
 
-def plotTfs(P, readouts, whatsimulation, cutoffs, fname):
+def plotTfs(P, READOUTS, whatsimulation, cutoffs, fname):
     plt.close()
     f = plt.figure(figsize=(6,4))
     axmap = {'Gln3':0,'Rtg13':1,'Mig1':2,'Gcn4':3,'Gis1':4,'Dot6':5}
-    for i, rd in enumerate(readouts):
+    for i, rd in enumerate(READOUTS):
         ax = f.add_subplot(2,3,axmap[rd] + 1)
         if rd == 'Mig1' or rd == 'Dot6':
             ax.plot(P['t'], [np.log10((p)/(1-p)) for p in P[rd]], label=rd)
@@ -64,10 +74,21 @@ def do_experiment(expargs):
     experiment = expargs['experiment']
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']
-    
+    paramdict = expargs['paramdict']
+    if paramdict is None:
+        paramdict = {}
+        
+    modelpath = expargs['modelpath']    
+    uid = str(experiment['id']) + '-' + experiment['strain']
+    fname = str(uid)
+    if SIMULATOR == 'cpp':
+        SIMARGS['simfilename'] = cleanfname(uid) + '.dat'
     # Initialize model object
     model = get_simulator(modelpath=modelpath,
-                       simulator='py')
+                          simulator=SIMULATOR,
+                          **SIMARGS)
+    model.set_attr(pars=paramdict)
+    
     ## Do mutant simulation
     ## 1. If parameters are defined, set parameters
     ## 2. If initial conditions are specified, set initial conditions
@@ -78,7 +99,7 @@ def do_experiment(expargs):
             ## Simple check to implement a "X times" type of specification
             ## Update mutpars inplace
             if type(v) is str and 'x' in v:
-                mutpars[k] = float(v.replace('x',''))*model.model.pars[k]
+                mutpars[k] = float(v.replace('x',''))*model.pars[k]
         model.set_attr(pars = mutpars)
     if experiment['mutant']['ics'] is not None:
         model.set_attr(ics = experiment['mutant']['ics'])
@@ -99,13 +120,12 @@ def do_experiment(expargs):
     
     P = model.simulate_and_get_points()
     newss = model.get_ss()
-    state = tfStates(newss, readouts, cutoffs)
-    uid = str(experiment['id']) + '-' + experiment['strain']
-    fname = str(uid)
+    state = tfStates(newss, READOUTS, cutoffs)
+
     for rep in [' ', '\\']:
         if rep in fname:
             fname = fname.replace(rep,'')
-    plotTfs(P, readouts, uid, cutoffs, fname)
+    #plotTfs(P, READOUTS, uid, cutoffs, fname)
     interpret_experiment(uid, state, expargs, fname)    
 
 def interpret_experiment(uid, state, expargs, fname):
@@ -121,7 +141,7 @@ def interpret_experiment(uid, state, expargs, fname):
 
     ## The experiment specification can carry the field
     ## =phenotypeInterpreted= which is how I represent
-    ## the strain's phenotype in terms of the model readouts.
+    ## the strain's phenotype in terms of the model READOUTS.
     ## If this field is present, use this to interpret the
     ## simulation results
     phenotypeMatches = []
@@ -134,12 +154,12 @@ def interpret_experiment(uid, state, expargs, fname):
                 # Simple string comparison to decide match.
                 # Takes care of potential white spaces, but not
                 # case of text. Printing below to help debug.
-            print(uid + '\t' + k +'\t' + experiment['phenotypeInterpreted'][k]\
-                  + '\t' + state[k]['dec'])
+            # print(uid + '\t' + k +'\t' + experiment['phenotypeInterpreted'][k]\
+            #       + '\t' + state[k]['dec'])
     else:
-        ## Not desirable, but fall back on the full list of readouts.
+        ## Not desirable, but fall back on the full list of READOUTS.
         ## This is quite unreliable.
-        for r in readouts:
+        for r in READOUTS:
             if experiment['expected'][k] == state[k]['dec'].strip():
                 phenotypeMatches.append(True)
             else:
@@ -167,7 +187,7 @@ def interpret_experiment(uid, state, expargs, fname):
     ## Store the global TF state. Useful for analysis in the future
     s = '|*TF*|*Interpreted*|*Simulated*|*Simulation*|\n'
 
-    for rd in readouts:
+    for rd in READOUTS:
         # Format the value of each readout in individual rows
         emph = '/'
         expected = '-'
@@ -194,8 +214,10 @@ def interpret_experiment(uid, state, expargs, fname):
     modelMatchesFlag = False
     if simulationAgreementStatus == "agrees":
         shareddict['counter'] += 1
-        modelMatchesFlag = True        
-    print(uid)    
+        #shareddict[uid]['counter'] +=1
+        shareddict[uid] += 1        
+        modelMatchesFlag = True
+        
     template = "* {}\n"\
         ":PROPERTIES:\n:CUSTOM_ID: sec:{}\n:END:\n"\
         "{}\n\n"\
@@ -223,7 +245,9 @@ def interpret_experiment(uid, state, expargs, fname):
                              strainGrowthStatus,
                              simulationAgreementStatus,
                              fname)
-    shareddict[uid] += report
+
+    #shareddict[uid]['report'] += report
+    #print(shareddict)    
 
 def stringify(datadict):
     if datadict is None:
@@ -231,8 +255,8 @@ def stringify(datadict):
     else:
         return('\n'.join(['|' + str(k) + '|' + str(v)+'|' for k,v in datadict.items()]))
     
-def define_state_space(datapath):
-    statedict = {r:[] for r in readouts}
+def define_state_space(datapath, modelpath):
+    statedict = {r:[] for r in READOUTS}
     
     nut = [{'Carbon':0.0,'ATP':0.0,'Glutamine_ext':0.0},
            {'Carbon':0.0,'ATP':0.0,'Glutamine_ext':1.0},
@@ -244,7 +268,7 @@ def define_state_space(datapath):
            {'Carbon':1.0,'ATP':1.0,'Glutamine_ext':0.0, 'Proline':1.0,'NH4':0.0}
     ]
     model = get_simulator(modelpath=modelpath,
-                       simulator='py')
+                          simulator=SIMULATOR,args=SIMARGS)
     for n in nut:
         model.set_attr(pars=n, tdata=[0,200])
         P = model.get_ss()
@@ -263,12 +287,26 @@ def define_state_space(datapath):
         print(k, round(lo,3), round(hi,3), round(mean,3))
         cutoffs[k] = mean
     return statedict, cutoffs
-    
-def compare_model_predictions(experimentpath, debug):
-    datapath = experimentpath
+
+
+def compare_model_predictions(experimentpath,
+                              modelpath,
+                              debug=False,
+                              parameterSetPath=None):
     print('Initializing...')
+    if parameterSetPath is not None:
+        if Path(parameterSetPath).exists():
+            psetdf = pd.read_csv(parameterSetPath)
+        else:
+            print('Invalid path')
+            sys.exit()
+        psets = psetdf.T.to_dict()
+        psetlength = len(psets)
+    else:
+        psets = [None]
+        psetlength = 1
     if not debug:
-        sd, cutoffs = define_state_space(datapath)
+        sd, cutoffs = define_state_space(experimentpath, modelpath)
     else:
         cutoffs = {'Gis1':0.498,
                    'Mig1':1.344,
@@ -277,58 +315,98 @@ def compare_model_predictions(experimentpath, debug):
                    'Rtg13':0.46,
                    'Gln3':0.564}    
     print('Loading data...')
-    expdat = load_data(datapath)
+    expdat = load_data(experimentpath)
     report = ''
     clock = time.time()
-    manager = mp.Manager()
-    shareddict = manager.dict()
-    shareddict['counter'] = 0
     kl = []
     start = 0
     end = len(expdat)
     print('Starting experiments...')
-
-    
+    aggregator = {'cost':[]}
+    uidlist = []
     for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
         uid = str(experiment['id']) + '-' + experiment['strain']
-        shareddict[uid] = ''
-        kl.append(uid)
-        
-    print('uid\ttf\texpec\tsimul')        
-    if debug:
-        experiment = expdat[-1]        
-        expargs = {'experiment':experiment,
-                   'shareddict': shareddict,
-                   'cutoffs': cutoffs}
-        do_experiment(expargs)
+        uidlist.append(uid)
+        aggregator[uid] = []
+
+    metacounter = {'counter':[], 'cost':[]}
+    #print('uid\ttf\texpec\tsimul')
+    parind = 0
     
-    else:
-        with mp.Pool() as pool:
-            jobs = []
+    while parind < psetlength:
+        manager = mp.Manager()
+        shareddict = manager.dict()
+        #shareddict.update({uid:{'report':'','counter':0} for uid in uidlist})
+        for uid in uidlist:
+            shareddict[uid] = 0
+        shareddict['counter'] = 0
+
+        if debug:
             for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
                 expargs = {'experiment':experiment,
                            'shareddict': shareddict,
-                           'cutoffs': cutoffs}
-                job = pool.apply_async(do_experiment, args=(expargs, ))
-                jobs.append(job)
-            for job in jobs:
-                job.wait()
+                           'cutoffs': cutoffs,
+                           'paramdict':psets[parind],
+                           'modelpath':modelpath}
+                do_experiment(expargs)
+        
+        else:
+            with mp.Pool() as pool:
+                jobs = []
+                for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
+                    expargs = {'experiment':experiment,
+                               'shareddict': shareddict,
+                               'cutoffs': cutoffs,
+                               'paramdict':psets[parind],
+                               'modelpath':modelpath}
+                    job = pool.apply_async(do_experiment, args=(expargs, ))
+                    jobs.append(job)
+                for job in jobs:
+                    job.wait()
+
+        aggregator['cost'].append(psets[parind].get('cost',0))
+        for uid in uidlist:
+            if shareddict[uid] == 1:
+                aggregator[uid].append(1)
+            else:
+                aggregator[uid].append(0)                
+        #metacounter['counter'].append(shareddict['counter'])
+        print(parind,'\t', shareddict['counter'], aggregator['cost'][-1])
+        del manager
+        del shareddict
+        parind += 1        
             
     print('Done!')
     print('This took ' + str(time.time() - clock) + 's')
-    preamble = '#+OPTIONS: toc:nil\n\n#+LATEX_HEADER: \\usepackage[margin=0.5in]{geometry}\n\n'
-    summary  = '{} out of {} experiments were correctly predicted\n\n'.format(shareddict['counter'],min(end, len(expdat))-start)
-    with open('report.org','w') as outfile:
-        report = preamble + summary + ''.join([shareddict[k] for k in kl])
-        outfile.write(report)
+    
+    # Write report to file
+    if psetlength == 1 and psets[0] is None:
+        preamble = '#+OPTIONS: toc:nil\n\n#+LATEX_HEADER: \\usepackage[margin=0.5in]{geometry}\n\n'
+        # summary  = '{} out of {} experiments were correctly predicted\n\n'.format(shareddict['counter'],min(end, len(expdat))-start)
+        # with open('report.org','w') as outfile:
+        #     report = preamble + summary + ''.join([shareddict[k] for k in kl])
+        #     outfile.write(report)
+    else:
+        agdf = pd.DataFrame(aggregator)
+        agdf.to_csv('summary_' + str(len(psets.keys())) + '.csv')
 
 
 def main():
     parser = OptionParser()
-    parser.add_option('-d','--debug',action='store_true',default=False,help='will not calculate thresholds')
-    parser.add_option('-e','--experiments',default='',type='str',help='Path to yaml file containing experimental results')    
+    parser.add_option('-d','--debug',action='store_true',default=False,
+                      help='will not calculate thresholds')
+    parser.add_option('-m','--model-path',type='str',default='',dest='modelpath',
+                      help='Path to model file')    
+    parser.add_option('-p','--parameter-sets',type='str', default='',
+                      help='Path to parameter set file.')
+    parser.add_option('-e','--experiments',default='',type='str',
+                      help='Path to yaml file containing experimental results')
     opt,args = parser.parse_args()
-    compare_model_predictions(opt.experiments, opt.debug)
+    
+    compare_model_predictions(opt.experiments,
+                              opt.modelpath,
+                              debug=opt.debug,
+                              parameterSetPath=opt.parameter_sets)
     
 if __name__ == '__main__':
     main()

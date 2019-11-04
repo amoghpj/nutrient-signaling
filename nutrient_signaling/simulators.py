@@ -1,12 +1,16 @@
 import os
+import sys
 import pandas as pd
 import PyDSTool as dst
 import nutrient_signaling.modelreader as md
-import sys
+from nutrient_signaling.cpputils.pydstool2cpp import PyDSTool2CPP
+
 class SimulatorPython:
     def __init__(self, modeldict):
+        self.pars = {}
+        self.ics = {}
         self.createModelObject(modeldict)
-    
+        
     def simulateModel(self):
         """
         Takes as input PyDSTool Model object
@@ -36,7 +40,15 @@ class SimulatorPython:
         return(SSPoints)
 
     def set_attr(self, pars={}, ics={}, tdata=[0, 90]):
-        self.model.set(pars=pars, ics=ics, tdata=tdata)
+        self.pars.update(pars)
+        self.ics.update(ics)
+        self.model.set(pars=self.pars, ics=ics, tdata=tdata)
+
+    def get_attr(self):
+        print("pars ", self.pars )
+        print("ics ", self.ics)
+        print("tend ", self.tend )
+        
         
     def createModelObject(self, modeldict):
         """
@@ -48,11 +60,14 @@ class SimulatorPython:
         :return ModelDS: a PyDSTool object that can be simulated to obtain the simulated trajectory
         :type ModelDS: PyDSTool Object
         """
+        self.pars = modeldict['parameters']
+
+        self.ics = modeldict['initialconditions']                
         ModelArgs = dst.args(
             name='test',
             varspecs=modeldict['variables'],
-            pars=modeldict['parameters'],
-            ics=modeldict['initialconditions'],
+            pars=self.pars,
+            ics=self.ics,
             tdata=[0, 60],
             ## Define inline functions that are specific to the NutSig modelx
             ## tRNA() computes min(tRNA_total, Amino acid)
@@ -71,15 +86,18 @@ class SimulatorPython:
 
 
 class SimulatorCPP:
-    def __init__(self, execpath='./src/',executable='main.o'):
+    def __init__(self, modeldict,
+                 execpath='./src/',
+                 executable='main.o',
+                 simfilename='values.dat'):
         self.execpath = execpath
-        self.pars = {}
-        self.ics = {}
+        self.pars = modeldict['parameters']
+        self.ics = modeldict['initialconditions']
         self.tdata = [0, 90]
         self.tend = self.tdata[1]
         self.step = 0.001
         self.plot = False
-        self.simfilename = 'values.dat'
+        self.simfilename = simfilename
         self.executable = executable
         
     def set_attr(self, pars={}, ics={},tdata=[0,90]):
@@ -156,42 +174,48 @@ class SimulatorCPP:
 
 
 def get_simulator(modelpath='./', simulator='py',**kwargs):
+    model = md.readinput(modelpath) ## change
+    
     if simulator == 'py':
-        model = md.readinput(modelpath) ## change
         simobj = SimulatorPython(model)
         return(simobj)
+    
     elif simulator == 'cpp':
         validpath = False
-        execpath = './src/'
-        executable = 'main.o'
-        if 'execpath' in kwargs.keys():
-            execpath = kwargs['execpath']
-            if not os.path.isdir(kwargs['execpath']):
-                print('Path to executable does not exist')
-                validpath = False
-        if 'executable' in kwargs.keys():
-            executable = kwargs['executable']
-            if not os.path.isfile(kwargs['execpath'] +  kwargs['executable']):
-                print('Executable not found')
-                validpath = False
+        execpath = kwargs.get('execpath','./src/')
+        executable = kwargs.get('execpath','main.o')
+        simfilename = kwargs.get('simfilename','values.dat')
+        
+        if not os.path.isdir(execpath):
+            print('Path to executable does not exist')
+            validpath = False
+            
+        if not os.path.isfile(execpath +  executable):
+            print('Executable not found')
+            validpath = False
+            
         if not validpath:
             if not os.path.exists(execpath + executable):
                 print(execpath + executable +' does not exist. Creating model file...')
                 cwd = os.path.dirname(os.path.realpath(__file__))
-                from nutrient_signaling.cpputils.pydstool2cpp import PyDSTool2CPP
-                outpath = execpath#cwd + '/../' + execpath
+                outpath = execpath
                 if not os.path.exists(outpath):
                     os.mkdir(outpath)
                 p2c = PyDSTool2CPP(modelpath)
                 p2c.setwritepath(cwd + '/cpputils/')
                 print(p2c.getwritepath())
                 p2c.writecpp()
-                os.chdir(cwd + '/cpputils')
-                cmd = "g++ -std=c++11 main.cpp model.cpp -o " + executable
+                headerpath = cwd + '/cpputils/'
+                cmd = "g++ -std=c++11 {}main.cpp {}model.cpp -o {}".format(headerpath,
+                                                                           headerpath,
+                                                                           executable)
+                print(cmd)
                 so = os.popen(cmd).read()
-                so = os.popen('cp ' +executable+ ' ' + outpath)
-                os.chdir(cwd + '/../')
-        simobj = SimulatorCPP(execpath, executable )
+                so = os.popen('cp ' + headerpath + executable+ ' ' + outpath)
+        simobj = SimulatorCPP(model,
+                              execpath=execpath,
+                              executable=executable,
+                              simfilename=simfilename)
         return(simobj)
             
             
