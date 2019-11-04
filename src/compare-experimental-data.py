@@ -268,7 +268,7 @@ def define_state_space(datapath, modelpath):
            {'Carbon':1.0,'ATP':1.0,'Glutamine_ext':0.0, 'Proline':1.0,'NH4':0.0}
     ]
     model = get_simulator(modelpath=modelpath,
-                          simulator=SIMULATOR,args=SIMARGS)
+                          simulator=SIMULATOR,**SIMARGS)
     for n in nut:
         model.set_attr(pars=n, tdata=[0,200])
         P = model.get_ss()
