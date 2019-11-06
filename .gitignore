@@ -1,5 +1,7 @@
 __pycache__/*
 nutrient_signaling/cpputils/*
+trash/*
+*.egg*
 *.o
 *.pyc
 *.dat
