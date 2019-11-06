@@ -336,6 +336,9 @@ def compare_model_predictions(experimentpath,
     while parind < psetlength:
         manager = mp.Manager()
         shareddict = manager.dict()
+        ## TODO: This is problematic! the manager dict is not meant to serve as a counter!!
+        ## Consider converting this to mp.Values()?
+        ## This only affects the printed logs, not the actual results
         #shareddict.update({uid:{'report':'','counter':0} for uid in uidlist})
         for uid in uidlist:
             shareddict[uid] = 0
