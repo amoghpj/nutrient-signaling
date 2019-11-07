@@ -110,7 +110,7 @@ def getMutantSpecs(modelpath):
     return(mutationSpecs)
 
 
-def simulateGlobalStateSpace(args):
+def simulateGlobalStateSpace(args): 
     """
     PROG  Update shared dict of global state
     """
@@ -120,14 +120,19 @@ def simulateGlobalStateSpace(args):
     modelpath = args['modelpath']
     fname = args['fname']
     cutoffs = args['cutoffs']
-    simargs = dict(SIMARGS)
+    paramdict = args['paramdict']
     
+    simargs = dict(SIMARGS)
+
     if SIMULATOR == 'cpp':
         simargs['simfilename'] = cleanfname(strain['name']) + '.dat'
+        
     model = get_simulator(modelpath=modelpath,
                           simulator=SIMULATOR,**simargs)
         
     collect = {}
+    model.set_attr(pars=paramdict)
+    
     for ninput in NutrientStates:
         shiftspec = {'pars':{'Carbon':ninput['C'],
                              'ATP':ninput['C'],
