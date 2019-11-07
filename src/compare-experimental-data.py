@@ -368,13 +368,19 @@ def compare_model_predictions(experimentpath,
                     job.wait()
 
         aggregator['cost'].append(psets[parind].get('cost',0))
+        counter = 0
+        cumsum = 0
         for uid in uidlist:
+            cumsum += shareddict[uid]
             if shareddict[uid] == 1:
                 aggregator[uid].append(1)
+                counter += 1
             else:
                 aggregator[uid].append(0)                
         #metacounter['counter'].append(shareddict['counter'])
-        print(parind,'\t', shareddict['counter'], aggregator['cost'][-1])
+        #print(parind,'\t', shareddict['counter'], aggregator['cost'][-1])
+        print(parind,'\t', cumsum, '\t', shareddict['counter'],'\t',counter, '\t', aggregator['cost'][-1])
+        
         del manager
         del shareddict
         parind += 1        
@@ -391,7 +397,7 @@ def compare_model_predictions(experimentpath,
         #     outfile.write(report)
     else:
         agdf = pd.DataFrame(aggregator)
-        agdf.to_csv('summary_' + str(len(psets.keys())) + '.csv')
+        agdf.to_csv('summary_' + str(len(psets.keys())) + '_test.csv')
 
 
 def main():

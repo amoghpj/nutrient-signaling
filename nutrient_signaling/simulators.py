@@ -9,6 +9,7 @@ class SimulatorPython:
     def __init__(self, modeldict):
         self.pars = {}
         self.ics = {}
+        self.variables = {}
         self.createModelObject(modeldict)
         
     def simulateModel(self):
@@ -50,6 +51,15 @@ class SimulatorPython:
         print("tend ", self.tend )
         
         
+    def get_pars(self):
+        return(self.pars)
+    
+    def get_variables(self):
+        return(self.variables)
+    
+    def get_ics(self):
+        return(self.ics)    
+        
     def createModelObject(self, modeldict):
         """
         Takes dictionary object as input, and
@@ -61,7 +71,7 @@ class SimulatorPython:
         :type ModelDS: PyDSTool Object
         """
         self.pars = modeldict['parameters']
-
+        self.variables = modeldict['variables'].keys()
         self.ics = modeldict['initialconditions']                
         ModelArgs = dst.args(
             name='test',
@@ -91,6 +101,7 @@ class SimulatorCPP:
                  executable='main.o',
                  simfilename='values.dat'):
         self.execpath = execpath
+        self.variables = modeldict['variables'].keys()
         self.pars = modeldict['parameters']
         self.ics = modeldict['initialconditions']
         self.tdata = [0, 90]
@@ -109,6 +120,15 @@ class SimulatorCPP:
         print("pars ", self.pars )
         print("ics ", self.ics)
         print("tend ", self.tend )
+        
+    def get_pars(self):
+        return(self.pars)
+    
+    def get_variables(self):
+        return(self.variables)
+    
+    def get_ics(self):
+        return(self.ics)    
         
     def construct_call(self):
         """
