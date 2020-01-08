@@ -43,11 +43,11 @@ class SimulatorPython:
     def set_attr(self, pars={}, ics={}, tdata=[0, 90]):
         self.pars.update(pars)
         self.ics.update(ics)
-        self.model.set(pars=self.pars, ics=ics, tdata=tdata)
+        self.model.set(pars=self.pars, ics=self.ics, tdata=tdata)
 
     def get_attr(self):
         print("pars ", self.pars )
-        print("ics ", self.ics)
+        print("ics ", self.ics )
         print("tend ", self.tend )
         
         

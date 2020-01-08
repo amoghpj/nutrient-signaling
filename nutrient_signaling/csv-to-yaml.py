@@ -1,5 +1,19 @@
 """
-Stores the rows in a csv file as entries in a yaml file
+Collection of functions to read csv tables containing experimental
+data and converting them to yaml files.
+Contains three "readers"
+1. read_perturb()
+2. read_timecourse()
+3. read_experiment()
+
+Each reader loads a csv file using pandas,
+and parses out the required data by assigning values to keys.
+Note that typically, the definition of a mutant or a shift
+will involve specifying parameters and initial conditions. In the
+csv files, they are stored a raw python dictionary strings. I use
+the ast library to parse and store these in nested yaml entries.
+The "skeletons" in each reader define the requisite entries for each
+type of analysis.
 """
 import bibtexparser as bp
 import pandas as pd
@@ -25,9 +39,32 @@ def csv2yaml(csvpath, yamlpath, inputtype, bibpath):
     with open(yamlpath, 'w') as outfile:
         yaml.safe_dump(data, outfile,  default_flow_style=False)
 
-def read_time(csvpath, bib):
+def read_timecourse(csvpath, bib):
+    """
+    PROG: not yet complete
+    """
     data = []
-    skeleton = {}
+    df = pd.read_csv(csvpath,sep='\t')
+    for i, row in df.iterrows():
+        skeleton = {
+            'description':row['description'],
+            'title':row['title'],
+            'source':row['source'],
+            'citation':row['citation'],                        
+            'ts_type':row['ts_type'],
+            'tunits':row['tunits'],
+            'readout':row['readout'],            
+            'time':row['time'],
+            'value':row['values'],
+            'normalize':{'lower':row['lower'],
+                         'upper':row['upper']},
+            'spec':{'preshift':{'pars':process_literal(row['pre_shift'])['parameters'],
+                                'ics':process_literal(row['pre_shift'])['inconds']},
+                    'postshift':{'pars':process_literal(row['pre_shift'])['parameters'],
+                                'ics':process_literal(row['pre_shift'])['inconds']}}
+        }        
+        data.append(skeleton)
+    
     return data
 
 def get_doi(key,bib):

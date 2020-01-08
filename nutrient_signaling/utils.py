@@ -50,12 +50,6 @@ def minmaxnorm(input_list):
     output_list = []
     for ele in input_list:
         if (mx-mi) < 1e-5:
-            home = os.path.expanduser('~')
-            with open(home + 'SIMULATION_LOGS','a') as outfile:
-                today = datetime.datetime.today()
-                outfile.write("\nDIVIDE BY ZERO ENCOUNTERED IN MINMAXNORM on " + str(today.year) + '-' + \
-                              str(today.month) + '-' + str(today.day) + \
-                              '-' + str(today.hour) + '-' +str(today.minute))
             denom = 1
         else:
             denom = mx - mi
