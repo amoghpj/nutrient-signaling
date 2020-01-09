@@ -9,11 +9,19 @@ class TimeCourse:
     """
     
     """
-    def __init__(self, simulator):
+    def __init__(self, simulator, datapath='../data/yaml/time-course-data.yaml'):
         self.data = []
         self.predictions = []
         self.debugflag = False
         self.simobj = simulator
+        self.datapath = datapath
+        self.read_data()
+        self.customFuncDef = {'mig1': (lambda mig_ts: [np.log10((m)/(1e-3+1-m)) for m in mig_ts]), # ensures denom is not 0
+                 'rib': (lambda rib_ts: [rib_ts[i]/(1e-2+rib_ts[0]) for i in range(0,len(rib_ts))])} #ensures denom is not 0
+
+        self.customylabel = {'mig1' : 'log(nMig1/cMig1)',
+                    'rib':'Rel Rib'}
+        
     
     def toggledebug(self):
         self.debugflag = not self.debugflag
@@ -22,19 +30,28 @@ class TimeCourse:
         if self.debugflag:
             print(prnt)
             
-    def read_data(self, path_to_yaml='../data/time-course-data.yaml'):
-        with open(path_to_yaml,'r') as infile:
+    def read_data(self):
+        with open(self.datapath,'r') as infile:
             self.data = yaml.safe_load(infile)
 
     def comparison(self):
         """
         Call simulate on each item in yaml file
+        TODO: This is getting messy again. 
+        1. Need to handle plotting of Mig1 on log scale
+        2. Need to handle non-normalized y axis for mig1 cleanly
+        3. cAMP should always have 0-1 range.
         """
         print("Starting Comparison")
         store_attributes = ['value','time','readout']
         for simid, experiment in enumerate(self.data):
             self.debug(simid)
-            self.predictions.append(self.simulate(experiment))
+            traj = self.simulate(experiment)
+            if experiment['tunits'] == 's':
+                traj['t'] = [t*60. for t in traj['t']]
+            if experiment['readout'].lower() in self.customFuncDef.keys():
+                traj['v'] = self.customFuncDef[experiment['readout'].lower()](traj['v'])
+            self.predictions.append(traj)
             f, ax = plt.subplots(1,1)
             self.plotdata(ax, experiment)
             self.plotpred(ax, self.predictions[-1])

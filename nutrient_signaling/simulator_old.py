@@ -1,6 +1,6 @@
 """Collection of utilities for simulating and analyzing model
 
-TODO: The functions here are outdated. The functionality has been moved
+NOTE: The functions here are outdated. The functionality has been moved
 to other locations where suitable. I am keeping this around for reference
 mainly for myself. Here be bad bad code.
 """

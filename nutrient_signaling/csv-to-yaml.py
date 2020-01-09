@@ -40,9 +40,6 @@ def csv2yaml(csvpath, yamlpath, inputtype, bibpath):
         yaml.safe_dump(data, outfile,  default_flow_style=False)
 
 def read_timecourse(csvpath, bib):
-    """
-    PROG: not yet complete
-    """
     data = []
     df = pd.read_csv(csvpath,sep='\t')
     for i, row in df.iterrows():
@@ -54,14 +51,14 @@ def read_timecourse(csvpath, bib):
             'ts_type':row['ts_type'],
             'tunits':row['tunits'],
             'readout':row['readout'],            
-            'time':row['time'],
-            'value':row['values'],
-            'normalize':{'lower':row['lower'],
-                         'upper':row['upper']},
+            'time':process_literal(row['time']),
+            'value':process_literal(row['values']),
+            'normalize':{'lower':float(row['lower']),
+                         'upper':float(row['upper'])},
             'spec':{'preshift':{'pars':process_literal(row['pre_shift'])['parameters'],
                                 'ics':process_literal(row['pre_shift'])['inconds']},
-                    'postshift':{'pars':process_literal(row['pre_shift'])['parameters'],
-                                'ics':process_literal(row['pre_shift'])['inconds']}}
+                    'postshift':{'pars':process_literal(row['post_shift'])['parameters'],
+                                'ics':process_literal(row['post_shift'])['inconds']}}
         }        
         data.append(skeleton)
     
@@ -155,7 +152,7 @@ def read_experiment(csvpath, bib):
         data.append(skeleton)
     return data
 
-def read_perturb(csvpath):
+def read_perturb(csvpath, bib):
     df = pd.read_csv(csvpath,sep='\t')
     data = []
     columns = df.columns
@@ -175,7 +172,7 @@ def read_perturb(csvpath):
             
         skeleton = {
             'simid':row['sim_id'],
-            'simulate':row['simulate'],
+            'shouldsimulate':row['simulate'],
             'description':row['description'],
             'type':row['sim_type'],
             'whichcondition':row['whichcondition'],

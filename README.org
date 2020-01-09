@@ -34,4 +34,48 @@ are listed below
    #+end_src
 7. You can now import =nutrient_signaling= as a package in your other projects!
 
-   
+* Organization   
+#+begin_src ditaa :file data/organization.png
+
+ +--------------------+
+ | nutrient signaling |
+ +--------------------+
+                       
+
+  +--------------+                                  
+  | /----------\ |                                  
+  | |simulators| |           +------------------+            
+  | |          | |           |                  |            
+  | \----------/ |<----------+ Model definition |                                     
+  |  |       |   |           |                  |       
+  |+-+-+ +---+--+|           +------------------+            
+  ||CPP| |Python||                                  
+  |+---+ +------+|                                  
+  +-----+--------+                                  
+        |                    /-------------------------\                                        
+        +--+                 |                         |                  
+           |         +------>|   datacomparison.py     |                  
+           V         |       |                         |                  
+     +---------+     |       \--^--------^---------^---/                  
+     |         |     |          |        |         |                      
+     |  Model  +-----+          |        |         |                      
+     |         |          +-----+        +---+     +--------+             
+     +---------+          |                  |              |             
+                   +------+-------+    +-----+-------+   +--+----------+  
+                   |  Time course |    |Perturbation |   | Qualitative |  
+                   +--------------+    +-------------+   +-------------+  
+                         ^                       ^                  ^      
+                         |                       |                  |     
+          +--------------+                       |                  +---+            
+          |               +----------------------+--+                   |            
+   +------+-------+       |                         |      +------------+-----------+
+   |    time      |       | perturbation-data.yaml  |      |                        |
+   |  course      |       |                         |      | experimental_data.yaml |
+   |              |       +-------------------------+      |                        |
+   +--------------+                                        +------------------------+
+
+
+#+end_src
+
+#+RESULTS:
+q[[file:data/organization.png]]
