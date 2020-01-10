@@ -38,18 +38,19 @@ class Comparison:
             sys.exit()
 
     def docomparison(self):
-        simobj = get_simulator(self.modelpath, self.simulator)
-        
         if self.comparisontype == 'perturb':
-            compobj = Perturb(simobj, self.datapath)
+            compobj = Perturb()
             if self.debug:
                 compobj.toggledebug()
-            print('simulating model')
+            compobj.read_data(self.datapath)
+            compobj.setSimulator(self.modelpath, self.simulator)
             compobj.comparison()
-            compobj.visualize_perturb(compobj.predictions)
+            compobj.visualize_perturb()
 
         if self.comparisontype == 'time':
-            compobj = TimeCourse(simobj, datapath=self.datapath)
+            compobj = TimeCourse()
+            compobj.read_data(self.datapath)
+            compobj.setSimulator(self.modelpath, self.simulator)
             if self.debug:
                 compobj.toggledebug()
             compobj.comparison()

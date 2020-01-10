@@ -311,7 +311,7 @@
     preshift:
       perturb: 0.25
       wt: 0.25
-  vmax: 0
+  vmax: 3.8
   whichcondition: C
 - citation: cite:2015_Cell_Peli-Gulli_deVirgillio_Amino_Acids-TORC1-Lst4-Lst7_Rag
   description: $gtr1$ $gtr2$ (4 m)

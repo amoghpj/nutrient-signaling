@@ -5,6 +5,7 @@ import PyDSTool as dst
 import matplotlib.pyplot as plt
 import os
 # Local imports
+from nutrient_signaling.simulators import get_simulator
 from nutrient_signaling.utils import minmaxnorm, minmaxnorm_special
 
 class Perturb:
@@ -13,15 +14,30 @@ class Perturb:
     a genetic perturbation or a chemical treatment. Thus,  the control 
     is ALWAYS the wt undergoing the same nutrient shift.
     """
-    def __init__(self, simulator, data_path='../data/yaml/perturbation-data.yaml'):        
-        #self.order = [12,5,None,13,9,10,4,None,6,8,11,7,3]
-        self.order = [12]                       
-        self.predictions = []
+    def __init__(self, ):        
+        self.order = [
+            1, 5,
+            None,
+            9, 10, 13, 4, # Nitrogen 
+            None,
+            6, 8, 7, 3, 11 # Carbon
+        ]
+
+        self.predictions = {}
         self.debugflag = False
-        self.simobj = simulator
-        self.data_path = data_path
+        self.data_path = '../data/yaml/perturbation-data.yaml'
         self.data = []
-        self.read_data()
+        self.modelpath = ""
+        self.simulatortype = "py"
+        self.specialNormalize = ['cAMP', 'Rib']
+
+    def setSimulator(self, modelpath, simulatortype='py'):
+        self.modelpath = modelpath
+        self.simulatortype = simulatortype
+
+    def makeSimulator(self):
+        simobj = get_simulator(self.modelpath, self.simulatortype)
+        return simobj
         
     def toggledebug(self):
         self.debugflag = not self.debugflag
@@ -30,13 +46,14 @@ class Perturb:
         if self.debugflag:
             print(prnt)
         
-    def read_data(self):
+    def read_data(self, data_path='../data/yaml/perturbation-data.yaml'):
         """
         From path, read perturbation data
         """
         # cwd = os.path.dirname(os.path.realpath(__file__))
         # print('I am in ' + cwd)
         # TODO what is the point of the above line?
+        self.data_path = data_path
         with open(self.data_path,'r') as infile:
             self.data = yaml.safe_load(infile)
             
@@ -46,24 +63,40 @@ class Perturb:
         """
         print("Starting Comparison")
         store_attributes = ['simid','description', 'units','readout','source','citation','value','whichcondition','type','vmax']
-        for simid, experiment in enumerate(self.data):
+        #for simid, experiment in enumerate(self.data):
+        for simid in self.order:
+            if simid is not None:
+                # Find the experiment corressponding to the simid
+                for d in self.data:
+                    if d['simid'] == simid:
+                        experiment = d
+                        break
+                if experiment['type'] != 'treat' and experiment['shouldsimulate'] == 'y':
+                    predictions = {}
+                    for att in store_attributes:
+                        predictions[att] = experiment[att]
 
-            # TODO revert
-            #if experiment['type'] != 'treat' and experiment['shouldsimulate'] == 'y':
-            if experiment['shouldsimulate'] == 'y':                
-                predictions = {}
-                for att in store_attributes:
-                    predictions[att] = experiment[att]
-                self.debug(experiment['readout'])                
-                self.debug(simid)                
-                for experimenttype in ['wt', 'perturb']:
-                    self.debug(experimenttype)
-                    predictions[experimenttype] = self.simulate(experiment,
-                                                                experimenttype=experimenttype)
-                    print(predictions)
-                self.predictions.append(predictions)
-            break
-
+                    for experimenttype in ['wt', 'perturb']:
+                        self.debug(experimenttype)
+                        # Do the simulation!
+                        predictions[experimenttype] = self.simulate(experiment,
+                                                                    experimenttype=experimenttype)
+                    self.predictions[simid] = predictions
+        self.postprocessing()
+        
+    def postprocessing(self):
+        self.specialNormalizeValues = {}
+        for v in self.specialNormalize:
+            self.specialNormalizeValues[v] = {}
+            vals = []
+            for k, p in self.predictions.items():
+                if p['readout'] == v:
+                    vals.extend([p['wt']['pre'],
+                                 p['wt']['post'],
+                                 p['perturb']['pre'],
+                                p['perturb']['post']])
+            self.specialNormalizeValues[v]['min'] = min(vals)
+            self.specialNormalizeValues[v]['max'] = max(vals)
     
     def simulate(self, experiment, experimenttype='wt'):
         """
@@ -71,6 +104,7 @@ class Perturb:
         and store the steady state values
         """
         readout = experiment['readout']
+        # Store the perturbation specification regardless of the strain
         pars_perturb = experiment['spec']['perturbation']['pars']
         self.debug(pars_perturb)
         ics_perturb = experiment['spec']['perturbation']['ics']
@@ -78,18 +112,14 @@ class Perturb:
         
         result = {'pre':0, 'post':0}
 
-        model = copy.copy(self.simobj)
-        self.debug('\t\tinitialized')
-        
+        model = self.makeSimulator()
+        preics = model.get_ss()
+
         # Initialize all variables with their ss values
         # Preshift
-        preics = model.get_ss()
-        print(preics[readout])
         prepars = experiment['spec']['preshift']['pars']
         model.set_attr(pars=prepars)
 
-        #self.debug('\t\tset ics to ss')
-        
         if experimenttype == 'perturb':
             # Parameters and initial conditions representing the experimental
             preics.update(ics_perturb)
@@ -100,7 +130,6 @@ class Perturb:
                        tdata=[0, experiment['time'][experimenttype]])
         
         result['pre'] = model.get_ss()[experiment['readout']]
-        print(result['pre'])
         self.debug('pre done')
         # Postshift
         postics = model.get_ss()
@@ -109,16 +138,16 @@ class Perturb:
         if experimenttype == 'perturb':
             postics.update(ics_perturb)
             postpars.update(pars_perturb)
-            
+
+
         model.set_attr(ics=postics,
                        pars=postpars,
                        tdata=[0, experiment['time'][experimenttype]])
         
         result['post'] = model.get_ss()[experiment['readout']]
-        print(result['post'])
         self.debug('post done')        
         del(model)
-        self.debug(result)
+        # self.debug(result)
         return(result)
 
     def simulate_old(self,experiment, experimenttype='wt'):
@@ -211,7 +240,7 @@ class Perturb:
         orderedpredictions = {'C':[],'N':[]}        
         leftylabels = []
         descriptions = []
-        ypos = 0        
+        ypos = 0
         for oi in self.order[::-1]:
             if oi is None:
                 leftylabels.append("")
@@ -219,12 +248,8 @@ class Perturb:
                 ypos += 1
             else:
                 prediction = self.predictions[oi]
-                # for p in self.predictions:
-                #     if p['simid'] == oi:
-                #         prediction = p
-                #         break
                 cond = prediction['whichcondition']
-                leftylabels.append('('+cond+') ' + predictions['readout'])
+                leftylabels.append('('+cond+') ' + prediction['readout'])
                 # If the maxium value from an experiment is specified,
                 # use it for minmax normaliation, otherwise compute min and
                 # max from the list of values
@@ -232,7 +257,8 @@ class Perturb:
                     w_e_pre, w_e_post, p_e_pre, p_e_post = minmaxnorm_special([prediction['value']['preshift']['wt'],
                                                                                prediction['value']['postshift']['wt'],
                                                                                prediction['value']['preshift']['perturb'],
-                                                                               prediction['value']['postshift']['perturb']],0,
+                                                                               prediction['value']['postshift']['perturb']],
+                                                                              0,
                                                                               prediction['vmax'])
                 else:
                     w_e_pre, w_e_post, p_e_pre, p_e_post = minmaxnorm([prediction['value']['preshift']['wt'],
@@ -243,19 +269,23 @@ class Perturb:
                     prediction['wt']['post'],\
                     prediction['perturb']['pre'],\
                     prediction['perturb']['post']
-                
-                if prediction['readout'] in ['cAMP','Rib']:
-                    w_p_pre, w_p_post ,p_p_pre, p_p_post = minmaxnorm([w_p_pre,
-                                                                       w_p_post,
-                                                                       p_p_pre,
-                                                                       p_p_post])
+
+                if prediction['readout'] in self.specialNormalize:
+                    w_p_pre, w_p_post ,p_p_pre, p_p_post = minmaxnorm_special([w_p_pre,
+                                                                               w_p_post,
+                                                                               p_p_pre,
+                                                                               p_p_post],
+                                                                              self.specialNormalizeValues[prediction['readout']]['min'],
+                                                                              self.specialNormalizeValues[prediction['readout']]['max'],)
                 
                 values_to_plot = {'wt':{'exp':{'preshift':w_e_pre,
                                                'postshift':w_e_post},
-                                        'pred':{'preshift':w_p_pre, 'postshift':w_p_post}},
+                                        'pred':{'preshift':w_p_pre,
+                                                'postshift':w_p_post}},
                                   'perturb':{'exp':{'preshift':p_e_pre,
                                                     'postshift':p_e_post},
-                                             'pred':{'preshift':p_p_pre, 'postshift':p_p_post}}}
+                                             'pred':{'preshift':p_p_pre,
+                                                     'postshift':p_p_post}}}
     
                 descriptions.append(prediction['description'])
                 self.perturb_plot_row(values_to_plot, ax, ypos)

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import yaml
 import nutrient_signaling.utils as utils
+from nutrient_signaling.simulators import get_simulator
 import numpy as np
 import copy
 import sys
@@ -9,13 +10,11 @@ class TimeCourse:
     """
     
     """
-    def __init__(self, simulator, datapath='../data/yaml/time-course-data.yaml'):
+    def __init__(self):
         self.data = []
         self.predictions = []
         self.debugflag = False
-        self.simobj = simulator
-        self.datapath = datapath
-        self.read_data()
+        self.data_path = '../data/yaml/time-course-data.yaml'
         self.customFuncDef = {'mig1': (lambda mig_ts: [np.log10((m)/(1e-3+1-m)) for m in mig_ts]), # ensures denom is not 0
                  'rib': (lambda rib_ts: [rib_ts[i]/(1e-2+rib_ts[0]) for i in range(0,len(rib_ts))])} #ensures denom is not 0
 
@@ -26,12 +25,21 @@ class TimeCourse:
     def toggledebug(self):
         self.debugflag = not self.debugflag
         
+    def setSimulator(self, modelpath, simulatortype='py'):
+        self.modelpath = modelpath
+        self.simulatortype = simulatortype
+
+    def makeSimulator(self):
+        simobj = get_simulator(self.modelpath, self.simulatortype)
+        return simobj
+        
     def debug(self, prnt):
         if self.debugflag:
             print(prnt)
             
-    def read_data(self):
-        with open(self.datapath,'r') as infile:
+    def read_data(self, data_path='../data/yaml/perturbation-data.yaml'):
+        self.data_path = data_path
+        with open(self.data_path,'r') as infile:
             self.data = yaml.safe_load(infile)
 
     def comparison(self):
@@ -89,7 +97,7 @@ class TimeCourse:
         the experiment
         """
         print(experiment['readout'])
-        model = copy.copy(self.simobj)
+        model = self.makeSimulator()
         preshift = experiment['spec']['preshift']
         postshift = experiment['spec']['postshift']
         print(preshift)
