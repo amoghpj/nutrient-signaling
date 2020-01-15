@@ -16,7 +16,9 @@
   mutant:
     ics: null
     pars:
-      Rtg13_T: 0.5
+      k_acc_glu: "0.75x"
+      k_acc_pro: "0.75x"
+      k_acc_nh4: "0.75x"      
   nutrientCondition: YP + 5% glucose
   phenotypeInterpreted:
     Rtg13: 'Off'
@@ -24,14 +26,14 @@
   postshift:
     ATP: 1.0
     Carbon: 1.0
-    Glutamine_ext: 0.5
+    Glutamine_ext: 1.0
   postshiftics: null
   preshift:
     ATP: 0.1
     Carbon: 0.1
     Glutamine_ext: 1.0
   shortname: Liu et al, 1999
-  strain: wt
+  strain: rho0
 - background: PSY142 \rho^0
   comments: null
   doi: https://doi.org/10.1128/mcb.19.10.6720
@@ -50,7 +52,9 @@
   mutant:
     ics: null
     pars:
-      Rtg13_T: 0.5
+      k_acc_glu: "0.75x"
+      k_acc_pro: "0.75x"
+      k_acc_nh4: "0.75x"            
   nutrientCondition: YP + 2% raffinose
   phenotypeInterpreted:
     Rtg13: 'On'
@@ -61,11 +65,11 @@
     Glutamine_ext: 0.5
   postshiftics: null
   preshift:
-    ATP: 1.0
-    Carbon: 1.0
+    ATP: 0.1
+    Carbon: 0.1
     Glutamine_ext: 1.0
   shortname: Liu et al, 1999
-  strain: wt
+  strain: rho0
 - background: PSY142 \rho^0
   comments: null
   doi: https://doi.org/10.1128/mcb.19.10.6720
@@ -82,10 +86,12 @@
   growth: growth
   id: 3
   mutant:
-    ics:
-      Rtg13: 0.0
+    ics: null
     pars:
-      Rtg13_T: 0.25
+      Rtg13_T: 0.75
+      k_acc_glu: "0.75x"
+      k_acc_pro: "0.75x"
+      k_acc_nh4: "0.75x"            
   nutrientCondition: YNBD + 0.02% Glutamate
   phenotypeInterpreted:
     Rtg13: 'Off'
@@ -111,86 +117,18 @@
     Gis1: 'Off'
     Gln3: 'Off'
     Mig1: 'On'
-    Rtg13: 'Off'
+    Rtg13: 'On'
   forGrowth:
     Rtg13: 'On'
-  growth: growth
+  growth: no growth
   id: 4
   mutant:
-    ics:
-      Rtg13: 0.0
+    ics: null
     pars:
-      Rtg13_T: 0.25
-  nutrientCondition: YNBD + 0.02% Glutamate
-  phenotypeInterpreted:
-    Rtg13: 'Off'
-  phenotypeReported: growth
-  postshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 0.9
-  postshiftics: null
-  preshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-  shortname: Liu et al, 1999
-  strain: rtg2
-- background: PSY142 \rho^0
-  comments: null
-  doi: https://doi.org/10.1128/mcb.19.10.6720
-  expReadout: colony growth
-  expected:
-    Dot6: 'Off'
-    Gcn4: 'Off'
-    Gis1: 'Off'
-    Gln3: 'Off'
-    Mig1: 'On'
-    Rtg13: 'Off'
-  forGrowth:
-    Rtg13: 'On'
-  growth: growth
-  id: 5
-  mutant:
-    ics:
-      Rtg13: 0.0
-    pars:
-      Rtg13_T: 0.25
-  nutrientCondition: YNBD + 0.02% Glutamate
-  phenotypeInterpreted:
-    Rtg13: 'Off'
-  phenotypeReported: growth
-  postshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 0.9
-  postshiftics: null
-  preshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-  shortname: Liu et al, 1999
-  strain: rtg3
-- background: PSY142 \rho^0
-  comments: null
-  doi: https://doi.org/10.1128/mcb.19.10.6720
-  expReadout: colony growth
-  expected:
-    Dot6: 'Off'
-    Gcn4: 'Off'
-    Gis1: 'Off'
-    Gln3: 'Off'
-    Mig1: 'On'
-    Rtg13: 'On'
-  forGrowth:
-    Rtg13: 'On'
-  growth: no growth
-  id: 6
-  mutant:
-    ics:
-      Rtg13: 0.0
-    pars:
-      Rtg13_T: 0.25
+      Rtg13_T: 0.75
+      k_acc_glu: "0.75x"
+      k_acc_pro: "0.75x"
+      k_acc_nh4: "0.75x"                  
   nutrientCondition: YNBD
   phenotypeInterpreted:
     Rtg13: 'Off'
@@ -206,76 +144,285 @@
     Glutamine_ext: 1.0
   shortname: Liu et al, 1999
   strain: rtg1
-- background: PSY142 \rho^0
-  comments: null
-  doi: https://doi.org/10.1128/mcb.19.10.6720
-  expReadout: colony growth
-  expected:
-    Dot6: 'Off'
-    Gcn4: 'Off'
-    Gis1: 'Off'
-    Gln3: 'Off'
-    Mig1: 'On'
-    Rtg13: 'On'
-  forGrowth:
-    Rtg13: 'On'
-  growth: no growth
-  id: 7
-  mutant:
-    ics:
-      Rtg13: 0.0
-    pars:
-      Rtg13_T: 0.25
-  nutrientCondition: YNBD
-  phenotypeInterpreted:
-    Rtg13: 'Off'
-  phenotypeReported: no growth
-  postshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 0.0
-  postshiftics: null
-  preshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-  shortname: Liu et al, 1999
-  strain: rtg2
-- background: PSY142 \rho^0
-  comments: null
-  doi: https://doi.org/10.1128/mcb.19.10.6720
-  expReadout: colony growth
-  expected:
-    Dot6: 'Off'
-    Gcn4: 'Off'
-    Gis1: 'Off'
-    Gln3: 'Off'
-    Mig1: 'On'
-    Rtg13: 'On'
-  forGrowth:
-    Rtg13: 'On'
-  growth: no growth
-  id: 8
-  mutant:
-    ics:
-      Rtg13: 0.0
-    pars:
-      Rtg13_T: 0.25
-  nutrientCondition: YNBD
-  phenotypeInterpreted:
-    Rtg13: 'Off'
-  phenotypeReported: no growth
-  postshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 0.0
-  postshiftics: null
-  preshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-  shortname: Liu et al, 1999
-  strain: rtg3
+
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'Off'
+#   forGrowth:
+#     Rtg13: 'Off'
+#   growth: growth
+#   id: 1
+#   mutant:
+#     ics: null
+#     pars:
+#       Rtg13_T: 0.5
+#   nutrientCondition: YP + 5% glucose
+#   phenotypeInterpreted:
+#     Rtg13: 'Off'
+#   phenotypeReported: growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 0.5
+#   postshiftics: null
+#   preshift:
+#     ATP: 0.1
+#     Carbon: 0.1
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: wt
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'Off'
+#   forGrowth:
+#     Rtg13: 'On'
+#   growth: growth
+#   id: 2
+#   mutant:
+#     ics: null
+#     pars:
+#       Rtg13_T: 0.5
+#   nutrientCondition: YP + 2% raffinose
+#   phenotypeInterpreted:
+#     Rtg13: 'On'
+#   phenotypeReported: slow growth
+#   postshift:
+#     ATP: 0.7
+#     Carbon: 0.7
+#     Glutamine_ext: 0.5
+#   postshiftics: null
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: wt
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'Off'
+#   forGrowth:
+#     Rtg13: 'On'
+#   growth: growth
+#   id: 3
+#   mutant:
+#     ics:
+#       Rtg13: 0.0
+#     pars:
+#       Rtg13_T: 0.25
+#   nutrientCondition: YNBD + 0.02% Glutamate
+#   phenotypeInterpreted:
+#     Rtg13: 'Off'
+#   phenotypeReported: growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 0.9
+#   postshiftics: null
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: rtg1
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'Off'
+#   forGrowth:
+#     Rtg13: 'On'
+#   growth: growth
+#   id: 4
+#   mutant:
+#     ics:
+#       Rtg13: 0.0
+#     pars:
+#       Rtg13_T: 0.25
+#   nutrientCondition: YNBD + 0.02% Glutamate
+#   phenotypeInterpreted:
+#     Rtg13: 'Off'
+#   phenotypeReported: growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 0.9
+#   postshiftics: null
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: rtg2
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'Off'
+#   forGrowth:
+#     Rtg13: 'On'
+#   growth: growth
+#   id: 5
+#   mutant:
+#     ics:
+#       Rtg13: 0.0
+#     pars:
+#       Rtg13_T: 0.25
+#   nutrientCondition: YNBD + 0.02% Glutamate
+#   phenotypeInterpreted:
+#     Rtg13: 'Off'
+#   phenotypeReported: growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 0.9
+#   postshiftics: null
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: rtg3
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'On'
+#   forGrowth:
+#     Rtg13: 'On'
+#   growth: no growth
+#   id: 6
+#   mutant:
+#     ics:
+#       Rtg13: 0.0
+#     pars:
+#       Rtg13_T: 0.25
+#   nutrientCondition: YNBD
+#   phenotypeInterpreted:
+#     Rtg13: 'Off'
+#   phenotypeReported: no growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 0.0
+#   postshiftics: null
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: rtg1
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'On'
+#   forGrowth:
+#     Rtg13: 'On'
+#   growth: no growth
+#   id: 7
+#   mutant:
+#     ics:
+#       Rtg13: 0.0
+#     pars:
+#       Rtg13_T: 0.25
+#   nutrientCondition: YNBD
+#   phenotypeInterpreted:
+#     Rtg13: 'Off'
+#   phenotypeReported: no growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 0.0
+#   postshiftics: null
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: rtg2
+# - background: PSY142 \rho^0
+#   comments: null
+#   doi: https://doi.org/10.1128/mcb.19.10.6720
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'On'
+#   forGrowth:
+#     Rtg13: 'On'
+#   growth: no growth
+#   id: 8
+#   mutant:
+#     ics:
+#       Rtg13: 0.0
+#     pars:
+#       Rtg13_T: 0.25
+#   nutrientCondition: YNBD
+#   phenotypeInterpreted:
+#     Rtg13: 'Off'
+#   phenotypeReported: no growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 0.0
+#   postshiftics: null
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Liu et al, 1999
+#   strain: rtg3
 - background: BY4741
   comments: also contains his,ura,leu
   doi: https://doi.org/10.1534/genetics.114.168609
@@ -679,44 +826,44 @@
     Glutamine_ext: 1.0
   shortname: Zurita-Martinez et al, 2005
   strain: ira1
-- background: S1278b
-  comments: Weakly resistant to rap
-  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
-  expReadout: colony growth
-  expected:
-    Dot6: 'Off'
-    Gcn4: 'On'
-    Gis1: 'Off'
-    Gln3: 'On'
-    Mig1: 'On'
-    Rtg13: 'On'
-  forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
-  growth: growth
-  id: 20
-  mutant:
-    ics: null
-    pars:
-      w_ras_pka: 0.5x
-  nutrientCondition: YP Glucose + 50nM rap
-  phenotypeInterpreted:
-    Gcn4: 'Off'
-    Gln3: 'Off'
-  phenotypeReported: slow growth
-  postshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-    TORC1_T: 0.0
-  postshiftics:
-    TORC1: 0
-  preshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-  shortname: Zurita-Martinez et al, 2005
-  strain: ira2
+# - background: S1278b
+#   comments: Weakly resistant to rap
+#   doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'On'
+#     Gis1: 'Off'
+#     Gln3: 'On'
+#     Mig1: 'On'
+#     Rtg13: 'On'
+#   forGrowth:
+#     Gcn4: 'Off'
+#     Gln3: 'Off'
+#   growth: growth
+#   id: 20
+#   mutant:
+#     ics: null
+#     pars:
+#       w_ras_pka: 0.5x
+#   nutrientCondition: YP Glucose + 50nM rap
+#   phenotypeInterpreted:
+#     Gcn4: 'Off'
+#     Gln3: 'Off'
+#   phenotypeReported: slow growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#     TORC1_T: 0.0
+#   postshiftics:
+#     TORC1: 0
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Zurita-Martinez et al, 2005
+#   strain: ira2
 - background: S1278b
   comments: Weakly resistant to rap
   doi: https://doi.org/10.1128/ec.4.1.63-71.2005
@@ -831,82 +978,82 @@
     Glutamine_ext: 1.0
   shortname: Zurita-Martinez et al, 2005
   strain: tpk1
-- background: MLY41a
-  comments: Worse than wt, lacks PKA activation
-  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
-  expReadout: colony growth
-  expected:
-    Dot6: 'Off'
-    Gcn4: 'Off'
-    Gis1: 'Off'
-    Gln3: 'Off'
-    Mig1: 'On'
-    Rtg13: 'Off'
-  forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
-  growth: no growth
-  id: 24
-  mutant:
-    ics: null
-    pars:
-      PKA_T: 0.66
-  nutrientCondition: YP Glucose + 50nM rap
-  phenotypeInterpreted:
-    Gcn4: 'On'
-    Gln3: 'On'
-  phenotypeReported: no growth
-  postshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-    TORC1_T: 0.0
-  postshiftics:
-    TORC1: 0
-  preshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-  shortname: Zurita-Martinez et al, 2005
-  strain: tpk2
-- background: MLY41a
-  comments: Worse than wt, lacks PKA activation
-  doi: https://doi.org/10.1128/ec.4.1.63-71.2005
-  expReadout: colony growth
-  expected:
-    Dot6: 'Off'
-    Gcn4: 'Off'
-    Gis1: 'Off'
-    Gln3: 'Off'
-    Mig1: 'On'
-    Rtg13: 'Off'
-  forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
-  growth: no growth
-  id: 25
-  mutant:
-    ics: null
-    pars:
-      PKA_T: 0.66
-  nutrientCondition: YP Glucose + 50nM rap
-  phenotypeInterpreted:
-    Gcn4: 'On'
-    Gln3: 'On'
-  phenotypeReported: no growth
-  postshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-    TORC1_T: 0.0
-  postshiftics:
-    TORC1: 0
-  preshift:
-    ATP: 1.0
-    Carbon: 1.0
-    Glutamine_ext: 1.0
-  shortname: Zurita-Martinez et al, 2005
-  strain: tpk3
+# - background: MLY41a
+#   comments: Worse than wt, lacks PKA activation
+#   doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'Off'
+#   forGrowth:
+#     Gcn4: 'Off'
+#     Gln3: 'Off'
+#   growth: no growth
+#   id: 24
+#   mutant:
+#     ics: null
+#     pars:
+#       PKA_T: 0.66
+#   nutrientCondition: YP Glucose + 50nM rap
+#   phenotypeInterpreted:
+#     Gcn4: 'On'
+#     Gln3: 'On'
+#   phenotypeReported: no growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#     TORC1_T: 0.0
+#   postshiftics:
+#     TORC1: 0
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Zurita-Martinez et al, 2005
+#   strain: tpk2
+# - background: MLY41a
+#   comments: Worse than wt, lacks PKA activation
+#   doi: https://doi.org/10.1128/ec.4.1.63-71.2005
+#   expReadout: colony growth
+#   expected:
+#     Dot6: 'Off'
+#     Gcn4: 'Off'
+#     Gis1: 'Off'
+#     Gln3: 'Off'
+#     Mig1: 'On'
+#     Rtg13: 'Off'
+#   forGrowth:
+#     Gcn4: 'Off'
+#     Gln3: 'Off'
+#   growth: no growth
+#   id: 25
+#   mutant:
+#     ics: null
+#     pars:
+#       PKA_T: 0.66
+#   nutrientCondition: YP Glucose + 50nM rap
+#   phenotypeInterpreted:
+#     Gcn4: 'On'
+#     Gln3: 'On'
+#   phenotypeReported: no growth
+#   postshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#     TORC1_T: 0.0
+#   postshiftics:
+#     TORC1: 0
+#   preshift:
+#     ATP: 1.0
+#     Carbon: 1.0
+#     Glutamine_ext: 1.0
+#   shortname: Zurita-Martinez et al, 2005
+#   strain: tpk3
 - background: TB50a
   comments: Worse than wt, lacks PKA activation
   doi: https://doi.org/10.1128/mcb.24.1.338-351.2004
