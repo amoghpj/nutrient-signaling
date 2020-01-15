@@ -3,11 +3,14 @@ import matplotlib
 import sys
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sys
 font = {'size'   : 17}
 
 matplotlib.rc('font', **font)
 
-path = 'output/summary_24066.csv'
+# path = 'output/summary_24066.csv'
+#path = 'output/combined_summary_24066.csv'
+path = 'output/combined_summary_24066_truncated.csv'
 df = pd.read_csv(path,index_col=0)
 df['relcost'] = df['cost']/df.cost.min()
 df = df[df['relcost'] < 2.0]
@@ -15,17 +18,27 @@ print(df.shape)
 
 f, ax = plt.subplots(1,1,figsize=(8,4))
 cols = [c for c in df.columns if c not in  ['cost','relcost']]
+print(len(cols))
 df = df.assign(sum=pd.Series(df[cols].sum(axis=1)))
-df['explained'] = 100.*df['sum']/48.
-df = df[(df['explained'] < 69.9) & (df['explained'] > 57.0)]
+df['explained'] = df['sum'] #100.*df['sum']/(len(cols))
+#print([d*float(len(cols))/100 for d in df['explained'].unique()])
+
+df = df[(df['explained'] < 29) & (df['explained'] > 22)]
+minc = df[df['cost'] == min(df['cost'])]
+# If using output/summary_24066.csv, use the following to filter out outliers
+#df = df[(df['explained'] < 69.9) & (df['explained'] > 57.0)]
+
 sns.boxplot(x='explained',y='relcost',data=df,ax=ax,showfliers=False,palette='coolwarm')
 sns.stripplot(data=df,x='explained',y='relcost',ax=ax,jitter=0.4,alpha=0.05,size=2,color='k')
-ax.set_xticklabels([str(round(ne,1)) for ne in sorted(df['explained'].unique())])
+ax.plot(4, minc['relcost'],'ro',ms=7)
+#ax.set_xticks([round(ne,1) for ne in sorted(df['explained'].unique())])
+ax.set_xticklabels([round(ne,1) for ne in sorted(df['explained'].unique())])
+
 ax.set_ylabel('x $C_{min}$')
-ax.set_xlabel('% Experiments Explained')
+ax.set_xlabel('Number of Experiments Explained (total 41)')
 
 plt.tight_layout()
-plt.savefig('experimental-data-fits-final.pdf',dpi=400)
+plt.savefig('cost-vs-explanatory-capacity.pdf',dpi=400)
 
 
 ## Subplots, showing cost scatter and box plot distributions

@@ -1,3 +1,8 @@
+"""
+Author: Amogh Jalihal
+Description: Carry out in silico shift experiments to compare model predictions
+to qualitative experimental data. 
+"""
 import os
 import sys
 import yaml
@@ -75,8 +80,11 @@ def do_experiment(expargs):
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']
     paramdict = expargs['paramdict']
+    singleRun = False
+    
     if paramdict is None:
         paramdict = {}
+        singleRun = True
         
     modelpath = expargs['modelpath']    
     uid = str(experiment['id']) + '-' + experiment['strain']
@@ -125,7 +133,8 @@ def do_experiment(expargs):
     for rep in [' ', '\\']:
         if rep in fname:
             fname = fname.replace(rep,'')
-    #plotTfs(P, READOUTS, uid, cutoffs, fname)
+    if singleRun:
+        plotTfs(P, READOUTS, uid, cutoffs, fname)
     interpret_experiment(uid, state, expargs, fname)    
 
 def interpret_experiment(uid, state, expargs, fname):
@@ -138,7 +147,11 @@ def interpret_experiment(uid, state, expargs, fname):
     experiment = expargs['experiment']
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']    
-
+    paramdict = expargs['paramdict']
+    singleRun = False
+    
+    if paramdict is None:
+        singleRun = True
     ## The experiment specification can carry the field
     ## =phenotypeInterpreted= which is how I represent
     ## the strain's phenotype in terms of the model READOUTS.
@@ -211,43 +224,40 @@ def interpret_experiment(uid, state, expargs, fname):
         if not p:
             simulationAgreementStatus = "does not agree"
 
-    modelMatchesFlag = False
-    if simulationAgreementStatus == "agrees":
-        shareddict['counter'] += 1
-        #shareddict[uid]['counter'] +=1
-        shareddict[uid] += 1        
-        modelMatchesFlag = True
+
+    if singleRun:
+        if simulationAgreementStatus == "agrees":
+            shareddict[uid]['result'] +=1
+        template = "* {}\n"\
+            ":PROPERTIES:\n:CUSTOM_ID: sec:{}\n:END:\n"\
+            "{}\n\n"\
+            "*Description*: {} studied a /{}/ strain ({}) grown in {}.\n\n"\
+            "*Representation*:\n\n/Preshift Parameters/\n{}\n\n/Postshift Parameters/\n{}\n\n/Postshift Initial Conditions/\n{}\n\n"\
+            "/Mutant/\n\nParameters:\n{}\n\nInitial Conditions:\n{}\n\n"\
+            "*Growth*: In this medium, the strain showed {}. The model predicts that the strain will show {}.\n\n"\
+            "*Model {} with experiment*.\n\n"\
+            "#+ATTR_LATEX: :height 0.25\\textheight\n"\
+            "[[./img/{}.png]]\n\n"
         
-    template = "* {}\n"\
-        ":PROPERTIES:\n:CUSTOM_ID: sec:{}\n:END:\n"\
-        "{}\n\n"\
-        "*Description*: {} studied a /{}/ strain ({}) grown in {}.\n\n"\
-        "*Representation*:\n\n/Preshift Parameters/\n{}\n\n/Postshift Parameters/\n{}\n\n/Postshift Initial Conditions/\n{}\n\n"\
-        "/Mutant/\n\nParameters:\n{}\n\nInitial Conditions:\n{}\n\n"\
-        "*Growth*: In this medium, the strain showed {}. The model predicts that the strain will show {}.\n\n"\
-        "*Model {} with experiment*.\n\n"\
-        "#+ATTR_LATEX: :height 0.25\\textheight\n"\
-        "[[./img/{}.png]]\n\n"
-
-    report = template.format(uid,
-                             fname,                             
-                             s,
-                             experiment['shortname'],
-                             experiment['strain'],
-                             experiment['background'],
-                             experiment['nutrientCondition'],
-                             stringify(experiment['preshift']),
-                             stringify(experiment['postshift']),
-                             stringify(experiment['postshiftics']),                             
-                             stringify(experiment['mutant']['pars']),
-                             stringify(experiment['mutant']['ics']),                             
-                             experiment['phenotypeReported'],
-                             strainGrowthStatus,
-                             simulationAgreementStatus,
-                             fname)
-
-    #shareddict[uid]['report'] += report
-    #print(shareddict)    
+        report = template.format(uid,
+                                 fname,                             
+                                 s,
+                                 experiment['shortname'],
+                                 experiment['strain'],
+                                 experiment['background'],
+                                 experiment['nutrientCondition'],
+                                 stringify(experiment['preshift']),
+                                 stringify(experiment['postshift']),
+                                 stringify(experiment['postshiftics']),                             
+                                 stringify(experiment['mutant']['pars']),
+                                 stringify(experiment['mutant']['ics']),                             
+                                 experiment['phenotypeReported'],
+                                 strainGrowthStatus,
+                                 simulationAgreementStatus,
+                                 fname)
+        shareddict[uid]['report'] += report
+    else:
+        shareddict[uid] +=1
 
 def stringify(datadict):
     if datadict is None:
@@ -293,10 +303,18 @@ def compare_model_predictions(experimentpath,
                               modelpath,
                               debug=False,
                               parameterSetPath=None):
+    
+    """
+    PROG: Cleanup script, add annotations
+    Needs better handling of single parameter set simulations
+    """
+    store_cost=False
+
     print('Initializing...')
-    if parameterSetPath is not None:
+    if parameterSetPath != '':
         if Path(parameterSetPath).exists():
             psetdf = pd.read_csv(parameterSetPath)
+            store_cost = True
         else:
             print('Invalid path')
             sys.exit()
@@ -305,6 +323,8 @@ def compare_model_predictions(experimentpath,
     else:
         psets = [None]
         psetlength = 1
+        debug = True
+
     if not debug:
         sd, cutoffs = define_state_space(experimentpath, modelpath)
     else:
@@ -318,86 +338,91 @@ def compare_model_predictions(experimentpath,
     expdat = load_data(experimentpath)
     report = ''
     clock = time.time()
-    kl = []
+    #kl = []
     start = 0
     end = len(expdat)
     print('Starting experiments...')
-    aggregator = {'cost':[]}
+    aggregator = {}
+    if store_cost:
+        aggregator = {'cost':[]}
+        
     uidlist = []
     for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
         uid = str(experiment['id']) + '-' + experiment['strain']
         uidlist.append(uid)
         aggregator[uid] = []
 
-    metacounter = {'counter':[], 'cost':[]}
-    #print('uid\ttf\texpec\tsimul')
+    #metacounter = {'counter':[], 'cost':[]}
+    # TODO: What is this metacounter and what does it do?
     parind = 0
     
     while parind < psetlength:
-        manager = mp.Manager()
-        shareddict = manager.dict()
-        ## TODO: This is problematic! the manager dict is not meant to serve as a counter!!
-        ## Consider converting this to mp.Values()?
-        ## This only affects the printed logs, not the actual results
-        #shareddict.update({uid:{'report':'','counter':0} for uid in uidlist})
-        for uid in uidlist:
-            shareddict[uid] = 0
-        shareddict['counter'] = 0
-
+        pset = psets[parind]
         if debug:
+            shareddict = {}
+            shareddict.update({uid:{'report':'','result':0} for uid in uidlist})            
             for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
                 expargs = {'experiment':experiment,
                            'shareddict': shareddict,
                            'cutoffs': cutoffs,
-                           'paramdict':psets[parind],
+                           'paramdict':pset,
                            'modelpath':modelpath}
                 do_experiment(expargs)
-        
         else:
+            manager = mp.Manager()
+            shareddict = manager.dict()
+            shareddict.update({uid:0 for uid in uidlist})
+            for uid in uidlist:
+                shareddict[uid] = 0            
             with mp.Pool() as pool:
                 jobs = []
+                # Run each experiment in parallel
                 for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
                     expargs = {'experiment':experiment,
                                'shareddict': shareddict,
                                'cutoffs': cutoffs,
-                               'paramdict':psets[parind],
+                               'paramdict':pset,
                                'modelpath':modelpath}
                     job = pool.apply_async(do_experiment, args=(expargs, ))
                     jobs.append(job)
                 for job in jobs:
                     job.wait()
 
-        aggregator['cost'].append(psets[parind].get('cost',0))
-        counter = 0
+        if store_cost:
+            aggregator['cost'].append(psets[parind].get('cost',0))
         cumsum = 0
-        for uid in uidlist:
-            cumsum += shareddict[uid]
-            if shareddict[uid] == 1:
-                aggregator[uid].append(1)
-                counter += 1
-            else:
-                aggregator[uid].append(0)                
+        if psetlength == 1:
+            cumsum = sum([shareddict[uid]['result'] for uid in uidlist])
+        else:
+            cumsum = sum([shareddict[uid] for uid in uidlist])
+            # temp
+            for uid in uidlist:
+                if shareddict[uid] == 1:
+                    aggregator[uid].append(1)
+                else:
+                    aggregator[uid].append(0)                
         #metacounter['counter'].append(shareddict['counter'])
-        #print(parind,'\t', shareddict['counter'], aggregator['cost'][-1])
-        print(parind,'\t', cumsum, '\t', shareddict['counter'],'\t',counter, '\t', aggregator['cost'][-1])
-        
-        del manager
-        del shareddict
+        #print(parind,'\t', cumsum, '\t', shareddict['counter'],'\t',counter, '\t', aggregator['cost'][-1])
+        print(parind,'\t', cumsum)#,'\t',counter)
+
+        if not debug:
+            del manager
+            del shareddict
         parind += 1        
-            
+
     print('Done!')
     print('This took ' + str(time.time() - clock) + 's')
     
     # Write report to file
     if psetlength == 1 and psets[0] is None:
         preamble = '#+OPTIONS: toc:nil\n\n#+LATEX_HEADER: \\usepackage[margin=0.5in]{geometry}\n\n'
-        # summary  = '{} out of {} experiments were correctly predicted\n\n'.format(shareddict['counter'],min(end, len(expdat))-start)
-        # with open('report.org','w') as outfile:
-        #     report = preamble + summary + ''.join([shareddict[k] for k in kl])
-        #     outfile.write(report)
+        summary  = '{} out of {} experiments were correctly predicted\n\n'.format(cumsum,min(end, len(expdat))-start)        
+        with open('tmp/report-1.org','w') as outfile:
+            report = preamble + summary + ''.join([shareddict[uid]['report'] for uid in uidlist])
+            outfile.write(report)
     else:
         agdf = pd.DataFrame(aggregator)
-        agdf.to_csv('summary_' + str(len(psets.keys())) + '_test.csv')
+        agdf.to_csv('rtg_summary_' + str(len(psets.keys())) + '_test.csv')
 
 
 def main():
