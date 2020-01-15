@@ -1,10 +1,13 @@
-import matplotlib.pyplot as plt
+import sys
+import copy
 import yaml
+import pandas as pd
+import numpy as np
+import matplotlib
+from tqdm import tqdm
+import matplotlib.pyplot as plt
 import nutrient_signaling.utils as utils
 from nutrient_signaling.simulators import get_simulator
-import numpy as np
-import copy
-import sys
 
 class TimeCourse:
     """
@@ -14,13 +17,13 @@ class TimeCourse:
         self.data = []
         self.predictions = []
         self.debugflag = False
+        self.parameterSetsDF = None # DataFrame        
         self.data_path = '../data/yaml/time-course-data.yaml'
         self.customFuncDef = {'mig1': (lambda mig_ts: [np.log10((m)/(1e-3+1-m)) for m in mig_ts]), # ensures denom is not 0
                  'rib': (lambda rib_ts: [rib_ts[i]/(1e-2+rib_ts[0]) for i in range(0,len(rib_ts))])} #ensures denom is not 0
-
+        self.numToUse = 0 # Number of parameter sets to use
         self.customylabel = {'mig1' : 'log(nMig1/cMig1)',
                     'rib':'Rel Rib'}
-        
     
     def toggledebug(self):
         self.debugflag = not self.debugflag
@@ -37,33 +40,72 @@ class TimeCourse:
         if self.debugflag:
             print(prnt)
             
-    def read_data(self, data_path='../data/yaml/perturbation-data.yaml'):
+    def readData(self, data_path='../data/yaml/perturbation-data.yaml'):
         self.data_path = data_path
         with open(self.data_path,'r') as infile:
             self.data = yaml.safe_load(infile)
 
-    def comparison(self):
+    def loadAlternateParameterSets(self,pathToAlternateParameters):
+        self.parameterSetsDF = pd.read_csv(pathToAlternateParameters, sep='\t',index_col=None)
+
+    def setNumberOfParameterSets(self, numToUse=50):
+        if self.parameterSetsDF is None:
+            print("Please use readData() to first load a parameter set file")
+        else:
+            self.numToUse = numToUse
+            self.ParameterSetsToUse = self.parameterSetsDF.sort_values(by='cost')[0:1000]
+            self.ParameterSetsToUse = self.ParameterSetsToUse.sample(self.numToUse)            
+            print(self.ParameterSetsToUse.shape)
+        
+    def compareToExperiment(self, experiment, ax=None,plot=True):
+        self.debug(experiment['description'])
+        if ax is None:
+            f, ax = plt.subplots(1,1)
+        self.plotdata(ax, experiment)
+        name = experiment['description']
+        if self.numToUse > 0:
+            for i, psetSeries in tqdm(self.ParameterSetsToUse.iterrows()):
+                traj = self.simulate(experiment,
+                                     parameterSet=psetSeries.to_dict())
+                if experiment['tunits'] == 's':
+                    traj['t'] = [t for t in traj['t']]
+                if experiment['readout'].lower() in self.customFuncDef.keys():
+                    traj['v'] = self.customFuncDef[experiment['readout'].lower()](traj['v'])
+                self.plotpred(ax, traj, c='k',alpha=0.2,lw=1)
+        traj = self.simulate(experiment)
+        if experiment['tunits'] == 's':
+            traj['t'] = [t for t in traj['t']]
+        if experiment['readout'].lower() in self.customFuncDef.keys():
+            traj['v'] = self.customFuncDef[experiment['readout'].lower()](traj['v'])        
+        self.plotpred(ax, traj)        
+        ax.set_ylabel(experiment['readout'])
+        ax.set_xlabel('time')
+
+            
+    def comparison(self): 
         """
         Call simulate on each item in yaml file
         TODO: This is getting messy again. 
-        1. Need to handle plotting of Mig1 on log scale
-        2. Need to handle non-normalized y axis for mig1 cleanly
         3. cAMP should always have 0-1 range.
         """
-        print("Starting Comparison")
-        store_attributes = ['value','time','readout']
+        #print("Starting Comparison")
+        #store_attributes = ['value','time','readout']
         for simid, experiment in enumerate(self.data):
             self.debug(simid)
+            ## 
             traj = self.simulate(experiment)
             if experiment['tunits'] == 's':
                 traj['t'] = [t*60. for t in traj['t']]
             if experiment['readout'].lower() in self.customFuncDef.keys():
                 traj['v'] = self.customFuncDef[experiment['readout'].lower()](traj['v'])
             self.predictions.append(traj)
-            f, ax = plt.subplots(1,1)
-            self.plotdata(ax, experiment)
+
             self.plotpred(ax, self.predictions[-1])
-            plt.savefig(f'img/{simid}.png')
+            name = experiment['description']
+            plt.ylabel(experiment['readout'])
+            plt.xlabel('time')
+            plt.tight_layout()            
+            plt.savefig(f'img/{name}.png')
             plt.close()
 
     def plotall(self):
@@ -71,37 +113,51 @@ class TimeCourse:
             f, ax = plt.subplots(1,1)
             self.plotdata(ax, experiment)
             self.plotpred(ax, pred)
-            plt.savefig(f'img/{simid}.png')
+            name = experiment['description']
+            plt.savefig(f'img/{name}.png')
             plt.close()
         
     def plotdata(self, ax, experiment):
         self.debug(experiment['title'])
-        lo = experiment['normalize']['lower']
-        hi = experiment['normalize']['upper']
-        if np.isnan(lo):
-            lo = min(experiment['value'])
-        if np.isnan(hi):
-            hi = max(experiment['value'])
 
-        normalizedData = utils.minmaxnorm_special(experiment['value'], lo, hi)
-        ax.plot(experiment['time'], normalizedData, 'k.')
+        if experiment['tunits'] == 's':
+            time = [t/60. for t in experiment['time']]
+        else:
+            time = experiment['time']            
+        if experiment['readout'] !='Mig1':
+            lo = experiment['normalize']['lower']
+            hi = experiment['normalize']['upper']
+            if np.isnan(lo) and len(experiment['value']) > 0 :
+                lo = min(experiment['value'])
+            if np.isnan(hi) and len(experiment['value']) > 0 :
+                hi = max(experiment['value'])
+            ax.set_ylim([0,1.1])
+            plotdata = utils.minmaxnorm_special(experiment['value'], lo, hi)
+        else:
+            plotdata = experiment['value']
+        ax.plot(time, plotdata, 'ko',markerfacecolor="none",ms=10)
         ax.set_title(experiment['title'])
         
-    def plotpred(self, ax, traj):
-        print(len(traj['t']))
-        ax.plot(traj['t'], traj['v'],'k--')
+    def plotpred(self, ax, traj, c='r',alpha=1.0,linestyle='-',lw=3):
+        ax.plot(traj['t'], traj['v'],
+                c=c,
+                alpha=alpha,
+                ls=linestyle,
+                lw=lw)
             
-    def simulate(self,experiment):
+    def simulate(self,experiment, parameterSet=None):
         """
         Simulate a time course using the preshift and post shift specifications defined in
         the experiment
         """
-        print(experiment['readout'])
+        self.debug(experiment['readout'])
         model = self.makeSimulator()
+        if parameterSet is not None:
+            model.set_attr(pars=parameterSet)
         preshift = experiment['spec']['preshift']
         postshift = experiment['spec']['postshift']
-        print(preshift)
-        print(postshift)
+        self.debug(preshift)
+        self.debug(postshift)
         tmax = 90
         if len(experiment['time']) >0:
             tmax = max(experiment['time'])
