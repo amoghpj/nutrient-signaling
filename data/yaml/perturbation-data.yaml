@@ -434,7 +434,7 @@
   vmax: 0
   whichcondition: C
 - citation: cite:1999_Nature_Beck_TOR_Nutrient_Regulated_Transcription
-  description: $sit 4$
+  description: $sit4$
   readout: Gln3
   shouldsimulate: y
   simid: 12

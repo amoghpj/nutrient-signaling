@@ -53,7 +53,7 @@ class TimeCourse:
             print("Please use readData() to first load a parameter set file")
         else:
             self.numToUse = numToUse
-            self.ParameterSetsToUse = self.parameterSetsDF.sort_values(by='cost')[0:1000]
+            self.ParameterSetsToUse = self.parameterSetsDF.sort_values(by='cost')[0:5000]
             self.ParameterSetsToUse = self.ParameterSetsToUse.sample(self.numToUse)            
             print(self.ParameterSetsToUse.shape)
         
@@ -135,7 +135,7 @@ class TimeCourse:
             plotdata = utils.minmaxnorm_special(experiment['value'], lo, hi)
         else:
             plotdata = experiment['value']
-        ax.plot(time, plotdata, 'ko',markerfacecolor="none",ms=10)
+        ax.plot(time, plotdata, 'ko',markerfacecolor="none",ms=15)
         ax.set_title(experiment['title'])
         
     def plotpred(self, ax, traj, c='r',alpha=1.0,linestyle='-',lw=3):
