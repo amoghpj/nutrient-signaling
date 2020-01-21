@@ -12,19 +12,19 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import multiprocessing as mp
+from tqdm import tqdm
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from optparse import OptionParser
 # Local Imports
 from nutrient_signaling.simulators import get_simulator
 
-home = os.path.expanduser('~')
 READOUTS = ['Gis1','Mig1','Dot6','Gcn4','Rtg13','Gln3']
 SIMULATOR = 'cpp'
-SIMARGS = {'executable':'robust.o'}
+SIMARGS = {'executable':'rap.o'}
 
 def cleanfname(fname):
-    specialchars = ['\\', '{', '}', ' ']
+    specialchars = ['\\', '{', '}', ' ','^']
     for sc in specialchars:
         fname = fname.replace(sc,'')
     return(fname)
@@ -44,7 +44,7 @@ def tfStates(ss,READOUTS,cutoffs):
         state[rd] = {'val':val, 'dec':dec}
     return(state)
 
-def plotTfs(P, READOUTS, whatsimulation, cutoffs, fname):
+def plotTfs(P, READOUTS, whatsimulation, cutoffs, fname, outDir):
     plt.close()
     f = plt.figure(figsize=(6,4))
     axmap = {'Gln3':0,'Rtg13':1,'Mig1':2,'Gcn4':3,'Gis1':4,'Dot6':5}
@@ -63,7 +63,7 @@ def plotTfs(P, READOUTS, whatsimulation, cutoffs, fname):
         ax.axhline(cutoffs[rd],c='k',ls='--',lw=1.0)
     plt.suptitle(whatsimulation)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])    
-    plt.savefig('img/' + fname + '.png', dpi=200)
+    plt.savefig(outDir + "img/" +  fname + '.png', dpi=200)
 
 def load_data(path):
     with open(path, 'r') as infile:
@@ -80,6 +80,7 @@ def do_experiment(expargs):
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']
     paramdict = expargs['paramdict']
+    outDir = expargs['outDir']    
     singleRun = False
     
     if paramdict is None:
@@ -134,10 +135,10 @@ def do_experiment(expargs):
         if rep in fname:
             fname = fname.replace(rep,'')
     if singleRun:
-        plotTfs(P, READOUTS, uid, cutoffs, fname)
-    interpret_experiment(uid, state, expargs, fname)    
+        plotTfs(P, READOUTS, uid, cutoffs, fname, outDir)
+    interpret_experiment(uid, state, expargs, fname, outDir)    
 
-def interpret_experiment(uid, state, expargs, fname):
+def interpret_experiment(uid, state, expargs, fname, outDir):
     """
     Interpret each in silico simulation.
     Currently records the global predicted cell state,
@@ -257,13 +258,14 @@ def interpret_experiment(uid, state, expargs, fname):
                                  fname)
         shareddict[uid]['report'] += report
     else:
-        shareddict[uid] +=1
+        if simulationAgreementStatus == "agrees":        
+            shareddict[uid] +=1
 
 def stringify(datadict):
     if datadict is None:
         return('')
     else:
-        return('\n'.join(['|' + str(k) + '|' + str(v)+'|' for k,v in datadict.items()]))
+        return('\n'.join(['|' + str(k) + '|' + str(round(v,4))+'|' for k,v in datadict.items()]))
     
 def define_state_space(datapath, modelpath):
     statedict = {r:[] for r in READOUTS}
@@ -302,12 +304,14 @@ def define_state_space(datapath, modelpath):
 def compare_model_predictions(experimentpath,
                               modelpath,
                               debug=False,
-                              parameterSetPath=None):
-    
+                              parameterSetPath=None,
+                              outDir="output/"):
     """
-    PROG: Cleanup script, add annotations
+    PROG: Cleanup script, add descriptions
     Needs better handling of single parameter set simulations
     """
+    if not os.path.exists(outDir + '/img/'):
+        os.mkdir(outDir + '/img/')
     store_cost=False
 
     print('Initializing...')
@@ -352,8 +356,6 @@ def compare_model_predictions(experimentpath,
         uidlist.append(uid)
         aggregator[uid] = []
 
-    #metacounter = {'counter':[], 'cost':[]}
-    # TODO: What is this metacounter and what does it do?
     parind = 0
     
     while parind < psetlength:
@@ -361,12 +363,13 @@ def compare_model_predictions(experimentpath,
         if debug:
             shareddict = {}
             shareddict.update({uid:{'report':'','result':0} for uid in uidlist})            
-            for i, experiment in enumerate(expdat[start:min(end, len(expdat))]):
+            for i, experiment in tqdm(enumerate(expdat[start:min(end, len(expdat))])):
                 expargs = {'experiment':experiment,
                            'shareddict': shareddict,
                            'cutoffs': cutoffs,
                            'paramdict':pset,
-                           'modelpath':modelpath}
+                           'modelpath':modelpath,
+                           'outDir':outDir}
                 do_experiment(expargs)
         else:
             manager = mp.Manager()
@@ -382,7 +385,8 @@ def compare_model_predictions(experimentpath,
                                'shareddict': shareddict,
                                'cutoffs': cutoffs,
                                'paramdict':pset,
-                               'modelpath':modelpath}
+                               'modelpath':modelpath,
+                               'outDir':outDir}
                     job = pool.apply_async(do_experiment, args=(expargs, ))
                     jobs.append(job)
                 for job in jobs:
@@ -409,7 +413,6 @@ def compare_model_predictions(experimentpath,
             del manager
             del shareddict
         parind += 1        
-
     print('Done!')
     print('This took ' + str(time.time() - clock) + 's')
     
@@ -417,12 +420,12 @@ def compare_model_predictions(experimentpath,
     if psetlength == 1 and psets[0] is None:
         preamble = '#+OPTIONS: toc:nil\n\n#+LATEX_HEADER: \\usepackage[margin=0.5in]{geometry}\n\n'
         summary  = '{} out of {} experiments were correctly predicted\n\n'.format(cumsum,min(end, len(expdat))-start)        
-        with open('tmp/report-1.org','w') as outfile:
+        with open(outDir + 'report-1.org','w') as outfile:
             report = preamble + summary + ''.join([shareddict[uid]['report'] for uid in uidlist])
             outfile.write(report)
     else:
         agdf = pd.DataFrame(aggregator)
-        agdf.to_csv('rtg_summary_' + str(len(psets.keys())) + '_test.csv')
+        agdf.to_csv(outDir + 'summary_' + str(len(psets.keys())) + '_test.csv')
 
 
 def main():
@@ -435,12 +438,16 @@ def main():
                       help='Path to parameter set file.')
     parser.add_option('-e','--experiments',default='',type='str',
                       help='Path to yaml file containing experimental results')
+    parser.add_option('','--out-dir',default='output/',type='str',
+                      help='Path to store output. Directory will be created if it does not exist.')
     opt,args = parser.parse_args()
-    
+    if  not os.path.exists(opt.out_dir):
+        os.mkdir(opt.out_dir)
     compare_model_predictions(opt.experiments,
                               opt.modelpath,
                               debug=opt.debug,
-                              parameterSetPath=opt.parameter_sets)
+                              parameterSetPath=opt.parameter_sets,
+                              outDir=opt.out_dir)
     
 if __name__ == '__main__':
     main()

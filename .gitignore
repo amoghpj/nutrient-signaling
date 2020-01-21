@@ -9,3 +9,4 @@ trash/*
 report.*
 test/*
 nsig/*
+*.tex

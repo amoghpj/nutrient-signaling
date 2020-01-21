@@ -34,6 +34,12 @@ are listed below
    #+end_src
 7. You can now import =nutrient_signaling= as a package in your other projects!
 
+* TASKS
+# TODO in the perturbation plot, fix tpk3 deletion
+# specification. Currently, model carries out PKA deletion, so change
+# PKA_T to 0.66 instead of 0, and record nth1 state. 
+# TODO Change rapamycin treatment specification, give importance to Dot6 prediction
+# TODO refactor qualitative.py with functions in compare-experimental-data.py
 * Organization   
 #+begin_src ditaa :file data/organization.png
 
@@ -78,4 +84,4 @@ are listed below
 #+end_src
 
 #+RESULTS:
-q[[file:data/organization.png]]
+[[file:data/organization.png]]

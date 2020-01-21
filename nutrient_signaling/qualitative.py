@@ -1,5 +1,9 @@
 class QualExp:
     def __init__(self):
+        #######
+        # WARNING THIS IS SEVERELY OUT OF DATE!!!!
+        print("This script is outdated. Please use src/compare-experimental-data.py.")
+        sys.exit()
         self.readouts = ['Gis1',
                          'Mig1',
                          'Dot6',
