@@ -193,7 +193,8 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    Gln3: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'    
   growth: slow growth
   id: 6
   mutant:
@@ -203,7 +204,8 @@
       Gln3_T: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    Gln3: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   phenotypeReported: growth
   postshift:
     ATP: 1.0
@@ -266,7 +268,8 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    Gln3: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off' # confirm that this does'nt affect simulations
   growth: no growth
   id: 8
   mutant:
@@ -274,7 +277,8 @@
     pars: null
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    Gln3: 'On'
+    # Gln3: 'On'
+    Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
     ATP: 1.0
@@ -308,7 +312,7 @@
     ics:
       Gln3: 0.0
     pars:
-      Gln3_T: 0.0
+      Gln3_T: 0.65
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
     Dot6: 'On'
@@ -603,8 +607,9 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
+    # Gcn4: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   growth: no growth
   id: 17
   mutant:
@@ -613,8 +618,9 @@
       Ras_T: 0.0
   nutrientCondition: YP Glucose + 50nM rapamycin
   phenotypeInterpreted:
-    Gcn4: 'On'
-    Gln3: 'On'
+    # Gcn4: 'On'
+    # Gln3: 'On'
+    Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
     ATP: 1.0
@@ -641,8 +647,9 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
+    # Gcn4: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   growth: no growth
   id: 18
   mutant:
@@ -651,8 +658,9 @@
       PKA_T: 0.66
   nutrientCondition: YP Glucose + 50nM rapamycin
   phenotypeInterpreted:
-    Gcn4: 'On'
-    Gln3: 'On'
+    # Gcn4: 'On'
+    # Gln3: 'On'
+    Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
     ATP: 1.0
@@ -761,8 +769,9 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
+    # Gcn4: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   growth: no growth
   id: 21
   mutant:
@@ -771,8 +780,9 @@
       w_pka_camp: 0.0
   nutrientCondition: YPD + 200ng/mL rapamycin
   phenotypeInterpreted:
-    Gcn4: 'On'
-    Gln3: 'On'
+    # Gcn4: 'On'
+    # Gln3: 'On'
+    Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
     ATP: 1.0
@@ -1066,8 +1076,9 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
+    # Gcn4: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   growth: no growth
   id: 29
   mutant:
@@ -1076,7 +1087,8 @@
       Gcn4_T: 0.0
   nutrientCondition: YPD 200ng/mL rapamycin
   phenotypeInterpreted:
-    Gln3: 'On'
+    # Gln3: 'On'
+    Dot6: 'On'
   phenotypeReported: no growth
   postshift:
     ATP: 1.0
@@ -1283,7 +1295,8 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    Gln3: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   growth: growth
   id: 35
   mutant:
@@ -1292,7 +1305,8 @@
       Snf1_T: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    Gln3: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   phenotypeReported: rapamycin resistance
   postshift:
     ATP: 1.0
@@ -1319,7 +1333,8 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    Gln3: 'On'
+    # Gln3: 'On'
+    Dot6: 'Off'
   growth: no growth
   id: 36
   mutant:
@@ -1328,7 +1343,8 @@
       w_snf_glc: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    Gln3: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'On'
   phenotypeReported: rapamycin hypersensitive
   postshift:
     ATP: 1.0
@@ -1355,7 +1371,8 @@
     Mig1: 'On'
     'On': 'On'
   forGrowth:
-    Gln3: 'On'
+    # Gln3: 'On'
+    Dot6: 'Off'
   growth: no growth
   id: 37
   mutant:
@@ -1364,7 +1381,8 @@
       w_gln3: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    Gln3: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'On'
   phenotypeReported: rapamycin sensitivity
   postshift:
     ATP: 1.0
@@ -1473,8 +1491,9 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    Gcn4: 'Off'
-    Gln3: 'Off'
+    # Gcn4: 'Off'
+    # Gln3: 'Off'
+    Dot6: 'Off'
   growth: growth
   id: 39
   mutant:
