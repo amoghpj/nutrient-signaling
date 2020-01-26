@@ -1408,6 +1408,7 @@
     ics:
     pars:
       w_gcn: 0.0
+      w_gln_sit: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
     Gcn4: 'Off'
@@ -1489,6 +1490,7 @@
       Sch9_T: 1.0
       w_sch9: -10
       w_gcn: 0.0
+      w_gln_sit: 0.0      
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
     Gcn4: 'Off'
