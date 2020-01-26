@@ -193,7 +193,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gln3: 'Off'
     Dot6: 'Off'    
   growth: slow growth
   id: 6
@@ -204,7 +203,6 @@
       Gln3_T: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gln3: 'Off'
     Dot6: 'Off'
   phenotypeReported: growth
   postshift:
@@ -268,7 +266,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gln3: 'Off'
     Dot6: 'Off' # confirm that this does'nt affect simulations
   growth: no growth
   id: 8
@@ -277,7 +274,6 @@
     pars: null
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gln3: 'On'
     Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
@@ -342,7 +338,7 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    Gln3: 'Off'
+    Dot6: 'Off'
   growth: no growth
   id: 10
   mutant:
@@ -352,7 +348,7 @@
       Gln3_T: 0.65
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    Gln3: 'On'
+    Dot6: 'On'
   phenotypeReported: no growth
   postshift:
     ATP: 1.0
@@ -487,8 +483,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: growth
   id: 14
@@ -498,8 +492,6 @@
       w_pka_sch9: 0.0
   nutrientCondition: YP Glucose + 50nM rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: slow growth
   postshift:
@@ -527,8 +519,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   growth: growth
   id: 15
@@ -538,8 +528,6 @@
       w_ras_pka: 0.5x
   nutrientCondition: YP Glucose + 50nM rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: slow growth
   postshift:
@@ -567,8 +555,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   growth: growth
   id: 16
@@ -578,8 +564,6 @@
       w_ras_pka: 0.1x
   nutrientCondition: YP Glucose + 50nM rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: slow growth
   postshift:
@@ -607,8 +591,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: no growth
   id: 17
@@ -618,8 +600,6 @@
       Ras_T: 0.0
   nutrientCondition: YP Glucose + 50nM rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'On'
-    # Gln3: 'On'
     Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
@@ -647,8 +627,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: no growth
   id: 18
@@ -658,8 +636,6 @@
       PKA_T: 0.66
   nutrientCondition: YP Glucose + 50nM rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'On'
-    # Gln3: 'On'
     Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
@@ -687,8 +663,6 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   growth: ~TOR1-1
   id: 19
@@ -699,8 +673,6 @@
       w_ras_pka: 0.0
   nutrientCondition: YPD + 200ng/mL rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: growth
   postshift:
@@ -728,8 +700,6 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   growth: ~TOR1-1
   id: 20
@@ -740,8 +710,6 @@
       w_pka_camp: 0.0
   nutrientCondition: YPD + 200ng/mL rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: growth
   postshift:
@@ -769,8 +737,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: no growth
   id: 21
@@ -780,8 +746,6 @@
       w_pka_camp: 0.0
   nutrientCondition: YPD + 200ng/mL rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'On'
-    # Gln3: 'On'
     Dot6: 'On'    
   phenotypeReported: no growth
   postshift:
@@ -798,7 +762,7 @@
   shortname: Schmelzle et al, 2003
   strain: bcy1
 - background: TB50alpha
-  comments: Different from 18?
+  comments: Different from 21?
   doi: https://doi.org/10.1128/mcb.24.1.338-351.2004
   expReadout: colony growth
   expected:
@@ -809,8 +773,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   growth: slow growth
   id: 22
@@ -821,8 +783,6 @@
       w_pka_camp: 10x
   nutrientCondition: YPD + 200ng/mL rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: Resistant to rapamycin
   postshift:
@@ -986,43 +946,6 @@
     NH4: 2.0
   shortname: Cherkasova et al, 2010
   strain: gcn2 snf1
-# - background: CLA-305
-#   comments: resistant to rapamycin, same as untreated levels
-#   doi: http://dx.doi.org/10.1128/jb.183.7.2331-2334.2001
-#   expReadout: colony growth
-#   expected:
-#     Dot6: 'On'
-#     Gcn4: 'On'
-#     Gis1: 'Off'
-#     Gln3: 'On'
-#     Mig1: 'On'
-#     Rtg13: 'On'
-#   forGrowth:
-#     Gcn4: 'Off'
-#     Gln3: 'Off'
-#   growth: growth
-#   id: 27
-#   mutant:
-#     ics: null
-#     pars: null
-#   nutrientCondition: YPD 200ng/mL rapamycin
-#   phenotypeInterpreted:
-#     Gcn4: 'Off'
-#     Gln3: 'Off'
-#   phenotypeReported: growth
-#   postshift:
-#     ATP: 1.0
-#     Carbon: 1.0
-#     Glutamine_ext: 1.0
-#     TORC1_T: 0.8
-#   postshiftics:
-#     TORC1: 0
-#   preshift:
-#     ATP: 1.0
-#     Carbon: 1.0
-#     Glutamine_ext: 1.0
-#   shortname: Valenzuela et al, 2001
-#   strain: TOR1-4
 - background: CLA-303
   comments: resistant to rapamycin, same as untreated levels
   doi: http://dx.doi.org/10.1128/jb.183.7.2331-2334.2001
@@ -1035,11 +958,9 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   growth: growth
-  id: 28
+  id: 27
   mutant:
     ics: null
     pars:
@@ -1047,8 +968,6 @@
       Gln3_T: 0.0
   nutrientCondition: YPD 200ng/mL rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: growth
   postshift:
@@ -1076,18 +995,15 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: no growth
-  id: 29
+  id: 28
   mutant:
     ics: null
     pars:
       Gcn4_T: 0.0
   nutrientCondition: YPD 200ng/mL rapamycin
   phenotypeInterpreted:
-    # Gln3: 'On'
     Dot6: 'On'
   phenotypeReported: no growth
   postshift:
@@ -1118,7 +1034,7 @@
     Gis1: 'Off'
     Mig1: 'On'
   growth: viable
-  id: 30
+  id: 29
   mutant:
     ics: null
     pars:
@@ -1154,7 +1070,7 @@
     Gis1: 'On'
     Mig1: 'Off'
   growth: very little growth
-  id: 31
+  id: 30
   mutant:
     ics: null
     pars:
@@ -1189,7 +1105,7 @@
   forGrowth:
     Gis1: 'Off'
   growth: viable
-  id: 32
+  id: 31
   mutant:
     ics: null
     pars:
@@ -1225,7 +1141,7 @@
   forGrowth:
     Gis1: 'On'
   growth: no growth
-  id: 33
+  id: 32
   mutant:
     ics: null
     pars:
@@ -1261,7 +1177,7 @@
   forGrowth:
     Gis1: 'Off'
   growth: raffinose < < glucose
-  id: 34
+  id: 33
   mutant:
     ics: null
     pars:
@@ -1295,17 +1211,15 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: growth
-  id: 35
+  id: 34
   mutant:
     ics: null
     pars:
       Snf1_T: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gln3: 'Off'
     Dot6: 'Off'
   phenotypeReported: rapamycin resistance
   postshift:
@@ -1333,17 +1247,15 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Gln3: 'On'
     Dot6: 'Off'
   growth: no growth
-  id: 36
+  id: 35
   mutant:
     ics: null
     pars:
       w_snf_glc: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gln3: 'Off'
     Dot6: 'On'
   phenotypeReported: rapamycin hypersensitive
   postshift:
@@ -1371,17 +1283,15 @@
     Mig1: 'On'
     'On': 'On'
   forGrowth:
-    # Gln3: 'On'
     Dot6: 'Off'
   growth: no growth
-  id: 37
+  id: 36
   mutant:
     ics: null
     pars:
       w_gln3: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gln3: 'Off'
     Dot6: 'On'
   phenotypeReported: rapamycin sensitivity
   postshift:
@@ -1409,19 +1319,16 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: slow growth
-  id: 38
+  id: 37
   mutant:
     ics:
     pars:
       w_gcn: 0.0
+      w_gln_sit: 0.0
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: slow growth
   postshift:
@@ -1449,8 +1356,6 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: slow growth
   id: 38
@@ -1462,8 +1367,6 @@
       w_sch9: -10      
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'    
   phenotypeReported: slow growth
   postshift:
@@ -1491,8 +1394,6 @@
     Mig1: 'On'
     Rtg13: 'Off'
   forGrowth:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   growth: growth
   id: 39
@@ -1503,10 +1404,9 @@
       Sch9_T: 1.0
       w_sch9: -10
       w_gcn: 0.0
+      w_gln_sit: 0.0            
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Gcn4: 'Off'
-    # Gln3: 'Off'
     Dot6: 'Off'
   phenotypeReported: growth
   postshift:

@@ -232,7 +232,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Dot6: 'Off'
     Gln3: 'Off'
     Gcn4: 'Off'        
   growth: slow growth
@@ -243,7 +242,6 @@
       w_gln3: 2x
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Dot6: 'Off'
     Gln3: 'Off'
     Gcn4: 'Off'        
   phenotypeReported: growth
@@ -272,7 +270,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Dot6: 'Off'
     Gln3: 'Off'
     Gcn4: 'Off'        
   growth: no growth
@@ -282,7 +279,6 @@
     pars: null
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Dot6: 'On'
     Gln3: 'On'
     Gcn4: 'On'            
   phenotypeReported: no growth
@@ -311,7 +307,6 @@
     Mig1: 'On'
     Rtg13: 'On'
   forGrowth:
-    # Dot6: 'Off'
     Gln3: 'Off'
     Gcn4: 'Off'            
   growth: no growth
@@ -323,7 +318,6 @@
       Gln3_T: 0.65
   nutrientCondition: YPD + rapamycin
   phenotypeInterpreted:
-    # Dot6: 'On'
     Gln3: 'On'
     Gcn4: 'On'                
   phenotypeReported: no growth
@@ -980,43 +974,6 @@
     NH4: 2.0
   shortname: Cherkasova et al, 2010
   strain: gcn2 snf1
-# - background: CLA-305
-#   comments: resistant to rapamycin, same as untreated levels
-#   doi: http://dx.doi.org/10.1128/jb.183.7.2331-2334.2001
-#   expReadout: colony growth
-#   expected:
-#     Dot6: 'On'
-#     Gcn4: 'On'
-#     Gis1: 'Off'
-#     Gln3: 'On'
-#     Mig1: 'On'
-#     Rtg13: 'On'
-#   forGrowth:
-#     Gcn4: 'Off'
-#     Gln3: 'Off'
-#   growth: growth
-#   id: 27
-#   mutant:
-#     ics: null
-#     pars: null
-#   nutrientCondition: YPD 200ng/mL rapamycin
-#   phenotypeInterpreted:
-#     Gcn4: 'Off'
-#     Gln3: 'Off'
-#   phenotypeReported: growth
-#   postshift:
-#     ATP: 1.0
-#     Carbon: 1.0
-#     Glutamine_ext: 1.0
-#     TORC1_T: 0.8
-#   postshiftics:
-#     TORC1: 0
-#   preshift:
-#     ATP: 1.0
-#     Carbon: 1.0
-#     Glutamine_ext: 1.0
-#   shortname: Valenzuela et al, 2001
-#   strain: TOR1-4
 - background: CLA-303
   comments: resistant to rapamycin, same as untreated levels
   doi: http://dx.doi.org/10.1128/jb.183.7.2331-2334.2001
@@ -1032,7 +989,7 @@
     Gcn4: 'Off'
     Gln3: 'Off'
   growth: growth
-  id: 28
+  id: 27
   mutant:
     ics: null
     pars:
@@ -1071,7 +1028,7 @@
     Gcn4: 'Off'
     Gln3: 'Off'
   growth: no growth
-  id: 29
+  id: 28
   mutant:
     ics: null
     pars:
@@ -1109,7 +1066,7 @@
     Gis1: 'Off'
     Mig1: 'On'
   growth: viable
-  id: 30
+  id: 29
   mutant:
     ics: null
     pars:
@@ -1145,7 +1102,7 @@
     Gis1: 'On'
     Mig1: 'Off'
   growth: very little growth
-  id: 31
+  id: 30
   mutant:
     ics: null
     pars:
@@ -1180,7 +1137,7 @@
   forGrowth:
     Gis1: 'Off'
   growth: viable
-  id: 32
+  id: 31
   mutant:
     ics: null
     pars:
@@ -1216,7 +1173,7 @@
   forGrowth:
     Gis1: 'On'
   growth: no growth
-  id: 33
+  id: 32
   mutant:
     ics: null
     pars:
@@ -1252,7 +1209,7 @@
   forGrowth:
     Gis1: 'Off'
   growth: raffinose < < glucose
-  id: 34
+  id: 33
   mutant:
     ics: null
     pars:
@@ -1289,7 +1246,7 @@
     Gcn4: 'Off'
     Gln3: 'Off'    
   growth: growth
-  id: 35
+  id: 34
   mutant:
     ics: null
     pars:
@@ -1327,7 +1284,7 @@
     Gcn4: 'Off'
     Gln3: 'Off'    
   growth: no growth
-  id: 36
+  id: 35
   mutant:
     ics: null
     pars:
@@ -1365,7 +1322,7 @@
     Gcn4: 'Off'
     Gln3: 'Off'    
   growth: no growth
-  id: 37
+  id: 36
   mutant:
     ics: null
     pars:
@@ -1403,7 +1360,7 @@
     Gcn4: 'Off'
     Gln3: 'Off'
   growth: slow growth
-  id: 38
+  id: 37
   mutant:
     ics:
     pars:
