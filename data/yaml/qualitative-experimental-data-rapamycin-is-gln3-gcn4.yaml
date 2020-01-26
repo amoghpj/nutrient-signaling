@@ -794,7 +794,7 @@
   shortname: Schmelzle et al, 2003
   strain: bcy1
 - background: TB50alpha
-  comments: Different from 18?
+  comments: Different from 21?
   doi: https://doi.org/10.1128/mcb.24.1.338-351.2004
   expReadout: colony growth
   expected:
