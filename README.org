@@ -2,6 +2,12 @@
 
 Code to simulate the  nutrient signaling model in yeast and carry out analysis based
 on literature curated data.
+** Model Availability
+While this repository provides python scripts to interact with the model, we also
+provide the model in other formats for ease of use. These can be found in =/data/model-formats=
+
+The alternate formats currently available are:
+1. SBML
 
 ** Installation 
 I recommend setting up a virtual environment for this project. The steps to be followed
