@@ -71,7 +71,7 @@
   shortname: Liu et al, 1999
   strain: rho0
 - background: PSY142 \rho^0
-  comments: null
+  comments: The representation of 0.02% glutamate can be misleading.Setting Glutamine_ext to a low value like 0.2 might result in Rtg activation. A possibility is to further decrease k_acc_glu. 
   doi: https://doi.org/10.1128/mcb.19.10.6720
   expReadout: colony growth
   expected:
@@ -108,7 +108,7 @@
   shortname: Liu et al, 1999
   strain: rtg1
 - background: PSY142 \rho^0
-  comments: null
+  comments: Defining Rtg3_T to be 0.75 still allows for its activation in low glucose. This is a problem. Since setting Rtg3_T lower than 0.5 is meaningless, consider decreasing k_acc_glu further.
   doi: https://doi.org/10.1128/mcb.19.10.6720
   expReadout: colony growth
   expected:

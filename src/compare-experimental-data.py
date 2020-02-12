@@ -81,11 +81,10 @@ def do_experiment(expargs):
     cutoffs = expargs['cutoffs']
     paramdict = expargs['paramdict']
     outDir = expargs['outDir']    
-    singleRun = False
-    
+    singleRun = expargs['singleRun']
     if paramdict is None:
         paramdict = {}
-        singleRun = True
+    #     singleRun = True
         
     modelpath = expargs['modelpath']    
     uid = str(experiment['id']) + '-' + experiment['strain']
@@ -97,7 +96,6 @@ def do_experiment(expargs):
                           simulator=SIMULATOR,
                           **SIMARGS)
     model.set_attr(pars=paramdict)
-    
     ## Do mutant simulation
     ## 1. If parameters are defined, set parameters
     ## 2. If initial conditions are specified, set initial conditions
@@ -110,6 +108,7 @@ def do_experiment(expargs):
             if type(v) is str and 'x' in v:
                 mutpars[k] = float(v.replace('x',''))*model.pars[k]
         model.set_attr(pars = mutpars)
+
     if experiment['mutant']['ics'] is not None:
         model.set_attr(ics = experiment['mutant']['ics'])
     
@@ -149,7 +148,7 @@ def interpret_experiment(uid, state, expargs, fname, outDir):
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']    
     paramdict = expargs['paramdict']
-    singleRun = False
+    singleRun = expargs['singleRun']
     
     if paramdict is None:
         singleRun = True
@@ -225,10 +224,13 @@ def interpret_experiment(uid, state, expargs, fname, outDir):
         if not p:
             simulationAgreementStatus = "does not agree"
 
-
+    if simulationAgreementStatus == "agrees":
+        print(uid)
     if singleRun:
         if simulationAgreementStatus == "agrees":
             shareddict[uid]['result'] +=1
+
+            
         template = "* {}\n"\
             ":PROPERTIES:\n:CUSTOM_ID: sec:{}\n:END:\n"\
             "{}\n\n"\
@@ -319,6 +321,12 @@ def compare_model_predictions(experimentpath,
         if Path(parameterSetPath).exists():
             psetdf = pd.read_csv(parameterSetPath)
             store_cost = True
+            singleRun = False
+            if psetdf.shape[0] == 1:
+                psets = [psetdf.iloc[0].to_list()]
+                psetlength = 1
+                debug = True
+                singleRun = True
         else:
             print('Invalid path')
             sys.exit()
@@ -327,6 +335,7 @@ def compare_model_predictions(experimentpath,
     else:
         psets = [None]
         psetlength = 1
+        singleRun = True
         debug = True
 
     if not debug:
@@ -365,11 +374,12 @@ def compare_model_predictions(experimentpath,
             shareddict.update({uid:{'report':'','result':0} for uid in uidlist})            
             for i, experiment in tqdm(enumerate(expdat[start:min(end, len(expdat))])):
                 expargs = {'experiment':experiment,
-                           'shareddict': shareddict,
+                           'shareddict': dict(shareddict),
                            'cutoffs': cutoffs,
                            'paramdict':pset,
                            'modelpath':modelpath,
-                           'outDir':outDir}
+                           'outDir':outDir,
+                           'singleRun':singleRun}
                 do_experiment(expargs)
         else:
             manager = mp.Manager()
@@ -417,7 +427,7 @@ def compare_model_predictions(experimentpath,
     print('This took ' + str(time.time() - clock) + 's')
     
     # Write report to file
-    if psetlength == 1 and psets[0] is None:
+    if singleRun:#psetlength == 1 and psets[0] is None:
         preamble = '#+OPTIONS: toc:nil\n\n#+LATEX_HEADER: \\usepackage[margin=0.5in]{geometry}\n\n'
         summary  = '{} out of {} experiments were correctly predicted\n\n'.format(cumsum,min(end, len(expdat))-start)        
         with open(outDir + 'report-1.org','w') as outfile:
