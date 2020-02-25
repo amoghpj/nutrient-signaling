@@ -1500,7 +1500,7 @@
     ATP: 1.0
     Carbon: 1.0
     Glutamine_ext: 1.0
-  shortname: Johnny et al, 2005
+  shortname: Roosen et al, 2005
   strain: sch9
 - background: W303-1
   comments: PKA function intact
@@ -1537,5 +1537,5 @@
     ATP: 1.0
     Carbon: 1.0
     Glutamine_ext: 1.0
-  shortname: Johnny et al, 2005
+  shortname: Roosen et al, 2005
   strain: sch9 gis1

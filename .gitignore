@@ -10,3 +10,12 @@ report.*
 test/*
 nsig/*
 *.tex
+*.bak
+incidental-analyses.org
+leastc-pset-gln3/*
+new-output/*
+opt-pset-gln3/*
+single-pset-rap-is-dot6/*
+single-pset-rap-is-gln3gnc4/*
+another-random-pset/*
+corrected-id-gln3/*
