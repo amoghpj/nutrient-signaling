@@ -190,6 +190,13 @@ def define_state_space(modelpath):
     return statedict, cutoffs
 
 def to_file(path, aggregate, colorder):
+    """
+    Write predictions to file
+    - TODO Refactor to using pandas
+    - NOTE This function is wholly unnecessary, a better
+      approach would be to first create the data object, 
+      then write it out to file using pandas.
+    """
     if Path(path).exists():
         outstr = ''
     else:
