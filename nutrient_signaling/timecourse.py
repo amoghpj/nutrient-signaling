@@ -11,7 +11,25 @@ from nutrient_signaling.simulators import get_simulator
 
 class TimeCourse:
     """
+    Minimal script:
     
+    __plottimecourse.py__
+    modelpath = "../data/2018-9-26-12-3-no-sigma"
+    from nutrient_signaling import TimeCourse
+    tc = TimeCourse()
+    tc.setSimulator(modelpath, simulatortype="cpp")
+    tc.readData()
+    tc.makeSimulator()
+    tc.comparison()
+    tc.plotall()
+
+    Notes:
+    Some important variables:
+    1. self.data_path ::  The default path is  relative to the library. Set this explicitly when
+       calling readData() if a different data set has to be compared. Please ensure that
+       the time course YAML file is correctly formatted!
+    2. self.customFuncDef :: This is a dictionary of lambda functions to appropriately standardize
+       experimental data if it is not a straighforward min-max normalization.
     """
     def __init__(self):
         self.data = []
@@ -40,7 +58,7 @@ class TimeCourse:
         if self.debugflag:
             print(prnt)
             
-    def readData(self, data_path='../data/yaml/perturbation-data.yaml'):
+    def readData(self, data_path='../data/yaml/time-course-data.yaml'):
         self.data_path = data_path
         with open(self.data_path,'r') as infile:
             self.data = yaml.safe_load(infile)
@@ -88,11 +106,12 @@ class TimeCourse:
         TODO: This is getting messy again. 
         3. cAMP should always have 0-1 range.
         """
-        #print("Starting Comparison")
+        print("Starting Comparison")
         #store_attributes = ['value','time','readout']
         for simid, experiment in enumerate(self.data):
             self.debug(simid)
-            ## 
+            ##
+            print(experiment)
             traj = self.simulate(experiment)
             if experiment['tunits'] == 's':
                 traj['t'] = [t*60. for t in traj['t']]
@@ -100,19 +119,11 @@ class TimeCourse:
                 traj['v'] = self.customFuncDef[experiment['readout'].lower()](traj['v'])
             self.predictions.append(traj)
 
-            self.plotpred(ax, self.predictions[-1])
-            name = experiment['description']
-            plt.ylabel(experiment['readout'])
-            plt.xlabel('time')
-            plt.tight_layout()            
-            plt.savefig(f'img/{name}.png')
-            plt.close()
-
     def plotall(self):
         for simid, (experiment, pred) in enumerate(zip(self.data, self.predictions)):
             f, ax = plt.subplots(1,1)
             self.plotdata(ax, experiment)
-            self.plotpred(ax, pred)
+            self.plotpred(ax, pred, experiment)
             name = experiment['description']
             plt.savefig(f'img/{name}.png')
             plt.close()
@@ -138,8 +149,12 @@ class TimeCourse:
         ax.plot(time, plotdata, 'ko',markerfacecolor="none",ms=15)
         ax.set_title(experiment['title'])
         
-    def plotpred(self, ax, traj, c='r',alpha=1.0,linestyle='-',lw=3):
-        ax.plot(traj['t'], traj['v'],
+    def plotpred(self, ax, traj, experiment, c='r',alpha=1.0,linestyle='-',lw=3):
+        if experiment['tunits'] == 's':
+            time = [t/60. for t in traj['t']]
+        else:
+            time = traj['t']        
+        ax.plot(time, traj['v'],
                 c=c,
                 alpha=alpha,
                 ls=linestyle,
