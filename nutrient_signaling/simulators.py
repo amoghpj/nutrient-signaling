@@ -7,6 +7,7 @@ from nutrient_signaling.cpputils.pydstool2cpp import PyDSTool2CPP
 
 class SimulatorPython:
     def __init__(self, modeldict):
+        self.modeldict = modeldict
         self.pars = {}
         self.ics = {}
         self.variables = {}
@@ -27,6 +28,17 @@ class SimulatorPython:
     
     def simulate_and_get_points(self):
         return(self.simulateModel())
+    def simulate_and_get_ss(self):
+        """
+        Returns steady states of all variables in the model
+    
+        :return SSPoints: Dictionary containing steady state values
+        """
+        Points = self.simulateModel()
+        SSPoints={}
+        for k in Points.keys():
+            SSPoints[k]=Points[k][-1]
+        return(SSPoints)
     
     def get_ss(self):
         """
@@ -114,7 +126,8 @@ class SimulatorCPP:
     def set_attr(self, pars={}, ics={},tdata=[0,90]):
         self.pars.update(pars)
         self.ics.update(ics)
-        self.tend = tdata[1]
+        self.tdata = tdata
+        self.tend = self.tdata[1]
         
     def get_attr(self):
         print("pars ", self.pars )
@@ -194,6 +207,11 @@ class SimulatorCPP:
 
 
 def get_simulator(modelpath='./', simulator='py',**kwargs):
+    try:
+        simulator in ["py","cpp"]
+    except:
+        print("Invalid simulator specification. Specific one of 'py' or 'cpp'.")
+        sys.exit()
     model = md.readinput(modelpath) ## change
     
     if simulator == 'py':
