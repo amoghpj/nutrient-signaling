@@ -1,3 +1,7 @@
+"""
+Author: Amogh Jalihal
+This script is used to generate Figure 4(c).
+"""
 import sys
 import pandas as pd
 import matplotlib
@@ -5,7 +9,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import matplotlib.patheffects as pe
-font = {'family' : 'normal',
+font = {'family' : 'Sans',
         'size'   : 17}
 
 matplotlib.rc('font', **font)
@@ -17,7 +21,7 @@ def compare_states(states, settings):
     '''
     # tuple for OFF vs ON confidence for each of the 6 TFs
     numTFs= len(settings.readouts)
-    confidence = [[0,0] for _ in range(numTFs)]
+    confidence = [{'off':0,'on':0} for _ in range(numTFs)]
     
     # States are of form 010010. Inner loop splits each character 'c'    
     splitstates = [[c for c in s] for s in states]
@@ -29,14 +33,14 @@ def compare_states(states, settings):
         for i, c in enumerate(s):
             ## Record the number of times the TF is OFF or ON
             if c == '0':
-                confidence[i][0] += 1.
-            else:
-                confidence[i][1] += 1.
+                confidence[i]['off'] += 1.
+            elif c == '1':
+                confidence[i]['on'] += 1.
                 
     ## Store as fraction
     for i in range(len(confidence)):
-        confidence[i][0] = confidence[i][0]/total
-        confidence[i][1] = confidence[i][1]/total
+        confidence[i]['off'] = confidence[i]['off']/total
+        confidence[i]['on'] = confidence[i]['on']/total
     return(confidence)
 
 
@@ -59,7 +63,7 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
     [{
       'NAME':STRAIN-NAME, 
       'state':{
-               NUTRIENT-CONDITION: [FRACTION ON, FRACTION OFF],
+               NUTRIENT-CONDITION: {'off':FRACTION OFF, 'on':FRACTION ON},
                (7 more)
                },
     (16 more)
@@ -68,10 +72,11 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
     '''
     
     ## Color Settings. Leaving older colors in here just in case.
-    lightgreen = '#d4efdfff'#'#a9dfbf'##d4efdf'#
-    lightred = '#f5b7b1'
-    darkred = 'r' # '#e74c3c'#
-    darkgreen = 'g'#'#27ae60'#'#196f3d'#'g'
+    robustgreen = '#d4efdf'#'k''#a9dfbf'##d4efdf'#
+    robustred = '#f5b7b1' # '#ffffff'
+    
+    fragilered = 'r' # '#e74c3c'#
+    fragilegreen = 'g'#'#27ae60'#'#196f3d'#'g'
     
     strains = [conf['name'] for conf in confidence]
     print(strains)
@@ -104,13 +109,13 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
         for xpos, nstate in enumerate(nstates):
             readout_counter = 0
             for conf in confidence[ypos]['states'][nstate]:
-                off = conf[0]
-                on = conf[1]
-                red = lightred
-                green = lightgreen
+                off = conf['off']
+                on = conf['on']
+                red = robustred
+                green = robustgreen                
                 if min(on, off) > 0.1:
-                    red = darkred
-                    green = darkgreen
+                    red = fragilered
+                    green = fragilegreen
                     
                 ystart = ypos - 0.25
                 yend_off = off/2.
@@ -178,7 +183,7 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
     plt.gca().spines['top'].set_visible(False)        
     plt.tight_layout()
     # plt.savefig('state-space-comparison-robust-representative.pdf', dpi=500)
-    plt.savefig('debug-tf-predictions.pdf', dpi=300)
+    plt.savefig('debug-tf-predictions-2.pdf', dpi=300)
 
 
 class Settings():
@@ -196,7 +201,7 @@ class Settings():
               'TORC1':'$\Delta$tor1',
               'Snf1':'$\Delta$snf1',
               'EGO':'$\Delta$gtr1/2',
-              'PDE':'$\Delta$pde1/2/3',
+              'PDE':'$\Delta$pde1/2',
               'EGOGAP':'$\Delta$lst4/7',
               'Ras':'$\Delta$ras2',
               'Sak':'$\Delta$sak1',
@@ -262,7 +267,7 @@ def main():
     ## predictions from each parameter set, and for each TF,
     ## counts the number of time the parameter sets predicted
     ## an ON vs an OFF. This is reported as a fraction of the total
-    ## number of predictions, and is returned as a list.
+    ## number of predictions, and is returned as a list. (See docs for visualize())
     
     for col in colorder:
         strain, nstate = col.split('_')
