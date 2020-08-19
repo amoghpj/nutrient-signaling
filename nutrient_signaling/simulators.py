@@ -4,14 +4,16 @@ import pandas as pd
 import PyDSTool as dst
 import nutrient_signaling.modelreader as md
 from nutrient_signaling.cpputils.pydstool2cpp import PyDSTool2CPP
+from nutrient_signaling.utils import get_protein_abundances
 
 class SimulatorPython:
-    def __init__(self, modeldict):
+    def __init__(self, modeldict, scale=False):
         self.modeldict = modeldict
         self.pars = {}
         self.ics = {}
         self.variables = {}
         self.createModelObject(modeldict)
+        self.scale = scale
         
     def simulateModel(self):
         """
@@ -24,7 +26,18 @@ class SimulatorPython:
         :type pts: dict
         """
         pts = self.model.compute('test').sample()
-        return(pts)
+        if self.scale:
+            scaled = dict()
+            scale_abundance_dict = get_protein_abundances()
+            for k in self.variables: # loop over variables:
+                if k in scale_abundance_dict.keys():
+                    scaled[k] =[p*float(scale_abundance_dict[k])
+                                for p in pts[k]]
+                else:
+                    scaled[k] = pts[k]
+            return(scaled)
+        else:
+            return(pts)
     
     def simulate_and_get_points(self):
         return(self.simulateModel())
@@ -111,7 +124,8 @@ class SimulatorCPP:
     def __init__(self, modeldict,
                  execpath='./src/',
                  executable='main.o',
-                 simfilename='values.dat'):
+                 simfilename='values.dat',
+                 scale=False):
         self.execpath = execpath
         self.variables = modeldict['variables'].keys()
         self.pars = modeldict['parameters']
@@ -122,6 +136,7 @@ class SimulatorCPP:
         self.plot = False
         self.simfilename = simfilename
         self.executable = executable
+        self.scale = scale
         
     def set_attr(self, pars={}, ics={},tdata=[0,90]):
         self.pars.update(pars)
@@ -187,11 +202,17 @@ class SimulatorCPP:
     #########
     ## Helpers
     def simulate_and_get_ss(self):
-        cmd = self.construct_call()
-        self.simulate(cmd)
-        D = self.read_sim()
-        SS = self.get_ss_as_dict(D)
-        return(SS)
+        """
+        Returns steady states of all variables in the model
+    
+        :return SSPoints: Dictionary containing steady state values
+        """
+        Points = self.simulate_and_get_points()
+        SSPoints={}
+        for k in Points.keys():
+            SSPoints[k]=Points[k][-1]
+        return(SSPoints)
+    
     # wrapper
     def get_ss(self):
         return(self.simulate_and_get_ss())
@@ -200,7 +221,19 @@ class SimulatorCPP:
         cmd = self.construct_call()
         self.simulate(cmd)
         D = self.read_sim()
-        return(D.to_dict(orient='list'))
+        pts = D.to_dict(orient='list')
+        if self.scale:
+            scaled = {}
+            scale_abundance_dict = get_protein_abundances()
+            for k in pts.keys(): # loop over variables:
+                if k in scale_abundance_dict.keys():
+                    scaled[k] =[p*float(scale_abundance_dict[k])
+                                for p in pts[k]]
+                else:
+                    scaled[k] = pts[k]
+            return(scaled)
+        else:
+            return(pts)
     
     def simulateModel(self):
         return(self.simulate_and_get_points())    
@@ -213,9 +246,10 @@ def get_simulator(modelpath='./', simulator='py',**kwargs):
         print("Invalid simulator specification. Specific one of 'py' or 'cpp'.")
         sys.exit()
     model = md.readinput(modelpath) ## change
+    scale = kwargs.get('scale',False)
     
     if simulator == 'py':
-        simobj = SimulatorPython(model)
+        simobj = SimulatorPython(model,scale=scale)
         return(simobj)
     
     elif simulator == 'cpp':
@@ -254,7 +288,8 @@ def get_simulator(modelpath='./', simulator='py',**kwargs):
         simobj = SimulatorCPP(model,
                               execpath=execpath,
                               executable=executable,
-                              simfilename=simfilename)
+                              simfilename=simfilename,
+                              scale=scale)
         return(simobj)
             
             

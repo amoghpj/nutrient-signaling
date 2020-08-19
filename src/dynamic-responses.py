@@ -1,34 +1,29 @@
 import nutrient_signaling.simulators as sim
 import pandas as pd
+import os
 import sys
 import importlib
 utils = importlib.import_module("compare_state_space_predictions")
+import confidence_state_space as css
 import matplotlib.pyplot as plt
 import matplotlib
+import numpy as np
 from tqdm import tqdm
-font = {'family' : 'normal',
-        'size'   : 14}
+from optparse import OptionParser
 
-matplotlib.rc('font', **font)
-SIMARGS = {'executable': 'dynamics.o'}
+MODELPATH = "data/2018-9-26-12-3-no-sigma"
+SIMARGS = {'executable': 'dynamics-1.o'}
 SIMULATOR = 'cpp'
-mapper = {'Sch9':'$\Delta$sch9',
-          'TORC1':'$\Delta$tor1',
-          'Snf1':'$\Delta$snf1',
-          'EGO':'$\Delta$gtr1/2',
-          'PDE':'$\Delta$pde1/2',
-          'EGOGAP':'$\Delta$lst4/7',
-          'Ras':'$\Delta$ras2',
-          'Sak':'$\Delta$sak1',
-          'Gcn2':'$\Delta$gcn2',
-          'Cyr1':'$\Delta$cyr1',
-          'PKA':'$\Delta$tpk1/2/3',
-          'Sch9-inhibit-gcn2':'GCN2-S557',
-          'Snf1-activates-nGln3':'GLN3 $\Delta$ST',
-          'TORC1-inhibits-Gln3':'GLN3 $\Delta$TT',
-          'Sch9-inhibits-PKA':'$\Delta$bcy1',
-          'PKA-inhibits-Ras':'$\Delta$ira1/2',
-          'wt':'wt'}
+MAJORVARIABLES = [
+    "Snf1",
+    "Sch9",
+    "PKA",
+    "cAMP",
+    "Gcn2",
+    "Gis1",
+    "Gln3",
+    "Rtg13"]
+
 
 def read_k_alternate_params(k=10):
     """
@@ -40,8 +35,63 @@ def read_k_alternate_params(k=10):
     ParameterSetsToUse = df.sort_values(by='cost')[0:5000]
     ParameterSetsToUse = ParameterSetsToUse.sample(k)            
     return(ParameterSetsToUse)
+
+def compute_mse(referencetraj, newtraj, is_camp=False):
+    """
+    Take two lists storing time coureses. Compute and return SSE 
+    """
+    if is_camp:
+        mse = sum([np.power((r - n), 2.) for r,n in zip(referencetraj[0:5000],newtraj[0:5000])])/5000
+    else:
+        mse = sum([np.power((r - n), 2.) for r,n in zip(referencetraj,newtraj)])/len(newtraj)
+    return mse
+
+def simulate_strain_and_nutrient_condition(ns, pset={},mut={}):
+    """
+    Simulates a single strain using a parameter set if specified.
+    Requires a nutrient condition specification
+    """
+    model = sim.get_simulator(modelpath = MODELPATH,
+                              simulator="cpp",
+                              executable=SIMARGS['executable'])
+    tmax = 90
+    # Set preshift parameters
+    if ns['name'] == 'LCLN':
+        preshift = {'Carbon':1.0,"Glutamine_ext":1.0,"ATP":1.0}
+    else:
+        preshift = {'Carbon':0.0,"Glutamine_ext":1.0,"ATP":0.0}
+    # initialize with pset
+    deletion_par = {}
+    if type(pset) != dict:
+        deletion_par.update(pset.to_dict())
+    deletion_par.update(mut.get('pars', {}))
+    deletion_par.update(preshift)
+    deletion_ics = mut.get('ics', {})
     
-def plot_dynamic_responses():
+    model.set_attr(pars=deletion_par,
+                   ics=deletion_ics,
+                   tdata = [0,90])
+    # Reinitialize the parameter specification
+    # NOTE This can be cleaner
+    deletion_par = {}
+    if type(pset) != dict:
+        deletion_par.update(pset.to_dict())
+    deletion_par.update(mut.get('pars', {}))
+    postshift = {'Carbon':ns['C'],
+                 "ATP":ns['C'],
+                 "Glutamine_ext":ns['Gln'],
+                 "NH4":ns['NH4'],
+                 "Proline":ns['Pro']}
+
+    deletion_par.update(postshift)
+    model.set_attr(ics=model.simulate_and_get_ss(),
+                   pars=deletion_par,
+                   tdata=[0,tmax])
+
+    points = model.simulate_and_get_points()
+    return(points)
+
+def dynamic_responses(settings,numpsets=10):
     """
     For each variable in defined in MAJORVARIABLES,
     make a tableu of time courses where columns are
@@ -49,14 +99,8 @@ def plot_dynamic_responses():
     Preshift will always be starvation, except in the case of
     LCLN
     """
-    modelpath = "data/2018-9-26-12-3-no-sigma"
-    majorvariables = [
-        "Snf1",
-        "Sch9",
-        "PKA",
-        "cAMP"
-    ]
-    psets = read_k_alternate_params(k=100)
+
+    psets = read_k_alternate_params(k=numpsets)
     
     nutrientStates = utils.createNutrientInputSpace()
 
@@ -64,82 +108,121 @@ def plot_dynamic_responses():
     norder = ['HCHG','HCHN','HCHP', 'HCLN',
               'LCHG','LCHN','LCHP', 'LCLN']
     
-    mutantSpecs = utils.getMutantSpecs(modelpath)
+    mutantSpecs = utils.getMutantSpecs(MODELPATH)
+    referencetraj = {no:{mv:None for mv in MAJORVARIABLES}
+                          for no in norder }
+    for ns in nutrientStates:
+        points = simulate_strain_and_nutrient_condition(ns)
+        for mv in MAJORVARIABLES:
+            referencetraj[ns['name']][mv] = points[mv]
 
-    # Main loop, over the variables to plot
-    for mv in majorvariables:
-        print(mv)
-        plt.close()
-        f = plt.figure(figsize=(20,30))
-        imgid = 1
-        # loop over the strains
-        for mut in tqdm(mutantSpecs):
-            if mv == 'cAMP':
-                tmax = 4.0
-            else:
-                tmax = 90.0
-                
-            # loop over the nutrient conditions
-            for no in norder:
-                # silly loop to get the correct specification 
-                ns = [n for n in nutrientStates if n['name'] == no][0]
-                ax = f.add_subplot(len(mutantSpecs),len(nutrientStates),imgid)
-                # loop over parameter sets
-                for i, pset in psets.iterrows():
-                    # Initialize model
-                    model = sim.get_simulator(modelpath = modelpath,
-                                              simulator="cpp",
-                                              executable=SIMARGS['executable'])
-                    # Set preshift parameters
-                    if ns['name'] == 'LCLN':
-                        preshift = {'Carbon':1.0,"Glutamine_ext":1.0,"ATP":1.0}
+    store = {mut['name']:{no:{mv:[] for mv in MAJORVARIABLES}
+                          for no in norder }
+             for mut in mutantSpecs}    
+    # loop over the strains
+    for mut in tqdm(mutantSpecs):
+        # loop over the nutrient conditions
+        for no in norder:
+            # silly loop to get the correct specification 
+            ns = [n for n in nutrientStates if n['name'] == no][0]
+            # loop over parameter sets
+            for i, pset in psets.iterrows():
+                # Initialize model
+                points = simulate_strain_and_nutrient_condition(ns, mut=mut, pset=pset)
+                # Main loop, over the variables to plot
+                for mv in MAJORVARIABLES:
+                    if mv == 'cAMP':
+                        is_camp = True
                     else:
-                        preshift = {'Carbon':0.0,"Glutamine_ext":1.0,"ATP":0.0}
-                    # initialize with pset
-                    deletion_par = pset.to_dict()
-                    deletion_par.update(mut['pars'])
-                    deletion_par.update(preshift)
-                    deletion_ics = mut['ics']
-                    model.set_attr(pars=deletion_par,
-                                   ics=deletion_ics,
-                                   tdata = [0,90])
-                    # Reinitialize.
-                    # NOTE This can be cleaner
-                    deletion_par = pset.to_dict()
-                    deletion_par.update(mut['pars'])
-                    postshift = {'Carbon':ns['C'],
-                                 "ATP":ns['C'],
-                                 "Glutamine_ext":ns['Gln'],
-                                 "NH4":ns['NH4'],
-                                 "Proline":ns['Pro']}
+                        is_camp = False
+                    # Compute MSE with reference pset
+                    v = compute_mse(referencetraj[ns['name']][mv],
+                                    points[mv], is_camp=is_camp)                        
+                    store[mut['name']][no][mv].append(v)
                     
-                    deletion_par.update(postshift)
-                    model.set_attr(ics=model.simulate_and_get_ss(),
-                                   pars=deletion_par,
-                                   tdata=[0,tmax])
-    
-                    points = model.simulate_and_get_points()
-                    ax.plot(points['t'],points[mv],'k',alpha=0.4)
-                    # End loop
-                # Configure plot
-                if imgid <= len(nutrientStates):
-                    ax.set_title(ns['name'])
+    with open('sse_values_'+str(numpsets)+'.csv','w') as outfile:
+        for mut in mutantSpecs:
+            for no in norder:
+                for mv in MAJORVARIABLES:
+                    l = [settings.mapper[mut['name']],no,mv]
+                    l.extend([str(s) for s in store[mut['name']][no][mv]])
+                    outfile.write(','.join(l) + '\n')
 
-                if (imgid-1) % len(nutrientStates) == 0:
-                    ax.set_ylabel(mapper[mut['name']])
-                if mv != 'cAMP':
-                    ax.set_ylim([0,1.1])
-                else:
-                    ax.set_ylim([0,3.0])
-                ax.set_xticklabels([])
-                ax.set_yticklabels([])                
-                imgid += 1
-        # plt.suptitle(mv)
-        plt.tight_layout()
-        plt.savefig('img/dynamic-responses-' + mv.lower() + '-confidence.png', dpi=100)
+def process_results(numpsets, settings):
+    path = 'sse_values_' + str(numpsets) + '.csv'
+    if not os.path.exists(path):
+        print('please run dynamic_responses() by setting do_simulations = True.')
+        sys.exit()
+    df = pd.read_csv(path, header=None, index_col=False)
+
+    # # NOTE Calculating a cutoff to consider a timecourse to be a good fit
+    # # There are two ways of thinking about this
+    # # 1. We can calculate the median MSE across all simulations.
+    # #    This assumes that a majority of the MSEs are "good"
+    # vals = df[[i for i in range(3,numpsets+3)]].values.flatten()
+    # cutoff = np.median(vals)
+    # # 2. Select a maximum MSE based on visual examination of time course
+    vals = df[(df[0]=='wt')
+              & (df[1]== 'HCHN')
+              & (df[2] == 'Sch9')][[i for i in range(3,numpsets+3)]].values.flatten()
+    cutoff = np.max(vals)
+    
+    revmapper = {v:k for k,v in settings.mapper.items()}
+    # Adapted from confidence_state_space.py
+    # make a nested dictionary to hold predictions
+    confidencedf = pd.DataFrame(columns=['strain','variable','nutrientState','robustFraction'],
+                              index=pd.Index([i for i in range(df.shape[1])]))
+    confidence = [{'name':revmapper[strain],
+                   'states':{nstate:[] for nstate in
+                             settings.nutrientStates}}
+                  for straindesc, strain in settings.mapper.items()]    
+
+          
+    for i, row in df.iterrows():
+        strain = row[0]
+        nutrientState = row[1]
+        variable = row[2]
+        vals = list(row[3:numpsets+3])
+        robustFraction = float(sum([1 for i in range(len(vals))
+                                    if vals[i] < cutoff]))/float(numpsets)
+        confidencedf.loc[i] = {'strain':strain,
+                           'variable':variable,
+                           'nutrientState':nutrientState,
+                           'robustFraction':robustFraction}
+    strains = df[0].unique()
+    for strain in strains:
+        for curind, conf in enumerate(confidence):
+            if conf['name'] == revmapper[strain]:
+                break
+        for nstate in settings.nutrientStates:
+            strain_nut_dyn = confidencedf[(confidencedf.strain == strain) &
+                                          (confidencedf.nutrientState == nstate)]
+            for mv in MAJORVARIABLES[0:4]:
+                # This is a problem. 'on' and 'off' don't carry the same meanings as the TF plot
+                # 'on' is fraction that is robust, 'off' is fraction that is not
+                # So if 'on' > 0.9 then the simulations are robust
+                rob = strain_nut_dyn[strain_nut_dyn.variable == mv].robustFraction.values[0]
+                #print(rob)
+                confidence[curind]['states'][nstate].append({'off':1.0 - rob, 'on':rob})
+    evidencedict = {}
+    css.visualize(confidence, numpsets, evidencedict, settings,
+                  plotname='dynamics-'+ str(numpsets)+'.pdf',
+                  inputtype='dynamics')
         
 if __name__ == "__main__":
-    plot_dynamic_responses()
+    parser = OptionParser()
+    parser.add_option('-s','--simulate',action='store_true',default=False,dest='do_simulations',
+                      help='Do simulations')
+    parser.add_option('-n','--numpsets',type='int',default=None,dest='numpsets',
+                      help='Number of parameter sets to use')
+    opt,args = parser.parse_args()
+    
+    numpsets = opt.numpsets
+    do_simulations = opt.do_simulations
+    
+    settings = css.Settings()
 
-
+    if do_simulations:
+        dynamic_responses(settings, numpsets=numpsets)
+    process_results(numpsets, settings)
 

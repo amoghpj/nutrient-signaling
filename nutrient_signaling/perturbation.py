@@ -61,6 +61,10 @@ class Perturb:
         """
         Call simulate on each item in yaml file
         """
+        if len(self.data) == 0:
+            print("Please load perturbation data using read_data()")
+            sys.exit()
+            
         print("Starting Comparison")
         store_attributes = ['simid','description', 'units','readout','source','citation','value','whichcondition','type','vmax']
         #for simid, experiment in enumerate(self.data):
@@ -96,7 +100,7 @@ class Perturb:
                                  p['perturb']['pre'],
                                 p['perturb']['post']])
             self.specialNormalizeValues[v]['min'] = min(vals)
-            self.specialNormalizeValues[v]['max'] = max(vals)
+            self.specialNormalizeValues[v]['max'] = max(vals) + 1e-5
     
     def simulate(self, experiment, experimenttype='wt'):
         """

@@ -98,7 +98,7 @@ int ode(float x[], float tstart, float tend, float y[], float step,
   
   int counter = 0;
   
-  for (int i=0; i<25;i++){
+  for (int i=0; i<26;i++){
     x[counter] = Vlist[names[i]];
     counter++;}
   
@@ -112,14 +112,14 @@ int ode(float x[], float tstart, float tend, float y[], float step,
   values.open(defaultoutname.c_str());
 
   values<<"t";
-  for (int i=0; i<25; i++){
+  for (int i=0; i<26; i++){
     values<<"\t"<<names[i];}
   values<<"\n";
   
   float tcurr = tstart;
 
   values<<tcurr;
-  for (int j=0;j<25;j++){
+  for (int j=0;j<26;j++){
     values<<"\t"<<x[j];
   }
   
@@ -135,7 +135,7 @@ int ode(float x[], float tstart, float tend, float y[], float step,
     tcurr = tcurr + step;
     
     values<<tcurr;
-    for (int j=0;j<25;j++){
+    for (int j=0;j<26;j++){
       values<<"\t"<<x[j];
     }
     

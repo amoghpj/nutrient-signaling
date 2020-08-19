@@ -66,7 +66,7 @@ class PyDSTool2CPP:
             outfile.write("extern std::map<std::string,float> initializeParamMap(std::map<std::string,float> Plist,int,char**, bool);\n")
             outfile.write("extern std::map<std::string,float> initializeICSMap(std::map<std::string,float> Vlist,int ,char** , bool);\n")
         
-            outfile.write("extern char names[25][25];\n")
+            outfile.write("extern char names[26][26];\n")
             outfile.write("typedef std::vector <double> state_type;\n")
             ###########################################################################
             #### Class Nutsig
@@ -130,7 +130,7 @@ class PyDSTool2CPP:
         with open(self.writepath + "model.cpp",'w') as outfile:
             outfile.write("#include \"model.h\"\n")
         
-            outfile.write("char names[25][25] = {")
+            outfile.write("char names[26][26] = {")
             i=0
             for variable in ModelDef['variables'].keys():
                 outfile.write("\"" + str(variable) + "\"")
@@ -144,7 +144,7 @@ class PyDSTool2CPP:
             outfile.write("std::map<std::string,float> initializeParamMap(std::map<std::string,float> Plist, int argc,char** argv, bool verb){\n")
             outfile.write("bool paramflag = false;\n")
             outfile.write("bool icsflag = false;\n")
-            outfile.write("char ListOfPars[200][25] = {\n")
+            outfile.write("char ListOfPars[200][26] = {\n")
             i=0
             for parameter in ModelDef['parameters'].keys():
                 outfile.write("\"" + parameter + "\"")
@@ -185,7 +185,7 @@ class PyDSTool2CPP:
             outfile.write("std::map<std::string,float> initializeICSMap(std::map<std::string,float> Vlist, int argc,char** argv, bool verb){\n")
             outfile.write("  bool paramflag =false;\n")
             outfile.write("  bool icsflag =false;\n")
-            outfile.write("  char ListOfVars[200][25] = {\n")
+            outfile.write("  char ListOfVars[200][26] = {\n")
             i=0
             for var in ModelDef['variables'].keys():
                 outfile.write("\"" + var + "\"")

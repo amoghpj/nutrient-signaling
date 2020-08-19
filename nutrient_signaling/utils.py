@@ -57,3 +57,28 @@ def minmaxnorm(input_list):
         
     return(output_list)
 
+def get_protein_abundances():
+    """
+    Returns dictionary of protein abundance values
+    """
+    scale_abundance_dict = {'Cyr1':4000,
+                            'Gln1':23700,
+                            'Gcn2':4500,
+                            'Sak':2000,
+                            'PKA':20000,
+                            'Trehalase':12000,
+                            'Rtg13':2300,
+                            'Ras':19000,
+                            'Gcn4':4600,
+                            'Gln3':1600,
+                            'Dot6':8000,
+                            'PDE':40000,
+                            'Mig1':3000,
+                            'Tps1':26000,
+                            'TORC1':6000,
+                            'Gis1':5100,
+                            'Snf1':11300,
+                            'EGO':2700,
+                            'Sch9':12000,
+                            'EGOGAP':300}    
+    return(scale_abundance_dict)

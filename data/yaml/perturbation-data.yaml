@@ -478,7 +478,7 @@
   readout: Sch9
   shouldsimulate: y
   simid: 13
-  source: Fig 1
+  source: Fig 6B
   spec:
     perturbation:
       ics:
@@ -501,8 +501,8 @@
       ics: null
       pars: null
   time:
-    perturb: 90
-    wt: 90
+    perturb: 30
+    wt: 30
   type: shift
   units: '% TORC1 activity as Sch9-P'
   value:

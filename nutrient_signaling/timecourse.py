@@ -110,8 +110,6 @@ class TimeCourse:
         #store_attributes = ['value','time','readout']
         for simid, experiment in enumerate(self.data):
             self.debug(simid)
-            ##
-            print(experiment)
             traj = self.simulate(experiment)
             if experiment['tunits'] == 's':
                 traj['t'] = [t*60. for t in traj['t']]
