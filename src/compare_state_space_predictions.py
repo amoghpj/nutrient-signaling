@@ -29,6 +29,7 @@ def createNutrientInputSpace():
     For each combination of high and low carbon and nitrogen
     input, create a dictionary whose keys are the nutrient input id (nid)
     and strings corresponding to the two letter abbreviation of a state
+    returns: list of dictionaries
     	C	Gln	NH4	Pro	name
     0	0	0	0	0	LCLN
     1	0	1	0	0	LCHG
@@ -83,6 +84,10 @@ def createNutrientInputSpace():
 
 
 def getMutantSpecs(modelpath):
+    """
+    Create a list =mutationSpecs= with each element being a dictionary
+    like follows: {'pars': {}, 'ics':{}, 'name': name}
+    """
     simargs = dict(SIMARGS)
     model = get_simulator(modelpath=modelpath,
                           simulator=SIMULATOR,**simargs)
@@ -218,7 +223,12 @@ def to_file(path, aggregate, colorder):
 def simulateStrains(modelpath,
                     parameterSetPath='',
                     debug=False):
-    
+    """
+    Main entry point.
+    For mutant strains defined in  =getMutantSpecs()= and nutrient conditions defined in
+    =createNutrientInputSpace()=, loop over all psets, simulate and write results to
+    file using =to_file()=.  Simulations are performed in =simulateGlobalStateSpace()=
+    """
     NutrientStates = createNutrientInputSpace()
     mutationSpecs = getMutantSpecs(modelpath)
     aggregator = {'cost':''}

@@ -57,18 +57,21 @@ def draw_grey_background(odd, ax, ypos, nstates, width, height):
         odd = 1
     return odd
         
-def visualize(confidence, numpsets, groundtruthdict, settings):
+def visualize(confidence, numpsets, evidencedict, settings,
+              inputtype='tfstate', # 'dynamics'
+              plotname='tf-predictions.pdf'):
     '''
     confidence: list of nested dictionaries with the following strucuture:
     [{
-      'NAME':STRAIN-NAME, 
-      'state':{
+      'name':STRAIN-NAME, 
+      'states':{
                NUTRIENT-CONDITION: {'off':FRACTION OFF, 'on':FRACTION ON},
                (7 more)
                },
     (16 more)
     }]
-    There should be 17 strains, 8 nutrient conditions
+    There should be 17 strains, 8 nutrient conditions.
+    This function can also handle predictions of dynamic responses. see dynamic-responses.py
     '''
     
     ## Color Settings. Leaving older colors in here just in case.
@@ -78,6 +81,7 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
     fragilered = 'r' # '#e74c3c'#
     fragilegreen = 'g'#'#27ae60'#'#196f3d'#'g'
     
+
     strains = [conf['name'] for conf in confidence]
     print(strains)
     nstates = settings.nutrientStates
@@ -112,10 +116,15 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
                 off = conf['off']
                 on = conf['on']
                 red = robustred
-                green = robustgreen                
-                if min(on, off) > 0.1:
-                    red = fragilered
-                    green = fragilegreen
+                green = robustgreen
+                if inputtype == 'tfstates':
+                    if min(on, off) > 0.1:
+                        red = fragilered
+                        green = fragilegreen
+                elif inputtype == 'dynamics':
+                    if on < 0.8:
+                        red = fragilered
+                        green = fragilegreen                        
                     
                 ystart = ypos - 0.25
                 yend_off = off/2.
@@ -148,8 +157,8 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
 
                 # annotation for experiment agreement
                 strain_nstate_readout = strain + '_' + nstate + '_' + settings.readouts[readout_counter]
-                if strain_nstate_readout in groundtruthdict.keys():
-                    gtstate = groundtruthdict[strain_nstate_readout]
+                if strain_nstate_readout in evidencedict.keys():
+                    gtstate = evidencedict[strain_nstate_readout]
                     color = 'r'
                     if gtstate == 'ON':
                         color = 'g'
@@ -183,7 +192,7 @@ def visualize(confidence, numpsets, groundtruthdict, settings):
     plt.gca().spines['top'].set_visible(False)        
     plt.tight_layout()
     # plt.savefig('state-space-comparison-robust-representative.pdf', dpi=500)
-    plt.savefig('debug-tf-predictions-2.pdf', dpi=300)
+    plt.savefig(plotname, dpi=300)
 
 
 class Settings():
@@ -198,21 +207,23 @@ class Settings():
         self.readouts = ['Gis1','Mig1','Dot6','Gcn4','Rtg13','Gln3']
         self.nutrientStates = ['HCHG','HCHN','HCHP','HCLN','LCHG','LCHN','LCHP','LCLN']
         self.mapper = {'Sch9':'$\Delta$sch9',
-              'TORC1':'$\Delta$tor1',
-              'Snf1':'$\Delta$snf1',
-              'EGO':'$\Delta$gtr1/2',
-              'PDE':'$\Delta$pde1/2',
-              'EGOGAP':'$\Delta$lst4/7',
-              'Ras':'$\Delta$ras2',
-              'Sak':'$\Delta$sak1',
-              'Gcn2':'$\Delta$gcn2',
-              'Cyr1':'$\Delta$cyr1',
-              'PKA':'$\Delta$tpk1/2/3',
-              'Sch9-inhibit-gcn2':'GCN2-S557',
-              'Snf1-activates-nGln3':'GLN3 $\Delta$ST',
-              'TORC1-inhibits-Gln3':'GLN3 $\Delta$TT',
-              'Sch9-inhibits-PKA':'$\Delta$bcy1',
-              'PKA-inhibits-Ras':'$\Delta$ira1/2'}        
+                       'TORC1':'$\Delta$tor1',
+                       'Snf1':'$\Delta$snf1',
+                       'EGO':'$\Delta$gtr1/2',
+                       'PDE':'$\Delta$pde1/2',
+                       'EGOGAP':'$\Delta$lst4/7',
+                       'Ras':'$\Delta$ras2',
+                       'Sak':'$\Delta$sak1',
+                       'Gcn2':'$\Delta$gcn2',
+                       'Cyr1':'$\Delta$cyr1',
+                       'PKA':'$\Delta$tpk1/2/3',
+                       'Sch9-inhibit-gcn2':'GCN2-S557',
+                       'Snf1-activates-nGln3':'GLN3 $\Delta$ST',
+                       'TORC1-inhibits-Gln3':'GLN3 $\Delta$TT',
+                       'Sch9-inhibits-PKA':'$\Delta$bcy1',
+                       'PKA-inhibits-Ras':'$\Delta$ira1/2',
+                       'wt':'wt'
+        }        
         
 def main():
     settings = Settings()

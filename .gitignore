@@ -6,6 +6,7 @@ trash/*
 *.pyc
 *.dat
 *.h
+*.dot
 report.*
 test/*
 nsig/*
@@ -19,3 +20,10 @@ single-pset-rap-is-dot6/*
 single-pset-rap-is-gln3gnc4/*
 another-random-pset/*
 corrected-id-gln3/*
+.dir-locals.el
+.projectile
+.stignore
+/gln3-tap42-redefined/
+/camp-sch9-relationship/
+ira-pde-competition/
+gln3gcn4again/
