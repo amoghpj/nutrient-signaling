@@ -1,3 +1,4 @@
+import os
 import sys
 import copy
 import yaml
@@ -58,7 +59,10 @@ class TimeCourse:
         if self.debugflag:
             print(prnt)
             
-    def readData(self, data_path='../data/yaml/time-course-data.yaml'):
+    def readData(self, data_path=None):
+        cwd = os.path.dirname(os.path.realpath(__file__))
+        if data_path is None:
+            data_path = cwd + '/../data/yaml/time-course-data.yaml'
         self.data_path = data_path
         with open(self.data_path,'r') as infile:
             self.data = yaml.safe_load(infile)

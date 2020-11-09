@@ -29,14 +29,18 @@ class Perturb:
         self.data = []
         self.modelpath = ""
         self.simulatortype = "py"
+        self.executable = "main.o"
         self.specialNormalize = ['cAMP', 'Rib']
 
-    def setSimulator(self, modelpath, simulatortype='py'):
+    def setSimulator(self, modelpath, simulatortype='py', executable="main.o"):
         self.modelpath = modelpath
         self.simulatortype = simulatortype
+        self.executable = executable
 
     def makeSimulator(self):
-        simobj = get_simulator(self.modelpath, self.simulatortype)
+        simobj = get_simulator(modelpath=self.modelpath,
+                               simulator=self.simulatortype,
+                               executable=self.executable)
         return simobj
         
     def toggledebug(self):
@@ -46,11 +50,13 @@ class Perturb:
         if self.debugflag:
             print(prnt)
         
-    def read_data(self, data_path='../data/yaml/perturbation-data.yaml'):
+    def readData(self, data_path=None):
         """
         From path, read perturbation data
         """
-        # cwd = os.path.dirname(os.path.realpath(__file__))
+        cwd = os.path.dirname(os.path.realpath(__file__))
+        if data_path is None:
+            data_path = cwd + '/../data/yaml/perturbation-data.yaml'
         # print('I am in ' + cwd)
         # TODO what is the point of the above line?
         self.data_path = data_path
@@ -102,56 +108,56 @@ class Perturb:
             self.specialNormalizeValues[v]['min'] = min(vals)
             self.specialNormalizeValues[v]['max'] = max(vals) + 1e-5
     
-    def simulate(self, experiment, experimenttype='wt'):
+    def simulate(self, experiment, experimenttype='wt', paramset={},executable="main.o"):
         """
         For each element in `data`, simulate experimenttype
         and store the steady state values
         """
+        # initialize variables
         readout = experiment['readout']
-        # Store the perturbation specification regardless of the strain
+        result = {'pre':0, 'post':0}
+        model = self.makeSimulator()
+        
+        # Parameters and initial conditions representing the perturbation
         pars_perturb = experiment['spec']['perturbation']['pars']
         self.debug(pars_perturb)
         ics_perturb = experiment['spec']['perturbation']['ics']
         self.debug(ics_perturb)
         
-        result = {'pre':0, 'post':0}
-
-        model = self.makeSimulator()
-        preics = model.get_ss()
-
-        # Initialize all variables with their ss values
-        # Preshift
-        prepars = experiment['spec']['preshift']['pars']
-        model.set_attr(pars=prepars)
-
+        # initizialize ics and parameters
+        parameters = paramset.copy()
+        parameters.update(experiment['spec']['preshift']['pars'])
+        model.set_attr(pars=parameters, ics=model.simulate_and_get_ss())
+        preics = model.simulate_and_get_ss()        
+        
         if experimenttype == 'perturb':
-            # Parameters and initial conditions representing the experimental
+            parameters.update(pars_perturb)
             preics.update(ics_perturb)
-            prepars.update(pars_perturb)
 
         model.set_attr(ics=preics,
-                       pars=prepars,                       
+                       pars=parameters,
                        tdata=[0, experiment['time'][experimenttype]])
         
-        result['pre'] = model.get_ss()[experiment['readout']]
+        ## 1. Preshift steady state simulation
+        preshiftss = model.simulate_and_get_ss()
+        result['pre'] = preshiftss[readout]
         self.debug('pre done')
+
         # Postshift
-        postics = model.get_ss()
-        postpars = experiment['spec']['postshift']['pars']
+        parameters.update(experiment['spec']['postshift']['pars'])        
+        postics = preshiftss
         
         if experimenttype == 'perturb':
+            parameters.update(pars_perturb)            
             postics.update(ics_perturb)
-            postpars.update(pars_perturb)
-
-
+            
         model.set_attr(ics=postics,
-                       pars=postpars,
+                       pars=parameters,
                        tdata=[0, experiment['time'][experimenttype]])
         
-        result['post'] = model.get_ss()[experiment['readout']]
+        result['post'] = model.simulate_and_get_ss()[readout]
         self.debug('post done')        
         del(model)
-        # self.debug(result)
         return(result)
 
     def simulate_old(self,experiment, experimenttype='wt'):
