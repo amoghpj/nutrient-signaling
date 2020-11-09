@@ -1,0 +1,838 @@
+- citation: cite:1999_Nature_Beck_TOR_Nutrient_Regulated_Transcription
+  description: rapamycin
+  readout: Gln3
+  shouldsimulate: y
+  simid: 1
+  source: Fig 3A
+  spec:
+    perturbation:
+      ics:
+        TORC1: 0.0
+      pars:
+        TORC1_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 90
+    wt: 90
+  type: shift
+  units: pixels free Gln3 pull-down
+  value:
+    postshift:
+      perturb: 38081.039
+      wt: 38081.039
+    preshift:
+      perturb: 38081.039
+      wt: 1214.134
+  vmax: 0
+  whichcondition: rap
+- citation: cite:2002_PNAS_Crespo_TOR_Gln3_Rtg13
+  description: MSX:$ gln3$
+  readout: Gln3
+  shouldsimulate: n
+  simid: 2
+  source: Fig 2C
+  spec:
+    perturbation:
+      ics: {}
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    postshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: {}
+      pars:
+        w_torc_glut: 0.0
+  time:
+    perturb: 90
+    wt: 90
+  type: treat
+  units: GLN1 mRNA at 0 min, 40 min
+  value:
+    postshift:
+      perturb: 3709.0
+      wt: 8920.0
+    preshift:
+      perturb: 3126.0
+      wt: 2892.9
+  vmax: 0
+  whichcondition: '0'
+- citation: cite:1997_Microbiology_Crauwels_Thevelein_Sch9_Yeast
+  description: $sch9$
+  readout: Gis1
+  shouldsimulate: y
+  simid: 3
+  source: Fig 6B
+  spec:
+    perturbation:
+      ics:
+        Sch9: 0.0
+      pars:
+        Sch9_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 30
+    wt: 30
+  type: shift
+  units: '% CTT1 gene expression'
+  value:
+    postshift:
+      perturb: 10.0
+      wt: 35.0
+    preshift:
+      perturb: 100.0
+      wt: 700.0
+  vmax: 0
+  whichcondition: C
+- citation: cite:1997_Microbiology_Crauwels_Thevelein_Sch9_Yeast
+  description: $sch9$
+  readout: Rib
+  shouldsimulate: y
+  simid: 4
+  source: Fig 9B
+  spec:
+    perturbation:
+      ics:
+        Sch9: 0.0
+      pars:
+        Sch9_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 60
+    wt: 60
+  type: shift
+  units: '% RPL25 expression'
+  value:
+    postshift:
+      perturb: 100.0
+      wt: 600.0
+    preshift:
+      perturb: 100.0
+      wt: 150.0
+  vmax: 0
+  whichcondition: N
+- citation: cite:1993_molcelbio_rolfes_gcn4_purine_limitation
+  description: $gcn2$
+  readout: Gcn4
+  shouldsimulate: y
+  simid: 5
+  source: Table 2
+  spec:
+    perturbation:
+      ics:
+        Gcn2: 0.0
+      pars:
+        Gcn2_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 150
+    wt: 150
+  type: shift
+  units: GCN4-lacZ pull down (w/o 3AT, at 8 hours)
+  value:
+    postshift:
+      perturb: 38.0
+      wt: 100.0
+    preshift:
+      perturb: 11.0
+      wt: 7.3
+  vmax: 0
+  whichcondition: 3AT
+- citation: cite:1999_MolBioCell_Ma_Pde_cAMP
+  description: $pde$
+  readout: cAMP
+  shouldsimulate: y
+  simid: 6
+  source: Fig 1A
+  spec:
+    perturbation:
+      ics:
+        PDE: 0.0
+      pars:
+        PDE_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 5
+    wt: 5
+  type: shift
+  units: cAMP nmol/g wet wt
+  value:
+    postshift:
+      perturb: 3.8
+      wt: 1.1
+    preshift:
+      perturb: 0.25
+      wt: 0.25
+  vmax: 0.0
+  whichcondition: C
+- citation: cite:1990_MolCellBio_Mbonyi_Glucose_Induced_Hyperaccumulation_cAMP
+  description: $tpk1$ $tpk2$
+  readout: Trehalase
+  shouldsimulate: y
+  simid: 7
+  source: Fig 5
+  spec:
+    perturbation:
+      ics:
+        PKA: 0.3
+      pars:
+p        PKA_T: 0.3
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 1.0        
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 90
+    wt: 90
+  type: shift
+  units: Trehalase sp act nmol/(min mg prtn)
+  value:
+    postshift:
+      perturb: 50.0    # 30.0
+      wt: 100.0        # 25.0      
+    preshift:
+      perturb: 25.0    # 
+      wt: 25.0         # 
+  vmax: 0
+  whichcondition: C
+- citation: cite:1988_MolCelBio_Mbonyi_Ras_cAMP_yeast
+  description: $ras1$ $ras2$  $bcy1$
+  readout: cAMP
+  shouldsimulate: y
+  simid: 8
+  source: Fig 2A
+  spec:
+    perturbation:
+      ics:
+        Ras: 0.0
+      pars:
+        Ras_T: 0.0
+        w_pka_camp: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 5
+    wt: 5
+  type: shift
+  units: Assumed cAMP nmol/g wet wt
+  value:
+    postshift:
+      perturb: 0.056
+      wt: 1.1
+    preshift:
+      perturb: 0.056
+      wt: 0.056
+  vmax: 3.8
+  whichcondition: C
+- citation: cite:2015_Cell_Peli-Gulli_deVirgillio_Amino_Acids-TORC1-Lst4-Lst7_Rag
+  description: $gtr1$ $gtr2$ (4 m)
+  readout: Sch9
+  shouldsimulate: y
+  simid: 9
+  source: Fig 1C
+  spec:
+    perturbation:
+      ics:
+        EGO: 0.0
+      pars:
+        EGO_T: 0.0
+        w_torc_ego: 0.0
+        w_torc_egoin: 0.0
+        w_torc_glut: 0.5
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 5
+    wt: 5
+  type: shift
+  units: '% TORC1 activity as Sch9-P'
+  value:
+    postshift:
+      perturb: 12.0
+      wt: 40.0
+    preshift:
+      perturb: 22.0
+      wt: 2.0
+  vmax: 100
+  whichcondition: N
+- citation: cite:2015_Cell_Peli-Gulli_deVirgillio_Amino_Acids-TORC1-Lst4-Lst7_Rag
+  description: $lst4$ $lst7$ (4 m)
+  readout: Sch9
+  shouldsimulate: y
+  simid: 10
+  source: Fig 1C
+  spec:
+    perturbation:
+      ics:
+        EGOGAP: 0.0
+      pars:
+        EGOGAP_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 5
+    wt: 5
+  type: shift
+  units: '% TORC1 activity as Sch9-P'
+  value:
+    postshift:
+      perturb: 17.0
+      wt: 40.0
+    preshift:
+      perturb: 1.0
+      wt: 2.0
+  vmax: 100
+  whichcondition: N
+- citation: cite:2003_PNAS_Hong_Activation_of_Snf1
+  description: $sak1$ $tos3$ $elm1$
+  readout: Snf1
+  shouldsimulate: y
+  simid: 11
+  source: Fig 2C
+  spec:
+    perturbation:
+      ics:
+        Sak: 0.0
+      pars:
+        Sak_T: 0.0
+    postshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 15
+    wt: 15
+  type: shift
+  units: Kin activity nmol min-1 mg-1
+  value:
+    postshift:
+      perturb: 0.1
+      wt: 2.25
+    preshift:
+      perturb: 0.1
+      wt: 0.05
+  vmax: 0
+  whichcondition: C
+- citation: cite:1999_Nature_Beck_TOR_Nutrient_Regulated_Transcription
+  description: $sit4$
+  readout: Gln3
+  shouldsimulate: y
+  simid: 12
+  source: Fig 3B
+  spec:
+    perturbation:
+      ics:
+        TORC1: 0.0
+      pars:
+        TORC1_T: 0.0
+        w_gln_sit: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 90
+    wt: 90
+  type: shift
+  units: GST-URE2 Pull-down
+  value:
+    postshift:
+      perturb: 789.0
+      wt: 6248.0
+    preshift:
+      perturb: 0.0
+      wt: 461.0
+  vmax: 0
+  whichcondition: rap
+- citation: cite:2014_JBioChem_Stracka_TOR_Nitrogen    
+  description: $gtr1/2$
+  readout: Sch9
+  shouldsimulate: y
+  simid: 13
+  source: Fig 6B
+  spec:
+    perturbation:
+      ics:
+        EGO: 0.0
+      pars:
+        EGO_T: 0.0
+        w_torc_ego: 0.0
+        w_torc_egoin: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 30
+    wt: 30
+  type: shift
+  units: '% TORC1 activity as Sch9-P'
+  value:
+    postshift:
+      perturb: 55.0
+      wt: 55.0
+    preshift:
+      perturb: 5.0
+      wt: 5.0
+  vmax: 0
+  whichcondition: N
+- citation: cite:1993_Cell_Liao_Rtg1_Rtg2
+  description: $rtg1$
+  readout: Rtg13
+  shouldsimulate: n
+  simid: 14
+  source: Table 2
+  spec:
+    perturbation:
+      ics:
+        Rtg13: 0.0
+      pars:
+        Rtg13_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 90
+    wt: 90
+  type: shift
+  units: beta galactosidase nmol/min per mg
+  value:
+    postshift:
+      perturb: 30.0
+      wt: 320.0
+    preshift:
+      perturb: 30.0
+      wt: 43.0
+  vmax: 0
+  whichcondition: N
+- citation: cite:1983_PNAS_Hinnebusch_Postive_Regulation_GAAC
+  description: $gcn4$
+  readout: Gcn4
+  shouldsimulate: n
+  simid: 15
+  source: Fig 5
+  spec:
+    perturbation:
+      ics:
+        Gcn4: 0.0
+      pars:
+        Gcn4_T: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 90
+    wt: 90
+  type: shift
+  units: HIS4-lacZ pull down
+  value:
+    postshift:
+      perturb: 0.0
+      wt: 1.0
+    preshift:
+      perturb: 0.0
+      wt: 0.0
+  vmax: 0
+  whichcondition: N
+- citation: cite:1996_CurrBio_Wilson_Glucose_Repression_Snf1_Activation
+  description: $snf1$
+  readout: Snf1
+  shouldsimulate: n
+  simid: 16
+  source: Fig 1
+  spec:
+    perturbation:
+      ics:
+        Snf1: 0.0
+      pars:
+        Snf1_T: 0.0
+    postshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 90
+    wt: 90
+  type: shift
+  units: Kin activity nmol min-1 mg-1
+  value:
+    postshift:
+      perturb: 0.026000000000000002
+      wt: 0.35
+    preshift:
+      perturb: 0.026000000000000002
+      wt: 0.026000000000000002
+  vmax: 0
+  whichcondition: C
+- citation: cite:1988_JBacter_Courchesne_Gln3_Ure2_Yeast
+  description: $gln3$
+  readout: Gln3
+  shouldsimulate: n
+  simid: 17
+  source: Table 2
+  spec:
+    perturbation:
+      ics:
+        Gln3: 0.0
+      pars:
+        Gln3_T: 0.0
+    postshift:
+      pars:
+        ATP: 0.0
+        Carbon: 0.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 90
+    wt: 90
+  type: shift
+  units: Glutamine Synthase sp act
+  value:
+    postshift:
+      perturb: 0.14
+      wt: 1.55
+    preshift:
+      perturb: 0.03
+      wt: 0.04
+  vmax: 0
+  whichcondition: N
+- citation: cite:2014_JBioChem_Stracka_TOR_Nitrogen
+  description: $gtr1$ pGTR1$^{GDP}$ Proline
+  readout: Protein
+  shouldsimulate: n
+  simid: 18
+  source: Fig 6
+  spec:
+    perturbation:
+      ics:
+        EGO: 0.0
+      pars:
+        EGO_T: 0.0
+        w_torc_ego: 0.0
+        w_torc_egoin: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+        Proline: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 200
+    wt: 200
+  type: shift
+  units: Colony Growth
+  value:
+    postshift:
+      perturb: 0.0
+      wt: 1.0
+    preshift:
+      perturb: 0.0
+      wt: 0.0
+  vmax: 0
+  whichcondition: N
+- citation: cite:2014_JBioChem_Stracka_TOR_Nitrogen
+  description: $gtr1$ pGTR1$^{GTP}$ Proline
+  readout: Protein
+  shouldsimulate: n
+  simid: 19
+  source: Fig 6
+  spec:
+    perturbation:
+      ics:
+        EGO: 1.0
+      pars:
+        EGO_T: 1.0
+        w_torc_ego: 0.0
+        w_torc_egoin: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+        Proline: 1.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 200
+    wt: 200
+  type: shift
+  units: Colony Growth
+  value:
+    postshift:
+      perturb: 1.0
+      wt: 1.0
+    preshift:
+      perturb: 0.0
+      wt: 0.0
+  vmax: 0
+  whichcondition: N
+- citation: cite:2014_JBioChem_Stracka_TOR_Nitrogen
+  description: $gtr1$ pGTR1$^{GDP}$ Glutamine
+  readout: Protein
+  shouldsimulate: n
+  simid: 20
+  source: Fig 6
+  spec:
+    perturbation:
+      ics:
+        EGO: 0.0
+      pars:
+        EGO_T: 0.0
+        w_torc_ego: 0.0
+        w_torc_egoin: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 200
+    wt: 200
+  type: shift
+  units: Colony Growth
+  value:
+    postshift:
+      perturb: 0.0
+      wt: 1.0
+    preshift:
+      perturb: 0.0
+      wt: 0.0
+  vmax: 0
+  whichcondition: N
+- citation: cite:2014_JBioChem_Stracka_TOR_Nitrogen
+  description: $gtr1$ pGTR1$^{GTP}$ Glutamine
+  readout: Protein
+  shouldsimulate: n
+  simid: 21
+  source: Fig 6
+  spec:
+    perturbation:
+      ics:
+        EGO: 1.0
+      pars:
+        EGO_T: 1.0
+        w_torc_ego: 0.0
+        w_torc_egoin: 0.0
+    postshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 0.0
+    preshift:
+      pars:
+        ATP: 1.0
+        Carbon: 1.0
+        Glutamine_ext: 1.0
+    treat:
+      ics: null
+      pars: null
+  time:
+    perturb: 200
+    wt: 200
+  type: shift
+  units: Colony Growth
+  value:
+    postshift:
+      perturb: 1.0
+      wt: 1.0
+    preshift:
+      perturb: 0.0
+      wt: 0.0
+  vmax: 0
+  whichcondition: N
