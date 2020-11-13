@@ -32,15 +32,20 @@ class Perturb:
         self.executable = "main.o"
         self.specialNormalize = ['cAMP', 'Rib']
 
-    def setSimulator(self, modelpath, simulatortype='py', executable="main.o"):
+    def setSimulator(self, modelpath,
+                     simulatortype='py',
+                     executable="main.o",
+                     simfilename="values.dat"):
         self.modelpath = modelpath
         self.simulatortype = simulatortype
         self.executable = executable
+        self.simfilename = simfilename
 
-    def makeSimulator(self):
+    def makeSimulator(self, args):
         simobj = get_simulator(modelpath=self.modelpath,
                                simulator=self.simulatortype,
-                               executable=self.executable)
+                               executable=self.executable,
+                               simfilename=self.simfilename)
         return simobj
         
     def toggledebug(self):
@@ -108,7 +113,12 @@ class Perturb:
             self.specialNormalizeValues[v]['min'] = min(vals)
             self.specialNormalizeValues[v]['max'] = max(vals) + 1e-5
     
-    def simulate(self, experiment, experimenttype='wt', paramset={},executable="main.o"):
+    def simulate(self, experiment,
+                 experimenttype='wt',
+                 paramset={},
+                 executable=None,
+                 simulatortype=None,
+                 simfilename=None):
         """
         For each element in `data`, simulate experimenttype
         and store the steady state values
@@ -116,7 +126,10 @@ class Perturb:
         # initialize variables
         readout = experiment['readout']
         result = {'pre':0, 'post':0}
-        model = self.makeSimulator()
+        args = {'executable':executable,
+                 'simfilename':simfilename,
+                'simulator':simulatortype} 
+        model = self.makeSimulator(args)
         
         # Parameters and initial conditions representing the perturbation
         pars_perturb = experiment['spec']['perturbation']['pars']

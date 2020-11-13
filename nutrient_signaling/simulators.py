@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 import pandas as pd
 import PyDSTool as dst
 import nutrient_signaling.modelreader as md
@@ -119,7 +120,6 @@ class SimulatorPython:
         )
         self.model = dst.Vode_ODEsystem(ModelArgs)
 
-
 class SimulatorCPP:
     def __init__(self, modeldict,
                  execpath='./src/',
@@ -197,7 +197,11 @@ class SimulatorCPP:
     
         
     def simulate(self, cmd):
-        so = os.popen(cmd).read()
+        #so = os.popen(cmd).read()
+        so = subprocess.check_call(cmd.split(),
+                                   stdout=subprocess.DEVNULL,
+                                   stderr=subprocess.STDOUT)
+        #so = subprocess.Popen(cmd.split())        
     
     #########
     ## Helpers
@@ -236,12 +240,52 @@ class SimulatorCPP:
             return(pts)
     
     def simulateModel(self):
-        return(self.simulate_and_get_points())    
+        return(self.simulate_and_get_points())
+
+    
+    #########
+    ## Helpers
+    def simulate_and_get_ss(self):
+        """
+        Returns steady states of all variables in the model
+    
+        :return SSPoints: Dictionary containing steady state values
+        """
+        Points = self.simulate_and_get_points()
+        SSPoints={}
+        for k in Points.keys():
+            SSPoints[k]=Points[k][-1]
+        return(SSPoints)
+    
+    # wrapper
+    def get_ss(self):
+        return(self.simulate_and_get_ss())
+    
+    def simulate_and_get_points(self):
+        cmd = self.construct_call()
+        self.simulate(cmd)
+        D = self.read_sim()
+        pts = D.to_dict(orient='list')
+        if self.scale:
+            scaled = {}
+            scale_abundance_dict = get_protein_abundances()
+            for k in pts.keys(): # loop over variables:
+                if k in scale_abundance_dict.keys():
+                    scaled[k] =[p*float(scale_abundance_dict[k])
+                                for p in pts[k]]
+                else:
+                    scaled[k] = pts[k]
+            return(scaled)
+        else:
+            return(pts)
+    
+    def simulateModel(self):
+        return(self.simulate_and_get_points())        
 
 
 def get_simulator(modelpath='./', simulator='py',**kwargs):
     try:
-        simulator in ["py","cpp"]
+        simulator in ["py","cpp","ppy"]
     except:
         print("Invalid simulator specification. Specific one of 'py' or 'cpp'.")
         sys.exit()

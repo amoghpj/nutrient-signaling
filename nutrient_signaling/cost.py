@@ -12,18 +12,23 @@ class ComputeCost:
     """
     Compute cost of fit to time course and perturbation data.
     """
-    def __init__(self, modelpath, simulator, psetpath, perturbpath = None,numpsets=10, executable="main.o"):
+    def __init__(self, modelpath, simulator,
+                 perturbpath=None,
+                 timecoursepath=None,
+                 numpsets=10,
+                 executable="main.o",
+                 simfilename="values.dat"):
         self.pert = Perturb()
         self.perturbpath = None
         self.pert.readData(data_path=perturbpath)
         self.modelpath = modelpath
         self.simulator = simulator
         self.executable = executable
-
+        self.simfilename = simfilename
+        # Load time course data
         self.tc = TimeCourse()
-        self.tc.readData()
-        # self.perturb_data = Perturb
-        self.psetpath = psetpath
+        self.tc.readData(data_path=timecoursepath)
+        self.psetpath = None
         self.numpsets = numpsets
         self.timeCourseSpecList = [
             'Snf1:glucose_repression',
@@ -39,7 +44,8 @@ class ComputeCost:
             'Gln3:rap'
         ]
         
-    def read_pset(self):
+    def read_pset_from_file(self, psetpath):
+        self.psetpath = psetpath        
         self.psetdf = pd.read_csv(self.psetpath, header=0,sep='\t').iloc[0:self.numpsets] #.sample(self.numpsets, axis='index')
 
     def compute_costs(self, outname="out"):
@@ -85,14 +91,22 @@ class ComputeCost:
         plt.tight_layout()
         plt.savefig('cost-dists.png')
         
-    def compute(self, paramset={}):
+    def compute(self, paramset={},args={}):
         """
         Computes the total time-course cost and perturbation
         cost for the given parameter set. If the argument is 
         empty, uses default parameter set.
         """
-        cost_ts = self.compute_timecourse_cost(paramset)
-        cost_pert = self.compute_perturb_cost(paramset)
+        cost_ts = self.compute_timecourse_cost(paramset,
+                                               modelpath=args.get('modelpath', None),
+                                               simulator=args.get('simulator', None),
+                                               executable=args.get('executable', None),
+                                               simfilename=args.get('simfilename', None))
+        cost_pert = self.compute_perturb_cost(paramset,
+                                              modelpath=args.get('modelpath', None),
+                                              simulator=args.get('simulator', None),
+                                              executable=args.get('executable', None),
+                                              simfilename=args.get('simfilename', None))
         cost_full = cost_ts + cost_pert
         return(cost_full, cost_ts, cost_pert)
     
@@ -119,10 +133,23 @@ class ComputeCost:
             else:
                 continue
         
-    def compute_perturb_cost(self, paramset):
-        self.pert.setSimulator(modelpath=self.modelpath,
-                               simulatortype=self.simulator,
-                               executable=self.executable)
+    def compute_perturb_cost(self, paramset,
+                             modelpath=None,
+                             simulator=None,
+                             executable=None,
+                             simfilename=None):
+        if modelpath is None:
+            modelpath = self.modelpath
+        if simulator is None:
+            simulator = self.simulator
+        if executable is None:
+            executable = self.executable
+        if simfilename is None:
+            simfilename = self.simfilename
+        self.pert.setSimulator(modelpath=modelpath,
+                               simulatortype=simulator,
+                               executable=executable,
+                               simfilename=simfilename)
         cost = 0.
         perturb_count = 0.
         for simid in [sid for sid in self.pert.order if sid is not None] :
@@ -151,28 +178,26 @@ class ComputeCost:
                         predictions["wt"]["post"],\
                         predictions["perturb"]["pre"],\
                         predictions["perturb"]["post"]
-                    # if exp_data['vmax'] > 0:
-                    #     p_wt_pre, p_wt_post, p_mut_pre, p_mut_post  = utils.minmaxnorm_special([
-                    #         predictions["wt"]["pre"],
-                    #         predictions["wt"]["post"],
-                    #         predictions["perturb"]["pre"],
-                    #         predictions["perturb"]["post"]], 0.0, exp_data['vmax'])
-                    # else:            
-                
-                # compute cost
-                # print(exp_data['description'], exp_data['readout'])
-                # print(e_wt_pre, p_wt_pre)
-                # print(e_wt_post, p_wt_post)
-                # print(e_mut_pre, p_mut_pre)
-                # print(e_mut_post, p_mut_post)
-                # print('---')
+
                 cost_wt = 0.5*((e_wt_pre - p_wt_pre)**2. + (e_wt_post - p_wt_post)**2.)
                 cost_mut = 0.5*((e_mut_pre - p_mut_pre)**2. + (e_mut_post - p_mut_post)**2.)
                 cost += 0.5*(cost_wt + cost_mut)
                 perturb_count += 1.
         return(cost/float(perturb_count))
         
-    def compute_timecourse_cost(self, paramset):
+    def compute_timecourse_cost(self, paramset,
+                                modelpath=None,
+                                simulator=None,
+                                executable=None,
+                                simfilename=None):
+        if modelpath is None:
+            modelpath = self.modelpath
+        if simulator is None:
+            simulator = self.simulator
+        if executable is None:
+            executable = self.executable
+        if simfilename is None:
+            simfilename = self.simfilename        
         cost = 0.
         timepoint_count = 0.
         
@@ -200,7 +225,10 @@ class ComputeCost:
             parameters = paramset.copy()
             parameters.update(simspec['preshift']['pars'])
             ## Simulation details
-            model = sim.get_simulator(self.modelpath, self.simulator, executable=self.executable)
+            model = sim.get_simulator(self.modelpath,
+                                      simulator=simulator,
+                                      executable=executable,
+                                      simfilename=simfilename)
             preshift_ics = model.simulate_and_get_ss()
             preshift_ics.update(simspec["preshift"]["ics"])
             model.set_attr(tdata=[0,90], pars=parameters, ics=preshift_ics)
@@ -229,4 +257,4 @@ class ComputeCost:
             cost += sum([np.power(predicted[self._findindex(pred_time, et)] - ev, 2) \
                         for et, ev in zip(expT, expV)])
             timepoint_count += len(expT)
-        return(cost/timepoint_count)
+        return(cost/float(timepoint_count))
