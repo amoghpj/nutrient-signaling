@@ -245,7 +245,7 @@
       ics:
         PKA: 0.3
       pars:
-p        PKA_T: 0.3
+        PKA_T: 0.3
     postshift:
       pars:
         ATP: 1.0

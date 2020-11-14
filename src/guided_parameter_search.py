@@ -2,16 +2,23 @@
 import os
 import sys
 import pandas as pd
+import scipy.linalg as slinalg
+from pandas.api.types import is_string_dtype
 import numpy as np
+np.seterr(all='raise')
 from pyDOE import lhs
 import copy
 import time
 import multiprocessing as mp
 import logging
+import datetime
+from tqdm import tqdm
+from pathlib import Path
 mpl = mp.log_to_stderr()
 mpl.setLevel(logging.INFO)
 # local
 from nutrient_signaling import cost
+from nutrient_signaling import utils
 from nutrient_signaling import modelreader as md
 
 class Settings:
@@ -29,19 +36,29 @@ class Settings:
             if not os.path.exists(p):
                 os.makedirs(p)
         # Run settings
-        self.runname = "corrected_data_full_plist"    
         self.simulator = "cpp"
         self.dest = "automatic-iterations/"
         self.debug = True
-        self.pathToCombinedPsets = "./Output/2020-11-11/full_guided.txt"
+        self.current_pset = ""
+        self.pathToCombinedPsets = ""
+        self.expansion_pset = ""        
+        self.min_num_psets_for_hessian = 3
         self.mineig = 0.1
-        self.costmultiple = 3.
+        self.costmultiple = 3. #10
         self.ReferenceCost = 0.0
         self.lhs_range = 0.025
+        ####
         self.numPsetsPerIter = 20# 15000
+        self.numproc = 0
+        self._get_numproc()
+        self.numPsetsPerCore = int(self.numPsetsPerIter/self.numproc)
+        self.PsetSplits = np.arange(self.numPsetsPerCore,
+                                    self.numPsetsPerIter + self.numPsetsPerCore,\
+                                    self.numPsetsPerCore)
+        ####
         self.number_of_lhs_sets = 20
         self.startiter = 0
-        self.num_iters = 4
+        self.num_iters = 2
         self.exclude_params = exclude_params = [
 ##################################################    
     # Do NOT Modify this section
@@ -86,137 +103,73 @@ class Settings:
            # 'gammagln1',  
            # 'gammagln3',  
        ]
+
     def setReferenceCost(self, cc):
         c, ct, cp = cc.compute()
         self.ReferenceCost = c
-    
-def makePars(iternumber, settings):
-    runname = settings.runname
-    mineig = settings.mineig
-    genpestPath = settings.genpestPath
-    pathToCombinedPsets = settings.pathToCombinedPsets
-    numPsetsPerIter = settings.numPsetsPerIter
-    numPsetsPerMachine = settings.numPsetsPerMachine
-    costmultiple = settings.costmultiple
-    ReferenceCost = settings.ReferenceCost
-    
-    HessianName = \
-        runname + '_' +\
-        'hessian' + '_' +\
-        str(iternumber) + '.txt'
-    #mineig = 0.1
-    
-    hessian_path = hessianPath + HessianName
-    numPSetsForHessian = getNumPsetsLessThanCutoff(pathToCombinedPsets,
-                                                   costmultiple,
-                                                   ReferenceCost)
-    P = np.arange(numPsetsPerMachine,\
-                  numPsetsPerIter + numPsetsPerMachine, numPsetsPerMachine)
-    for p in P:
-        psets_suffix = runname + '_' +\
-            str(iternumber) + '_' + str(p)
-        guidedPsetGeneration(
-                False,             # generate_hessian         
-                HessianName,      # hessian_name
-                mineig,            # mineig                
-                pathToCombinedPsets,       # path_psets_for_hessian
-                numPSetsForHessian,# num_psets_for_hessian 
-                costmultiple,      # min_cost_multiplier   
-                True,              # generate_psets        
-                HessianName,      # path_to_hessian       
-                numPsetsPerMachine,# number_to_generate    
-                psets_suffix,      # psets_suffix          
-                False)             # debug          
 
-def get_lowest_cost(psetpath=None):
-    df = pd.read_csv(psetpath,index_col=None)
-    return(df.cost.min())
+    def _get_numproc(self):
+        # Distribute parameter sets to be evaluated across cores
+        if mp.cpu_count() < 5:
+            self.numproc = mp.cpu_count() - 1
+        else:
+            self.numproc = ((mp.cpu_count() // 5) * 5)
+
+def makePars(iternumber, settings):
+    guidedPsetGeneration(
+        iternumber, settings,
+        generate_hessian=False,             # generate_hessian         
+        generate_pars=True,              # generate_pars       
+        debug=False)             # debug          
 
 def makeHessian(iternumber, settings):
-    runname = settings.runname
-    hessianpath = settings.hessianpath
-    costmultiple = settings.costmultiple
-    mineig = settings.mineig
-    ReferenceCost = settings.ReferenceCost
-
-    if iternumber == 0:
-        pathToCombinedPsets = settings.lhspath
-        
-    numPSetsForHessian = getNumPsetsLessThanCutoff(pathToCombinedPsets,
-                                                   costmultiple,
-                                                   ReferenceCost)
-
-    minCostMultiplier = costmultiple
-    HessianName = \
-        runname + '_' +\
-        'hessian' + '_' +\
-        str(iternumber) + '.txt'
-    hessian_path = hessianPath + HessianName 
     guidedPsetGeneration(
-            True,              # generate_hessian         
-            HessianName,#hessian_path,      # hessian_path
-            mineig,            # mineig                
-            pathToCombinedPsets,       # path_psets_for_hessian
-            numPSetsForHessian,# num_psets_for_hessian 
-            False,             # generate_psets        
-            '',                # path_to_hessian       
-            0,                 # number_to_generate    
-            '',                # psets_suffix          
-            True,              # baumann               
-            False,             # debug
-        settings)
+        iternumber,settings,
+        generate_hessian=True,              # generate_hessian         
+        generate_pars=False,             # generate_pars
+        debug=False)
     
-def getNumPsetsLessThanCutoff(pathToCombinedPsets,costmultiple, ReferenceCost):
-    DF = pd.read_csv(pathToCombinedPsets,sep='\t')
-    return DF.shape[0]
+def get_lowest_cost(settings):
+    df = pd.read_csv(settings.expansion_pset,index_col=None)
+    return(df.cost.min())
 
-def guidedPsetGeneration(generate_hessian, hessian_name,
-                         mineig, path_psets_for_hessian,
-                         num_psets_for_hessian,
-                         generate_psets, path_to_hessian,
-                         number_to_generate, psets_suffix, debug,
-                         settings):
+def create_alphavector(num_pars):    
+    alpha_vector = np.random.normal(0,1, num_pars)
+    alpha_vector = alpha_vector/np.linalg.norm(alpha_vector)
+    return alpha_vector
+
+def guidedPsetGeneration(iternumber,settings,
+                         generate_hessian=False,
+                         generate_pars=False,
+                         debug=True):
     """
     Computes Hessian, writes to file, and generates guided parameter sets.
-    """
-    lowest_cost = get_lowest_cost() #0.0261908040909428
+    """    
 
-    if not os.path.exists(path_psets_for_hessian):
+    lowest_cost = get_lowest_cost(settings) #0.0261908040909428
+    cutoff = settings.costmultiple*lowest_cost
+    # Read results of cost evaluation carried out in 
+    # previous iteration    
+    if not os.path.exists(settings.expansion_pset):
         print("Parameter Set file to compute Hessian not found")
         sys.exit()
-    
-    # Read results of cost evaluation carried out on
-    # LHS sample
-    psetsFile = Path(path_psets_for_hessian).stem
+    psetsFile = str(Path(settings.expansion_pset).stem)
     print(psetsFile)
-    
     psetsFile_noext = psetsFile.split('.txt')[0]
-    psetsDF = pd.read_csv(path_psets_for_hessian, sep='\t')
-
-    # cleanup file
-    if 'index' in list(psetsDF.columns):
-        psetsDF = psetsDF.drop(['index'],axis=1)
-        
-    psetsDF = psetsDF.drop(['c_t','c_p'],axis=1)
-
+    psetsDF = pd.read_csv(settings.expansion_pset, index_col=None)
+    psetsDF = psetsDF.drop(['c_t','c_p'],axis=1)    
+    hessian_name = f"hessian_%d.txt" % (iternumber)        
     if is_string_dtype(psetsDF['cost']):
         psetsDF = psetsDF.loc[psetsDF['cost'] != 'NAN']
         psetsDF.reset_index(inplace=True,drop=True)
         psetsDF['cost'] = pd.to_numeric(psetsDF['cost'])
-
-    cutoff = settings.costmultiple*lowest_cost
+        
+    numPSetsForHessian = psetsDF.shape[0]
+    # This is important: Filter out parameter sets in case lowest cost has decreased
     psetsDF_cutoff = psetsDF.loc[psetsDF['cost'] < cutoff].reset_index(drop=True)
     
-    logmessage(path_psets_for_hessian + "\tCutoff="+str(cutoff)+" produces a set containing "\
+    logmessage(settings.pathToCombinedPsets + "\tCutoff="+str(cutoff)+" produces a set containing "\
                +str(psetsDF_cutoff.shape[0]) + ' rows', settings)
-    
-    min_num_psets_for_hessian = 10
-    if generate_hessian:
-        if psetsDF_cutoff.shape[0] < min_num_psets_for_hessian:
-            m = path_psets_for_hessian + '\t' + hessian_name + '\t ABORTED: NOT ENOUGH PSETS'
-            logmessage(m, settings)
-            sys.exit()
-
     # The cutoff only serves to choose which psets build the hessian.
     # This is wrt lowest_cost because lowest_cost establishes a good enough fit
     # The actual min cost in a given pset should contribute to refining
@@ -224,28 +177,29 @@ def guidedPsetGeneration(generate_hessian, hessian_name,
     min_row = psetsDF_cutoff.loc[psetsDF_cutoff['cost'] == min(psetsDF_cutoff['cost'])]
     min_row.reset_index(inplace=True,drop=True)
     min_row = min_row.to_dict(orient='index')[0]
+    Hpath = settings.hessianpath + hessian_name    
     if generate_hessian:
-        if len(hessian_name) == 0:
-            print("Please Specify Hessian File Name")
+        if psetsDF_cutoff.shape[0] < settings.min_num_psets_for_hessian:
+            m = path_psets_for_hessian + '\t' + hessian_name + '\t ABORTED: NOT ENOUGH PSETS'
+            logmessage(m, settings)
             sys.exit()
-        logmessage(path_psets_for_hessian + '\tC_min='+str(min_row['cost']),settings)
         if min_row['cost'] < lowest_cost:
             logmessage(path_psets_for_hessian + "\t Found lower cost than lowest_cost ****", settings)
-        Hpath = settings.hessianpath + hessian_name #'H_' + psetsFile_noext + '_'+ hessian_suffix + '.txt'
         ## Compute the Hessian
         ### computeHessian will first check if a hessian file
         ### already exists for a given input file name
-        computeHessian(psetsDF_cutoff, psetsFile_noext,
-                       Hpath, min_row,  debug)
+        computeHessian(psetsDF_cutoff,
+                       psetsFile_noext,
+                       Hpath, min_row,
+                       debug, settings)
         print("Wrote Hessian to file")
-    if generate_psets:
-        if not os.path.exists(settings.hessianpath + path_to_hessian):
+    if generate_pars:
+        if not os.path.exists(Hpath):
             print("Hessian file with that name not found at " + settings.hessianpath)
             sys.exit()
-            
-        H_mat = pd.read_csv(settings.hessianpath + path_to_hessian, sep='\t',header=None)
+        H_mat = pd.read_csv(settings.hessianpath + hessian_name, header=None, index_col=None)
         H = H_mat.values
-        parnamesDF = pd.read_csv(settings.hessianpath + path_to_hessian.split('.txt')[0] + '_par_names.txt',sep='\t')
+        parnamesDF = pd.read_csv(Hpath.split('.txt')[0] + '_par_names.csv',index_col=None)
         par_names = list(parnamesDF['parnames'])
         DeltaC = 0.5
         # Compute the matrix of eigenvectors and the diagonal matrix containing eigenvalues
@@ -255,67 +209,61 @@ def guidedPsetGeneration(generate_hessian, hessian_name,
         # This is from Jignesh's script'
         W = abs(W)
         # The numpy way of doing things
-        
         W_corrected = W.copy()
-
+        mineig = settings.mineig
         small_eig_count = len(list(np.where(W_corrected < mineig)[0]))
-        
-        W_corrected[ np.where(W_corrected) < mineig] = mineig
+        W_corrected[ np.where(W_corrected <  mineig)] = mineig
         eig_val_matrix = np.diag(W_corrected)
         eig_vector_matrix = V
-        
-        logmessage(path_psets_for_hessian + "\tNumber eigenvalues < " + str(mineig) + "= " + str(small_eig_count))
-
+        # logmessage(path_psets_for_hessian +\
+        #            "\tNumber eigenvalues < " + str(mineig) + "= " + str(small_eig_count))
         p_new = {p:[] for p in par_names}
-        
         # This is the version used in the paper
         q_vec_skeleton = (DeltaC**(0.5))*np.matmul(eig_vector_matrix,\
                                                    np.linalg.inv(slinalg.sqrtm(eig_val_matrix)))
-        
         print(q_vec_skeleton.shape)
-        
-        for i in tqdm(range(0,number_to_generate)):
+        for i in tqdm(range(0,settings.numPsetsPerIter)):
             alpha_vector = create_alphavector(num_pars)
             q_vec = list(np.matmul(q_vec_skeleton,alpha_vector)*np.random.normal(0,1))
-                  
             for q, p in zip(q_vec,par_names):
                 # p*.e^(DeltaC^(0.5)V.Lambda^(-0.5))
                 p_new[p].append(float(min_row[p])*np.exp(float(q.real)))
-        dirs = path_to_hessian.split('/')
-        HessianFile = ''
-        for n in dirs:
-            if '.txt' in n:
-                HessianFile = n
-                break
+        HessianFile = Path(Hpath).stem
         print(p_new.keys())
-        NewPDF = pd.DataFrame(p_new)
-        NewPDF.to_csv(settings.write_psetspath + '/guided_'+ psets_suffix +'.txt',index=None,sep='\t')         
+        generatedParsDF = pd.DataFrame(p_new)
+        generated_pset_path = f"%s/guided_%d.csv" % (settings.write_psetspath, iternumber)
+        generatedParsDF.to_csv(generated_pset_path,index=None)
+        settings.current_pset = generated_pset_path
 
-def computeHessian(data, fname, Hpath, min_row,  debug):
+def computeHessian(psetsDF_cutoff,
+                   psetsFile_noext,
+                   Hpath, min_row,
+                   debug, settings):
     print("Computing Hessian using Dr. Baumann's method")
-    num_psets = data.shape[0]
-    par_names = list(data.columns)
+    num_psets = psetsDF_cutoff.shape[0]
+    par_names = list(psetsDF_cutoff.columns)
     par_names.remove('cost')
 
-    for excludep in exclude_params:
+    for excludep in settings.exclude_params:
         if excludep in par_names:
             par_names.remove(excludep)
-
-    par_names_filename = Hpath.split('.txt')[0] + '_par_names.txt'
+            
+    ## Debug
+    par_names_filename = Hpath.split('.txt')[0] + '_par_names.csv'
     with open(par_names_filename,'w') as parfile:
         parfile.write('parnames\n')
         for p in par_names:
             parfile.write(p + '\n')
-
+    ## -- 
     num_pars = len(par_names)
     nphv = int(num_pars*(num_pars+1.0)/2.0) # from Baumann's script
     vecV = np.zeros((nphv, 1))
     Q = np.zeros((nphv,nphv))
-    L_mat = loadL(num_pars)
-    for i, row in tqdm(data.iterrows()):
+    L_mat = loadL(num_pars, settings)
+    for i, row in tqdm(psetsDF_cutoff.iterrows()):
         q_k = np.zeros((num_pars,1))
         for j in range(0,num_pars):
-            denom = min_row[par_names[j]]
+            denom = min_row[par_names[j]] + 1e-5
             q_k[j] = np.log(row[par_names[j]]) - np.log(denom)
         qqT = np.outer(q_k,q_k.transpose()) # size num
         qqThv = np.matmul(L_mat,qqT.reshape((num_pars*num_pars,1)))
@@ -323,7 +271,7 @@ def computeHessian(data, fname, Hpath, min_row,  debug):
         Q = Q + np.outer(qqThv,qqThv.transpose())
     print('Q' + str(Q.shape))
     print('vecV' +str(vecV.shape))
-    D_mat = loadD(num_pars)
+    D_mat = loadD(num_pars, settings)
     print('Dmat' + str(D_mat.shape))
     vecH = np.linalg.solve(np.matmul(Q,np.matmul(D_mat.transpose(),D_mat)),vecV)
     print(vecH.shape)
@@ -331,36 +279,41 @@ def computeHessian(data, fname, Hpath, min_row,  debug):
     H_DF = pd.DataFrame(H)
     print('Writing Hessian to file')
     print(Hpath)
-    H_DF.to_csv(Hpath,sep='\t',header=False, index=False)
+    H_DF.to_csv(Hpath,
+                header=False,
+                index=False)
     return(num_pars, par_names)
 
-def loadD(num_pars):
+def loadD(num_pars, settings):
     print('Checking if D_mat exists...')
-    if os.path.exists('./Input/duplicator_' + str(num_pars) + '.txt'):
+    path_to_D = settings.write_psetspath + '/duplicator_' + str(num_pars) + '.txt'
+    if os.path.exists(path_to_D):
         print('D_mat of dimension ' + str(num_pars) + ' exists')
         print('Reading D_mat')
-        D_mat_DF = pd.read_csv('./Input/duplicator_' + str(num_pars) +'.txt',sep='\t',header=None)
+        D_mat_DF = pd.read_csv(path_to_D, header=None, index_col=None)
         D_mat = D_mat_DF.values
+        print('Done')
         return D_mat
     else:
-        print('Please generate D_mat of size ' + str(num_pars) +\
-              ' by calling D(' + str(num_pars) + ') in eliminator_duplicator.py')
-        sys.exit()
+        d = utils.D(num_pars)
+        pd.DataFrame(d).to_csv(path_to_D, header=False, index=False)
+        return d
         
-def loadL(num_pars):
+def loadL(num_pars, settings):
     print('Checking if L_mat exists...')
-    if os.path.exists('./Input/eliminator_' + str(num_pars) + '.txt'):
+    path_to_L = settings.write_psetspath + '/eliminator_' + str(num_pars) + '.txt'
+    if os.path.exists(path_to_L):
         print('L_mat of dimension ' + str(num_pars) + ' exists')
         print('Reading L_mat')
-        L_mat_DF = pd.read_csv('./Input/eliminator_' + str(num_pars) +'.txt',sep='\t',header=None)
+        L_mat_DF = pd.read_csv(path_to_L, header=None, index_col=None)
         L_mat = L_mat_DF.values
         print('Done')
         return L_mat
     else:
-        print('Please generate L_mat of size ' + str(num_pars) +\
-              ' by calling L(' + str(num_pars) + ') in eliminator_duplicator.py')
-        sys.exit()
-
+        l = utils.L(num_pars)
+        pd.DataFrame(l).to_csv(path_to_L, header=False, index=False)
+        return l
+    
 def logmessage(message, settings):
     print(message)
     with open(settings.datapath + 'LOGS','a') as outfile:
@@ -370,81 +323,59 @@ def logmessage(message, settings):
                  '-' + str(today.hour) + '-' + str(today.minute)
         
         outfile.write(date + '\t' + message + "\n")
-       
-
-    
-def createExpansion(iternumber, runname, costmultiple,
-                    datapath, dest, ReferenceCost):
-
+           
+def createExpansion(iternumber, settings):
     # Read combine file
-    Combine = pd.read_csv(datapath + dest + runname\
-                          + "/iter" + str(iternumber) +\
-                          "/combine_iter" + str(iternumber) + ".txt",sep='\t')
+    combinedf = pd.read_csv(f"%s/combine_iter-%d.csv" % (settings.write_psetspath, iternumber),
+                          index_col=False)
 
-    if is_string_dtype(Combine['cost']):
-        Combine = Combine.loc[Combine['cost'] != 'NAN']
-        Combine.reset_index(inplace=True,drop=True)
-        Combine['cost'] = pd.to_numeric(Combine['cost'])
+    if is_string_dtype(combinedf['cost']):
+        combinedf = combinedf.loc[combinedf['cost'] != 'NAN']
+        combinedf.reset_index(inplace=True,drop=True)
+        combinedf['cost'] = pd.to_numeric(combinedf['cost'])
 
-    cmin = Combine.cost.min()
-
-    if cmin > ReferenceCost:
-        cmin = ReferenceCost
-
-    extract = Combine.loc[Combine.cost <= costmultiple*cmin]
-
-    expansion_path =  datapath + dest + runname +\
-        "/iter" + str(iternumber) +\
-        "/expansion_iter" + str(iternumber) + ".txt"
-
+    cmin = combinedf.cost.min()
+    if cmin > settings.ReferenceCost:
+        cmin = settings.ReferenceCost
+    cutoffdf = combinedf.loc[combinedf.cost <= settings.costmultiple*cmin]
+    expansion_pset = f"%s/expansion_iter-%d.csv" % (settings.write_psetspath, iternumber)
     if iternumber == 0:
         # Create expansion_0 as subset of combine_0
-        extract.to_csv(expansion_path, sep='\t', index=False)
+        cutoffdf.to_csv(expansion_pset, index=False)
     else:
         list_ = []
-        list_.append(extract)
-        prev_expansion = pd.read_csv(datapath + dest + runname\
-                                     + "/iter" + str(iternumber - 1) +\
-                                     "/expansion_iter" + str(iternumber - 1) +\
-                                     ".txt",sep='\t')
-
+        list_.append(cutoffdf)
+        prev_expansion = pd.read_csv(f"%s/expansion_iter-%d.csv" % (settings.write_psetspath,
+                                                                    iternumber - 1))
         list_.append(prev_expansion)
+        expansiondf = pd.concat(list_)
+        expansiondf.to_csv(expansion_pset,index=False)
+    # update path to parameter sets
+    settings.expansion_pset = expansion_pset
 
-        D = pd.concat(list_)
+# def rundone(iternumber, runname, numPsetsPerMachine,datapath,dest):
+#     doneflag = True
+#     P = np.arange(numPsetsPerMachine, numPsetsPerIter + numPsetsPerMachine,\
+#                   numPsetsPerMachine)
+#     for m,p in zip(runlist, P):
+#         psets_suffix = runname + '_' +\
+#             str(iternumber) + '_' + str(p)
+#         DF = pd.read_csv(datapath + dest + runname +"/iter" + str(iternumber) +\
+#                          '/eval_' + psets_suffix + '.txt')
+#         if DF.shape[0] != numPsetsPerMachine:
+#             doneflag = False
+#     return doneflag
 
-        D.to_csv(expansion_path,sep='\t',index=False)
-    return expansion_path
-
-def rundone(iternumber, runname, numPsetsPerMachine,datapath,dest):
-    doneflag = True
-    P = np.arange(numPsetsPerMachine, numPsetsPerIter + numPsetsPerMachine,\
-                  numPsetsPerMachine)
-    for m,p in zip(runlist, P):
-        psets_suffix = runname + '_' +\
-            str(iternumber) + '_' + str(p)
-        DF = pd.read_csv(datapath + dest + runname +"/iter" + str(iternumber) +\
-                         '/eval_' + psets_suffix + '.txt')
-        if DF.shape[0] != numPsetsPerMachine:
-            doneflag = False
-    return doneflag
-
-def combinefiles(iternumber, runname, datapath, dest):
-    path = datapath + dest + runname + '/iter' + str(iternumber)
+def combinefiles(iternumber, settings):
     list_ = []
-    P = np.arange(numPsetsPerMachine, numPsetsPerIter + numPsetsPerMachine,\
-                  numPsetsPerMachine)
-
-    for m,p in zip(runlist, P):
-        psets_suffix = runname + '_' +\
-            str(iternumber) + '_' + str(p)
-
-        f = "/eval_" + psets_suffix + ".txt"
-        df = pd.read_csv(path + f, sep='\t')
-        list_.append(df)
-        D = pd.concat(list_)
-
-    D.to_csv(path + "/combine_iter" + str(iternumber) +".txt",sep='\t',index=False)
-
+    for pid, endp in enumerate(settings.PsetSplits):
+        df = pd.read_csv(f"%s/iter-%d-%d.csv" % (settings.write_psetspath, iternumber, pid),
+                         index_col=False)
+        list_.append(df.reset_index(drop=True))
+    D = pd.concat(list_)
+    D.to_csv(f"%s/combine_iter-%d.csv" % (settings.write_psetspath, iternumber),
+             index=False)
+    
 def LHS(model, settings):
     """
     The LHS function returns a value between 0 and 1
@@ -480,23 +411,12 @@ def LHS(model, settings):
     DF.to_csv(settings.lhspath, sep='\t', index=False)
     
 def startCostEvaluation(iternumber, cc, settings):
-    runname = settings.runname
     numPsetsPerIter = settings.numPsetsPerIter
-
-    # Distribute parameter sets to be evaluated across cores
-    if mp.cpu_count() < 5:
-        denom = mp.cpu_count()
-    else:
-        denom = ((mp.cpu_count() // 5) * 5)
-    numPsetsPerCore = int(numPsetsPerIter/denom)
-
-    PsetSplits = np.arange(numPsetsPerCore, numPsetsPerIter + numPsetsPerCore,\
-                  numPsetsPerCore)
-    startp = 0
-    if iternumber == 0:                                                        #
-        path_to_psets = settings.lhspath                                       #    
+    numPsetsPerCore = settings.numPsetsPerCore
+    parsdf = pd.read_csv(settings.current_pset,sep='\t')            
     # Debug
-    # for pid, endp  in enumerate(PsetSplits):
+    # startp = 0    
+    # for pid, endp  in enumerate(settings.PsetSplits):
     #     args = {'cc':copy.copy(cc),
     #             'settings':copy.copy(settings),
     #             'pid':pid,
@@ -506,40 +426,12 @@ def startCostEvaluation(iternumber, cc, settings):
     #     }
     #     startp = int(endp)
     #     compute_cost_wrapper(args)
-    ##############################################################################
-    # Same problem as async
-
-    # arglist = []                                                               #
-    # for pid, endp in enumerate(PsetSplits):                                    #
-    #     parsdf = pd.read_csv(path_to_psets,sep='\t')                           #
-    #     parsoi = parsdf.loc[startp:endp]                                       #
-    #     args = {                                                               #
-    #         #'cc':copy.copy(cc),                                               #
-    #         'parsoi':parsoi,                                                   #
-    #         'outlist':list(),                                                  #
-    #         'settings':copy.copy(settings),                                    #
-    #         'pid':pid,                                                         #
-    #         'startp':int(startp),                                              #
-    #         'endp': int(endp),                                                 #
-    #         'iternumber':iternumber                                            #
-    #     }                                                                      #
-    #     startp = int(endp)                                                     #
-    #     arglist.append(args)                                                   #
-    # processes = []                                                             #
-    #     for arg in arglist:                                                    #
-    #     processes.append(mp.Process(target=compute_cost_wrapper, args=(arg,))) #
-    # for p in processes:                                                        #
-    #     p.start()                                                              #
-    # for p in processes:                                                        #
-    #     p.join()                                                               #
-    ##############################################################################
-
-    with mp.Pool(3) as pool:
+    with mp.Pool(settings.numproc) as pool:
         jobs = []
         startp = 0
         arglist = []
-        for pid, endp in enumerate(PsetSplits):
-            parsdf = pd.read_csv(path_to_psets,sep='\t')
+        for pid, endp in enumerate(settings.PsetSplits):
+
             parsoi = parsdf.loc[startp:endp]
             outlist = []            
             args = {
@@ -549,37 +441,13 @@ def startCostEvaluation(iternumber, cc, settings):
                 'pid':pid,
                 'startp':int(startp),
                 'endp': int(endp),
-                'iternumber':iternumber
-            }
-            # Sequential, blocking
-            # job = pool.apply(compute_cost_wrapper, args=(args,))
+                'iternumber':iternumber}
             job = pool.apply_async(compute_cost_wrapper, args=(args,))            
             startp = int(endp)
             jobs.append(job)
         for job in jobs:
             job.wait()            
-        
-    # This works, at least with 'py'
-    # for pid, endp in enumerate(PsetSplits):
-    #     parsdf = pd.read_csv(path_to_psets,sep='\t')
-    #     parsoi = parsdf.loc[startp:endp]
-    #     args = {
-    #         #'cc':copy.copy(cc),
-    #         'parsoi':parsoi,
-    #         'outlist':list(),
-    #         'settings':copy.copy(settings),
-    #         'pid':pid,
-    #         'startp':int(startp),
-    #         'endp': int(endp),
-    #         'iternumber':iternumber
-    #     }
-    #     startp = int(endp)
-    #     arglist.append(args)
-    # with mp.Pool() as pool:
-    #     results = pool.map(compute_cost_wrapper, arglist)
-    #     pool.close()
-    #     pool.join()
-        
+
 def compute_cost_wrapper(args):
     settings = args['settings']
     cc = cost.ComputeCost(settings.modelpath, settings.simulator,
@@ -600,14 +468,14 @@ def compute_cost_wrapper(args):
         try:
             c, ct, cp = cc.compute(paramset, args)
             outlist.append(dict(paramset,cost=c, c_t=ct, c_p=cp))
-            print("success")
         except Exception as e:
             print(pid, "fail", e)
     outdf = pd.DataFrame(outlist)
-    outdf.to_csv(f"%s/iter-%d-%d.csv" % (settings.write_psetspath, iternumber, pid))
+    outdf.to_csv(f"%s/iter-%d-%d.csv" % (settings.write_psetspath, iternumber, pid), index=False)
     print(pid, os.getpid())    
         
 def main():
+    start  = time.time()
     settings = Settings()
     print("setting up cost obj")
     cc = cost.ComputeCost(settings.modelpath, settings.simulator,
@@ -627,45 +495,34 @@ def main():
         print("In Iter " + str(i))
         if not os.path.exists(settings.datapath +\
                               settings.dest +\
-                              settings.runname + "/iter" + str(i)):
+                              "/iter" + str(i)):
             os.makedirs(settings.datapath +\
                         settings.dest +\
-                        settings.runname + "/iter" + str(i))
+                        "/iter" + str(i))
             print("Created folder")
 
         if i == 0 :
+            settings.current_pset = settings.lhspath
             print("starting lhs gen")
             LHS(model, settings)
-            print("starting lhs eval")
-            startCostEvaluation(i, cc, settings)
-        sys.exit()
-        print("\tStarting makeHessian()...")
-        makeHessian(i, settings)
-
-        print("\tStarting makePars()")
-        makePars(i, settings)
-        sys.exit()
+        else:
+            # Get started on making Hessian from parameters generated
+            # from previous iteration
+            print("\tStarting makeHessian()...")
+            makeHessian(i, settings)
+            print("\tStarting makePars()")
+            makePars(i, settings)
         
         print("\tStarting startCostEvaluation()...")
-        startCostEvaluation(i, runname, runlist, genpsetsPath,\
-                            numPsetsPerIter, numPsetsPerMachine,datapath,dest)
+        startCostEvaluation(i, cc, settings)        
         
-        print("\tParameter Sets are being evaluated")
-        time.sleep(30)
-    
-        while not rundone(i, runname, numPsetsPerMachine,datapath,dest):
-            time.sleep(wait)
-            print("Next check in " + str(wait) + "s")
-            
         print("\tEvaluation Complete, combining files...")
-        combinefiles(i, runname, datapath, dest)
+        combinefiles(i, settings)
         
         print("\tExtracting psets to =expansion=")
-        pathToCombinedPsets = createExpansion(i, runname, costmultiple,
-                                              datapath, dest, ReferenceCost)
-        
-    if not debug:
-        killscreens(runlist)
+        createExpansion(i, settings)
+
+    print(f"This took %0.2fs" % (time.time() - start))
         
 if __name__ == '__main__':
     main()
