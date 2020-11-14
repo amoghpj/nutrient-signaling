@@ -28,7 +28,7 @@ class Settings:
         self.perturbpath = "./data/yaml/perturbation-data-rebuttal.yaml"
         self.timecoursepath = "./data/yaml/time-course-data-rebuttal.yaml"
         # Output paths
-        self.datapath = "./tmp-1/"        
+        self.datapath = "./search-redone/"        
         self.hessianpath =  self.datapath + "Hessians/"
         self.write_psetspath = self.datapath + "Generated-Parameter-Sets/"
         self.lhspath = self.write_psetspath + 'lhs.txt'
@@ -432,8 +432,7 @@ def startCostEvaluation(iternumber, cc, settings):
         startp = 0
         arglist = []
         for pid, endp in enumerate(settings.PsetSplits):
-
-            parsoi = parsdf.loc[startp:endp]
+            parsoi = parsdf.loc[startp:endp-1]
             outlist = []            
             args = {
                 'parsoi':parsoi,
