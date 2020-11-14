@@ -48,7 +48,7 @@ class Settings:
         self.ReferenceCost = 0.0
         self.lhs_range = 0.025
         ####
-        self.numPsetsPerIter = 20# 15000
+        self.numPsetsPerIter = 120# 15000
         self.numproc = 0
         self._get_numproc()
         self.numPsetsPerCore = int(self.numPsetsPerIter/self.numproc)
@@ -369,8 +369,9 @@ def createExpansion(iternumber, settings):
 def combinefiles(iternumber, settings):
     list_ = []
     for pid, endp in enumerate(settings.PsetSplits):
-        df = pd.read_csv(f"%s/iter-%d-%d.csv" % (settings.write_psetspath, iternumber, pid),
-                         index_col=False)
+        path = f"%s/iter-%d-%d.csv" % (settings.write_psetspath, iternumber, pid)
+        print(path)
+        df = pd.read_csv(path, index_col=False)
         list_.append(df.reset_index(drop=True))
     D = pd.concat(list_)
     D.to_csv(f"%s/combine_iter-%d.csv" % (settings.write_psetspath, iternumber),
