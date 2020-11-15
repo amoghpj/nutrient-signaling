@@ -39,10 +39,6 @@ class Settings:
         self.simulator = "cpp"
         self.dest = "automatic-iterations/"
         self.debug = True
-        self.number_of_lhs_sets = self.numPsetsPerIter
-        self.startiter = 0
-        self.num_iters = 6        
-        self.expansion_pset =  f"%s/expansion_iter-%d.csv" % (settings.write_psetspath, self.startiter)
         self.current_pset = ""        
         self.min_num_psets_for_hessian = 100
         self.mineig = 0.1
@@ -57,8 +53,11 @@ class Settings:
         self.PsetSplits = np.arange(self.numPsetsPerCore,
                                     self.numPsetsPerIter + self.numPsetsPerCore,\
                                     self.numPsetsPerCore)
+        self.number_of_lhs_sets = self.numPsetsPerIter
+        self.startiter = 0
+        self.num_iters = 6        
+        self.expansion_pset =  f"%s/expansion_iter-%d.csv" % (settings.write_psetspath, self.startiter)        
         ####
-
         self.exclude_params = exclude_params = [
 ##################################################    
     # Do NOT Modify this section
