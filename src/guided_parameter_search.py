@@ -31,7 +31,7 @@ class Settings:
         self.datapath = "./search-redone/"        
         self.hessianpath =  self.datapath + "Hessians/"
         self.write_psetspath = self.datapath + "Generated-Parameter-Sets/"
-        self.lhspath = self.write_psetspath + 'lhs.txt'
+        self.lhspath = self.write_psetspath + 'lhs.csv'
         for p in [self.datapath, self.hessianpath, self.write_psetspath]:
             if not os.path.exists(p):
                 os.makedirs(p)
@@ -54,9 +54,9 @@ class Settings:
                                     self.numPsetsPerIter + self.numPsetsPerCore,\
                                     self.numPsetsPerCore)
         self.number_of_lhs_sets = self.numPsetsPerIter
-        self.startiter = 0
+        self.startiter = 1
         self.num_iters = 6        
-        self.expansion_pset =  f"%s/expansion_iter-%d.csv" % (settings.write_psetspath, self.startiter)        
+        self.expansion_pset =  f"%s/expansion_iter-%d.csv" % (self.write_psetspath, self.startiter)        
         ####
         self.exclude_params = exclude_params = [
 ##################################################    
@@ -128,7 +128,7 @@ def makeHessian(iternumber, settings):
         generate_pars=False,             # generate_pars
         debug=False)
     
-def get_lowest_cost(settings):
+def get_lowest_cost(iternumber, settings):
     df = pd.read_csv(settings.expansion_pset,index_col=None)
     return(df.cost.min())
 
@@ -145,7 +145,7 @@ def guidedPsetGeneration(iternumber,settings,
     Computes Hessian, writes to file, and generates guided parameter sets.
     """    
 
-    lowest_cost = get_lowest_cost(settings) #0.0261908040909428
+    lowest_cost = get_lowest_cost(iternumber, settings) #0.0261908040909428
     cutoff = settings.costmultiple*lowest_cost
     # Read results of cost evaluation carried out in 
     # previous iteration    
@@ -342,7 +342,8 @@ def createExpansion(iternumber, settings):
         list_ = []
         list_.append(cutoffdf)
         prev_expansion = pd.read_csv(f"%s/expansion_iter-%d.csv" % (settings.write_psetspath,
-                                                                    iternumber - 1))
+                                                                    iternumber - 1),
+                                     index_col=None)
         list_.append(prev_expansion)
         expansiondf = pd.concat(list_)
         expansiondf.to_csv(expansion_pset,index=False)
@@ -405,12 +406,12 @@ def LHS(model, settings):
     DF = pd.DataFrame(data=PSetDict)
     print("Writing to file...")
     
-    DF.to_csv(settings.lhspath, sep='\t', index=False)
+    DF.to_csv(settings.lhspath, index=False)
     
 def startCostEvaluation(iternumber, cc, settings):
     numPsetsPerIter = settings.numPsetsPerIter
     numPsetsPerCore = settings.numPsetsPerCore
-    parsdf = pd.read_csv(settings.current_pset,sep='\t')            
+    parsdf = pd.read_csv(settings.current_pset, index_col=False)            
     # Debug
     # startp = 0    
     # for pid, endp  in enumerate(settings.PsetSplits):
