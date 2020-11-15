@@ -46,7 +46,7 @@ class Settings:
         self.ReferenceCost = 0.0
         self.lhs_range = 0.025
         ####
-        self.numPsetsPerIter = 15000
+        self.numPsetsPerIter = 21000
         self.numproc = 0
         self._get_numproc()
         self.numPsetsPerCore = int(self.numPsetsPerIter/self.numproc)
@@ -54,7 +54,7 @@ class Settings:
                                     self.numPsetsPerIter + self.numPsetsPerCore,\
                                     self.numPsetsPerCore)
         self.number_of_lhs_sets = self.numPsetsPerIter
-        self.startiter = 1
+        self.startiter = 0
         self.num_iters = 6        
         self.expansion_pset =  f"%s/expansion_iter-%d.csv" % (self.write_psetspath, self.startiter)        
         ####
@@ -335,7 +335,7 @@ def createExpansion(iternumber, settings):
         cmin = settings.ReferenceCost
     cutoffdf = combinedf.loc[combinedf.cost <= settings.costmultiple*cmin]
     expansion_pset = f"%s/expansion_iter-%d.csv" % (settings.write_psetspath, iternumber)
-    if iternumber == 0:
+    if iternumber < 2:
         # Create expansion_0 as subset of combine_0
         cutoffdf.to_csv(expansion_pset, index=False)
     else:
