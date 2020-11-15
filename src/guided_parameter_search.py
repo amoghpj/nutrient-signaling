@@ -14,8 +14,8 @@ import logging
 import datetime
 from tqdm import tqdm
 from pathlib import Path
-mpl = mp.log_to_stderr()
-mpl.setLevel(logging.INFO)
+# mpl = mp.log_to_stderr()
+# mpl.setLevel(logging.INFO)
 # local
 from nutrient_signaling import cost
 from nutrient_signaling import utils
@@ -42,13 +42,13 @@ class Settings:
         self.current_pset = ""
         self.pathToCombinedPsets = ""
         self.expansion_pset = ""        
-        self.min_num_psets_for_hessian = 3
+        self.min_num_psets_for_hessian = 100
         self.mineig = 0.1
         self.costmultiple = 3. #10
         self.ReferenceCost = 0.0
         self.lhs_range = 0.025
         ####
-        self.numPsetsPerIter = 120# 15000
+        self.numPsetsPerIter = 15000
         self.numproc = 0
         self._get_numproc()
         self.numPsetsPerCore = int(self.numPsetsPerIter/self.numproc)
@@ -56,9 +56,9 @@ class Settings:
                                     self.numPsetsPerIter + self.numPsetsPerCore,\
                                     self.numPsetsPerCore)
         ####
-        self.number_of_lhs_sets = 20
+        self.number_of_lhs_sets = self.numPsetsPerIter
         self.startiter = 0
-        self.num_iters = 2
+        self.num_iters = 6
         self.exclude_params = exclude_params = [
 ##################################################    
     # Do NOT Modify this section
@@ -472,7 +472,7 @@ def compute_cost_wrapper(args):
             print(pid, "fail", e)
     outdf = pd.DataFrame(outlist)
     outdf.to_csv(f"%s/iter-%d-%d.csv" % (settings.write_psetspath, iternumber, pid), index=False)
-    print(pid, os.getpid())    
+    # print(pid, os.getpid())    
         
 def main():
     start  = time.time()
