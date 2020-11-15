@@ -39,9 +39,11 @@ class Settings:
         self.simulator = "cpp"
         self.dest = "automatic-iterations/"
         self.debug = True
-        self.current_pset = ""
-        self.pathToCombinedPsets = ""
-        self.expansion_pset = ""        
+        self.number_of_lhs_sets = self.numPsetsPerIter
+        self.startiter = 0
+        self.num_iters = 6        
+        self.expansion_pset =  f"%s/expansion_iter-%d.csv" % (settings.write_psetspath, self.startiter)
+        self.current_pset = ""        
         self.min_num_psets_for_hessian = 100
         self.mineig = 0.1
         self.costmultiple = 3. #10
@@ -56,9 +58,7 @@ class Settings:
                                     self.numPsetsPerIter + self.numPsetsPerCore,\
                                     self.numPsetsPerCore)
         ####
-        self.number_of_lhs_sets = self.numPsetsPerIter
-        self.startiter = 0
-        self.num_iters = 6
+
         self.exclude_params = exclude_params = [
 ##################################################    
     # Do NOT Modify this section
@@ -167,9 +167,6 @@ def guidedPsetGeneration(iternumber,settings,
     numPSetsForHessian = psetsDF.shape[0]
     # This is important: Filter out parameter sets in case lowest cost has decreased
     psetsDF_cutoff = psetsDF.loc[psetsDF['cost'] < cutoff].reset_index(drop=True)
-    
-    logmessage(settings.pathToCombinedPsets + "\tCutoff="+str(cutoff)+" produces a set containing "\
-               +str(psetsDF_cutoff.shape[0]) + ' rows', settings)
     # The cutoff only serves to choose which psets build the hessian.
     # This is wrt lowest_cost because lowest_cost establishes a good enough fit
     # The actual min cost in a given pset should contribute to refining
@@ -263,7 +260,7 @@ def computeHessian(psetsDF_cutoff,
     for i, row in tqdm(psetsDF_cutoff.iterrows()):
         q_k = np.zeros((num_pars,1))
         for j in range(0,num_pars):
-            denom = min_row[par_names[j]] + 1e-5
+            denom = min_row[par_names[j]]
             q_k[j] = np.log(row[par_names[j]]) - np.log(denom)
         qqT = np.outer(q_k,q_k.transpose()) # size num
         qqThv = np.matmul(L_mat,qqT.reshape((num_pars*num_pars,1)))
