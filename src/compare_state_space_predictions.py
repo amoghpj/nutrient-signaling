@@ -231,6 +231,8 @@ def simulateStrains(modelpath,
     """
     NutrientStates = createNutrientInputSpace()
     mutationSpecs = getMutantSpecs(modelpath)
+    if not os.path.exists("output/"):
+        os.makedirs("output/")
     aggregator = {'cost':''}
     colorder = ['cost']
     for strain in mutationSpecs:
