@@ -116,7 +116,7 @@ def visualize(confidence, numpsets, evidencedict, settings,
                 red = robustred
                 green = robustgreen
                 if inputtype == 'tfstate':
-                    if min(on, off) > 0.1:
+                    if min(on, off) > 0.1: # 0.01
                         red = fragilered
                         green = fragilegreen
                 elif inputtype == 'dynamics':
