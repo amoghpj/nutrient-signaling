@@ -284,6 +284,13 @@ class SimulatorCPP:
 
 
 def get_simulator(modelpath='./', simulator='py',**kwargs):
+    """
+    Initialize an simulator object.
+    This involves reading the model defined at modelpath.
+    If the simulator is 'cpp' and the corresponding executable does
+    not exist, then the script compiles the C++ code and moves the 
+    resulting executable to the appropriate location.
+    """
     try:
         simulator in ["py","cpp","ppy"]
     except:

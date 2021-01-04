@@ -83,14 +83,12 @@ def visualize(confidence, numpsets, evidencedict, settings,
     
 
     strains = [conf['name'] for conf in confidence]
-    print(strains)
+    # print(strains)
     nstates = settings.nutrientStates
     nested = {}
 
     y_positions = [i for i in range(len(strains))]
     x_positions = [i for i in range(len(nstates))]
-    
-    print(y_positions)
     
     plotwidth = 10
     plotheight = 10
@@ -117,11 +115,12 @@ def visualize(confidence, numpsets, evidencedict, settings,
                 on = conf['on']
                 red = robustred
                 green = robustgreen
-                if inputtype == 'tfstates':
+                if inputtype == 'tfstate':
                     if min(on, off) > 0.1:
                         red = fragilered
                         green = fragilegreen
                 elif inputtype == 'dynamics':
+                    print(on, off)
                     if on < 0.8:
                         red = fragilered
                         green = fragilegreen                        
@@ -231,7 +230,8 @@ def main():
     ## State Predictions:
     ## This tab-separated file is generated using 
     ## src/compare-state-space-predictions.py
-    predictionpath = 'output/global_space_24066.csv'
+    #predictionpath = 'output/global_space_24066.csv'
+    predictionpath = 'output/global_space_43982.csv'
     predictiondf = pd.read_csv(predictionpath,
                                 sep='\t', index_col=False,
                                 dtype='str')
@@ -268,7 +268,7 @@ def main():
                              settings.nutrientStates}}
                   for strain in allstrains]
     strainMapper = {conf['name']:i for i, conf in enumerate(confidence)}
-    print(strainMapper)
+    # print(strainMapper)
     # Record predictions
     ## Each entry in predictiondf is a string of 0s and 1s
     ## which records the state of the TFs in the order given
@@ -284,7 +284,7 @@ def main():
         strain, nstate = col.split('_')
         strainid = strainMapper[strain]
         confidence[strainid]['states'][nstate] = compare_states(list(predictiondf[col]), settings)
-    print(colorder)
+    # print(colorder)
     numpsets = predictiondf.shape[0]
 
     # Plot the confidences as a tableu
