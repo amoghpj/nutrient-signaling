@@ -76,15 +76,16 @@ def do_experiment(expargs):
     specification.
     PROG: incomplete
     """
+
     experiment = expargs['experiment']
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']
     paramdict = expargs['paramdict']
-    outDir = expargs['outDir']    
-    singleRun = expargs['singleRun']
+    outDir = expargs['outDir']
+    singleRun = expargs.get('singleRun', False)
+
     if paramdict is None:
         paramdict = {}
-    #     singleRun = True
         
     modelpath = expargs['modelpath']    
     uid = str(experiment['id']) + '-' + experiment['strain']
@@ -111,7 +112,7 @@ def do_experiment(expargs):
 
     if experiment['mutant']['ics'] is not None:
         model.set_attr(ics = experiment['mutant']['ics'])
-    
+
     prepars = experiment['preshift']
     if prepars is None:
         prepars = {}
@@ -129,7 +130,6 @@ def do_experiment(expargs):
     P = model.simulate_and_get_points()
     newss = model.get_ss()
     state = tfStates(newss, READOUTS, cutoffs)
-
     for rep in [' ', '\\']:
         if rep in fname:
             fname = fname.replace(rep,'')
@@ -148,7 +148,7 @@ def interpret_experiment(uid, state, expargs, fname, outDir):
     shareddict = expargs['shareddict']
     cutoffs = expargs['cutoffs']    
     paramdict = expargs['paramdict']
-    singleRun = expargs['singleRun']
+    singleRun = expargs.get('singleRun', False)
     
     if paramdict is None:
         singleRun = True
@@ -209,7 +209,7 @@ def interpret_experiment(uid, state, expargs, fname, outDir):
             emph = '*'
             expected = experiment['phenotypeInterpreted'][rd]
             simulated = state[rd]['dec']
-        s += "|%s|%s|%s|%0.3f|\n" %(emph + rd + emph,
+        s += "|%s|%s|%s|%0.3f|\n" % (emph + rd + emph,
                                     expected,
                                     simulated,
                                     state[rd]['val'])
@@ -224,13 +224,9 @@ def interpret_experiment(uid, state, expargs, fname, outDir):
         if not p:
             simulationAgreementStatus = "does not agree"
 
-    if simulationAgreementStatus == "agrees":
-        print(uid)
     if singleRun:
         if simulationAgreementStatus == "agrees":
             shareddict[uid]['result'] +=1
-
-            
         template = "* {}\n"\
             ":PROPERTIES:\n:CUSTOM_ID: sec:{}\n:END:\n"\
             "{}\n\n"\
@@ -261,7 +257,7 @@ def interpret_experiment(uid, state, expargs, fname, outDir):
         shareddict[uid]['report'] += report
     else:
         if simulationAgreementStatus == "agrees":        
-            shareddict[uid] +=1
+            shareddict[uid] += 1
 
 def stringify(datadict):
     if datadict is None:
@@ -371,10 +367,11 @@ def compare_model_predictions(experimentpath,
         pset = psets[parind]
         if debug:
             shareddict = {}
-            shareddict.update({uid:{'report':'','result':0} for uid in uidlist})            
+            # shareddict.update({uid:{'report':'','result':0} for uid in uidlist})
+            shareddict.update({uid:0 for uid in uidlist})            
             for i, experiment in tqdm(enumerate(expdat[start:min(end, len(expdat))])):
                 expargs = {'experiment':experiment,
-                           'shareddict': dict(shareddict),
+                           'shareddict': shareddict,
                            'cutoffs': cutoffs,
                            'paramdict':pset,
                            'modelpath':modelpath,

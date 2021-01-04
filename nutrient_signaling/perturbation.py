@@ -36,6 +36,16 @@ class Perturb:
                      simulatortype='py',
                      executable="main.o",
                      simfilename="values.dat"):
+        """
+        Set user-defined attributes of simulator object to be used
+        to create the simulator object.
+        
+        :param modelpath: Relative path to directory folding model definition files
+        :param simulatortype: Either 'py'thon or 'cpp'
+        :param executable: Optional name of CPP executable to search for
+        :param simfilename: Optional name of data file to hold simulation data
+        :returns: None
+        """
         self.modelpath = modelpath
         self.simulatortype = simulatortype
         self.executable = executable

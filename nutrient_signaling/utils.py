@@ -1,8 +1,12 @@
-import PyDSTool as dst
-import pandas as pd
-import nutrient_signaling. modelreader as md
-import ast
 import os
+import ast
+import sys
+import numpy as np
+import pandas as pd
+import PyDSTool as dst
+from tqdm import tqdm
+# local imports
+import nutrient_signaling.modelreader as md
 
 def processliteral(string_specification):
     """
@@ -101,10 +105,7 @@ To generate the eliminator matrix L for an nxn symmetric matrix, call L(n). Like
 
 '''
 
-import numpy as np
-import sys
-from tqdm import tqdm
-import pandas as pd
+
 def L(n):
     '''
     Arguments:

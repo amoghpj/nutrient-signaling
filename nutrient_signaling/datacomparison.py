@@ -16,7 +16,7 @@ class Comparison:
         self.debug = False                
         self.simulator = simulator 
         self.checkpaths()
-        if self.comparisontype not in ['time','perturb','qualtitative']:
+        if self.comparisontype not in ['time', 'perturb', 'qualtitative']:
             print("comparisontype must be one of ['time','perturb','qualtitative']")
             raise Warning
             #sys.exit()
@@ -38,6 +38,7 @@ class Comparison:
             sys.exit()
 
     def docomparison(self):
+        """Compare model predictions to either perturbation or time course data"""
         if self.comparisontype == 'perturb':
             compobj = Perturb()
             if self.debug:
