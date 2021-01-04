@@ -28,7 +28,7 @@ class Settings:
         self.perturbpath = "./data/yaml/perturbation-data-rebuttal.yaml"
         self.timecoursepath = "./data/yaml/time-course-data-rebuttal.yaml"
         # Output paths
-        self.datapath = "./search-redone/"        
+        self.datapath = "./search-redone-1/"        
         self.hessianpath =  self.datapath + "Hessians/"
         self.write_psetspath = self.datapath + "Generated-Parameter-Sets/"
         self.lhspath = self.write_psetspath + 'lhs.csv'
@@ -41,7 +41,7 @@ class Settings:
         self.debug = True
         self.current_pset = ""        
         self.min_num_psets_for_hessian = 100
-        self.mineig = 0.1
+        self.mineig = 0.001
         self.costmultiple = 3. #10
         self.ReferenceCost = 0.0
         self.lhs_range = 0.025
