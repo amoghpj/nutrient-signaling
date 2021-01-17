@@ -34,15 +34,20 @@ rapamycinExps = ['6-gln3 gat1',
 
 
 ## Plot non rapamycin experiments
-path = "output/summary_24066_gln3_tap42_redefined.csv"
-#path = "output/summary_24066_rap-is-dot6.csv"
+# path = "output/summary_24066_gln3_tap42_redefined.csv"
+path = "search-redone-sample/summary_43982_test.csv"#"search-redone-sample/summary_99_test.csv"
 
 rapamycinExps.append('25-snf1')
+
+rapamycinExps.append('31-mig1 snf1 pde2')
+rapamycinExps.append('32-mig1 snf1 pde2')
+rapamycinExps.append('33-mig1 snf1 pde2')
+
 df = pd.read_csv(path,index_col=0)
 df['relcost'] = df['cost']/df.cost.min()
-df = df[df['relcost'] < 2.0]
+df = df[df['relcost'] < 3.]
 df = df.drop(columns=rapamycinExps)
-
+# df = df.sample(20000, axis=0,)
 f, ax = plt.subplots(1,1,figsize=(8,4))
 cols = [c for c in df.columns if c not in  ['cost','relcost']]
 print(len(cols))
@@ -65,7 +70,10 @@ ax.set_ylabel('x $C_{min}$')
 ax.set_xlabel(f'Number of Experiments Explained (total {len(cols)})')
 
 plt.tight_layout()
-plt.savefig('cost-vs-explanatory-capacity-drop-rap-gln3-drop25snf1.pdf',dpi=400)
+# plt.savefig('cost-vs-explanatory-capacity-drop-rap-gln3-drop25snf1.pdf',dpi=400)
+#plt.show()
+plt.savefig('cost-vs-explanatory-capacity-drop-rap-gln3-rebuttal.png',dpi=400)
+#plt.savefig('cost-vs-explanatory-capacity-redone-full.pdf',dpi=400)
 # #plt.savefig('cost-vs-explanatory-capacity-drop-rap-dot6.pdf',dpi=400)
 
 
