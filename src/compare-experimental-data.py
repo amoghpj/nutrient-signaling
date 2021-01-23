@@ -2,6 +2,10 @@
 Author: Amogh Jalihal
 Description: Carry out in silico shift experiments to compare model predictions
 to qualitative experimental data. 
+This script is used to generate the predictions that are
+1. visualized in Fig3 in the main paper
+2. compare simulations and data in Section S5 of the supplement
+3. depending on the input file, use rapamycin def as Gln3Gcn4 or Dot6
 """
 import os
 import sys
@@ -432,7 +436,7 @@ def compare_model_predictions(experimentpath,
             outfile.write(report)
     else:
         agdf = pd.DataFrame(aggregator)
-        agdf.to_csv(outDir + 'summary_' + str(len(psets.keys())) + '_test.csv')
+        agdf.to_csv(outDir + 'summary_' + str(len(psets.keys())) + '.csv')
 
 
 def main():
