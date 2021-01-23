@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import confidence_state_space as css
+import fig4c_confidence_state_space as css
 import sys
 
 def enclose_in_tabular(s, numcols):
@@ -15,7 +15,7 @@ def main():
     ## State Predictions:
     ## This tab-separated file is generated using 
     ## src/compare-state-space-predictions.py
-    predictionpath = 'output/global_space_24066.csv'
+    predictionpath = 'search-redone-sample/summary_43982_test.csv'#'output/global_space_24066.csv'
     predictiondf = pd.read_csv(predictionpath,
                                 sep='\t', index_col=False,
                                 dtype='str')
@@ -123,7 +123,7 @@ def write_csv(summarydf, settings, evidencedict, revmapper):
             vals = [float(v) for v in row[ns].split(',') if v != ""]
             for r, v in zip(settings.readouts, vals):
                 expandeddf[ns + '-' + r].loc[strain] = v
-    expandeddf.to_csv("summary_state_space.csv")
+    expandeddf.to_csv("summary_state_space_rebuttal.csv")
         
 def write_latex(summarydf, settings, evidencedict, revmapper):
     lateximports = "\\documentclass[landscape]{article}\n"\
@@ -172,7 +172,7 @@ def write_latex(summarydf, settings, evidencedict, revmapper):
         lt += tableclose
         start += numcols
     lt += latexfooter
-    with open('summary_state_space.tex','w') as outfile:
+    with open('summary_state_space-rebuttal.tex','w') as outfile:
         outfile.write(lt)
         
 def experiment_agreement(v, strain, nstate, readout_counter, settings, evidencedict):
