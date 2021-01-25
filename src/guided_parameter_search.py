@@ -28,7 +28,7 @@ class Settings:
         self.perturbpath = "./data/yaml/perturbation-data-rebuttal.yaml"
         self.timecoursepath = "./data/yaml/time-course-data-rebuttal.yaml"
         # Output paths
-        self.datapath = "./search-redone-1/"        
+        self.datapath = "./search-redone-2/"        
         self.hessianpath =  self.datapath + "Hessians/"
         self.write_psetspath = self.datapath + "Generated-Parameter-Sets/"
         self.lhspath = self.write_psetspath + 'lhs.csv'
@@ -46,7 +46,7 @@ class Settings:
         self.ReferenceCost = 0.0
         self.lhs_range = 0.025
         ####
-        self.numPsetsPerIter = 21000
+        self.numPsetsPerIter = 15000
         self.numproc = 0
         self._get_numproc()
         self.numPsetsPerCore = int(self.numPsetsPerIter/self.numproc)
@@ -61,7 +61,7 @@ class Settings:
         self.exclude_params = exclude_params = [
 ##################################################    
     # Do NOT Modify this section
-           'Carbon','Tps1_T',
+            'Carbon','Tps1_T','PDE_T','Rtg13_T'
            'Glutamine_ext','Sak_T',
            'NH4','Snf1_T',
            'ATP','Sch9_T',
