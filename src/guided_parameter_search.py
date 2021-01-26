@@ -58,7 +58,7 @@ class Settings:
         self.num_iters = 6        
         self.expansion_pset =  f"%s/expansion_iter-%d.csv" % (self.write_psetspath, self.startiter)        
         ####
-        self.exclude_params = exclude_params = [
+        self.exclude_params =  [
 ##################################################    
     # Do NOT Modify this section
             'Carbon','Tps1_T','PDE_T','Rtg13_T'
