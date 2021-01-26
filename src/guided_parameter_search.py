@@ -46,7 +46,7 @@ class Settings:
         self.ReferenceCost = 0.0
         self.lhs_range = 0.025
         ####
-        self.numPsetsPerIter = 15000
+        self.numPsetsPerIter = 9000
         self.numproc = 0
         self._get_numproc()
         self.numPsetsPerCore = int(self.numPsetsPerIter/self.numproc)
@@ -61,46 +61,46 @@ class Settings:
         self.exclude_params =  [
 ##################################################    
     # Do NOT Modify this section
-            'Carbon','Tps1_T','PDE_T','Rtg13_T'
-           'Glutamine_ext','Sak_T',
-           'NH4','Snf1_T',
-           'ATP','Sch9_T',
-           'Proline','Gln3_T',
-           'Cyr1_T','Rtg13_T'
-           'PDE_T','Gis1_T',
-           'Ras_T','Gcn4_T',
-           'PKA_T','Dot6_T',
-           'Trehalase_T','Gcn2_T',
-           'TORC1_T','Gln1_T',
-           'EGO_T','eIF_T',
-           'EGOGAP_T','Rib_T',
-           'Mig1_T',
-           ## The sigma values
-           'sigma_gln','sigma_gap',
-           'sigma_gln1','sigma_ego',
-           'sigma_rtg','sigma_tor',
-           'sigma_gis1','sigma_sak',
-           'sigma_gcn4','sigma_tps',
-           'sigma_dot','sigma_trehalase',
-           'sigma_gcn2','sigma_pka',
-           'sigma_rib','sigma_ras',
-           'sigma_eif','sigma_pde',
-           'sigma_cyr',       
-           'sigma_mig1',
-           'sigma_snf',
-           'sigma_sch9',
-           ##################################################
-           ## The gamma values
-           # 'gammacyr', 'gammagap',   
-           # 'gammapde', 'gammasynth', 
-           # 'gammaras', 'gammaeif',      
-           # 'gammapka', 'gamma_rib',  
-           # 'gammatre', 'gamma_gcn2', 
-           # 'gammatps', 'gamma_mig',  
-           # 'gammator', 'gammasnf',   
-           # 'gammaego', 'gammasch9',  
-           # 'gammagln1',  
-           # 'gammagln3',  
+            'Carbon','Tps1_T','PDE_T','Rtg13_T',
+            'Glutamine_ext','Sak_T',
+            'NH4','Snf1_T',
+            'ATP','Sch9_T',
+            'Proline','Gln3_T',
+            'Cyr1_T','Rtg13_T'
+            'PDE_T','Gis1_T',
+            'Ras_T','Gcn4_T',
+            'PKA_T','Dot6_T',
+            'Trehalase_T','Gcn2_T',
+            'TORC1_T','Gln1_T',
+            'EGO_T','eIF_T',
+            'EGOGAP_T','Rib_T',
+            'Mig1_T',
+            ## The sigma values
+            'sigma_gln','sigma_gap',
+            'sigma_gln1','sigma_ego',
+            'sigma_rtg','sigma_tor',
+            'sigma_gis1','sigma_sak',
+            'sigma_gcn4','sigma_tps',
+            'sigma_dot','sigma_trehalase',
+            'sigma_gcn2','sigma_pka',
+            'sigma_rib','sigma_ras',
+            'sigma_eif','sigma_pde',
+            'sigma_cyr',       
+            'sigma_mig1',
+            'sigma_snf',
+            'sigma_sch9',
+            ##################################################
+            ## The gamma values
+            # 'gammacyr', 'gammagap',   
+            # 'gammapde', 'gammasynth', 
+            # 'gammaras', 'gammaeif',      
+            # 'gammapka', 'gamma_rib',  
+            # 'gammatre', 'gamma_gcn2', 
+            # 'gammatps', 'gamma_mig',  
+            # 'gammator', 'gammasnf',   
+            # 'gammaego', 'gammasch9',  
+            # 'gammagln1',  
+            # 'gammagln3',  
        ]
 
     def setReferenceCost(self, cc):
